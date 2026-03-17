@@ -1,0 +1,195 @@
+@client.register()
+    class roles(
+        lightbulb.SlashCommand,
+        name = "roles",
+        description = "role selection setup",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            if not await _owner_only(ctx):
+                return
+            gender = hikari.Embed(
+                title = "__**GENDER**__",
+                description = "<:Fem:1482013180220669962> Female 　　　　　　　　　　　　　　　　　 \n <:Male:1481981869758218303> Male \n <:NB:1481992723698548746> Non-Binary \n <:GF:1481983903047876680> Genderfluid \n <:MTF:1481985970113871912> Trans MTF \n <:FTM:1481985939176820746> Trans FTM \n <:IS:1481998231121428540> Intersex",
+                color = 0x861f42,
+            )
+            age = hikari.Embed(
+                title = "**__AGE__**",
+                description = "<:01:1482023336027357256> 18-20 　　　　　　　　　　　　 \n <:02:1482023355946238024> 21-25 \n <:03:1482023378251419738> 26-30 \n <:04:1482023400326037565> 30+", 
+                color = 0x861f42,
+            )
+            genitalia = hikari.Embed(
+                title ="__GENITALIA__",
+                description = ":eggplant: I have a dick 　　 \n :taco: I have a pussy",
+                color = 0x861f42,
+            )
+            sexuality = hikari.Embed(
+                title = "__**SEXUALITY**__",
+                description = " <:Straight:1482033959377440969> Straight 　　　　　　　　　　　 \n <:Lesbian:1482034028206096546> Lesbian \n <:BiPan:1482034060854558800> Bi/Pan \n <:Asexual:1482034955579166934> Asexual \n <:Other:1482033993930113055> Other",
+                color = 0x861f42,
+            )
+            position = hikari.Embed(
+                title = "__**POSITION**__",
+                description = " <a:Dominant:1482036391977291901> Dominant 　　　　　　　　　　 \n <:DomLean:1482036433219879063> Dom-Lean \n <:Switch:1482036472713449542>   Switch \n <:SubLean:1482038379200647300>  Sub-Lean \n <:Sub:1482036591512785117>  Submissive",
+                color = 0x861f42,
+            )
+            region = hikari.Embed(
+                title = "__**REGION**__",
+                description = " <:NorthAmerica:1482039930095140955> North America 　　　　　　　　　　　　　\n <:SouthAmerica:1482039974579802287> South America \n <:Europe:1482040003667165305> Europe \n <:Africa:1482040032645742623> Africa \n <:Asia:1482040064870711376> Asia \n <:Oceania:1482040104854884372> Oceania",
+                color = 0x861f42,
+            )
+            dms = hikari.Embed(
+                title = "__**DIRECT MESSAGING**__",
+                description = "🔓 Open 　　　　　　　　　　　　 \n ☑️ Open for verified \n ❔ Ask me \n ❓ Ask my owner \n 🔒  Closed",
+                color = 0x861f42,
+            )
+            relationships = hikari.Embed(
+                title = "__**RELATIONSHIPS**__",
+                description = "<a:taken:1482043730901995560>  In a relationship 　　　　　　　　 \n <a:single:1482043767400829071>  Not in a relationship \n  <a:mono:1482043799835508987>  Monogamous \n  <a:poly:1482043830231499001>  Polyamorous \n <:owner:1482043872124076094>  Owner \n  <:owned:1482043908207804598>  Owned \n <a:dynamic:1482043956979044444>  In a dynamic",
+                color = 0x861f42,
+            )
+            await ctx.client.app.rest.create_message(1482800121795055646, "# REACT TO THE CORRESPONDING ICON TO SELECT THE ROLES THAT MOST SUIT YOU. \n # __**MAKE SURE YOU GRAB YOUR AGE AND GENDER ROLES**__")
+            #await ctx.client.app.rest.create_message(1481738496938082435, embed = region)
+            #await ctx.client.app.rest.create_message(1481738496938082435, content = "https://media.discordapp.net/attachments/1206982918300373062/1482061929055781018/VnAOsrV.png?ex=69b5953b&is=69b443bb&hm=52577b7b8e0845345299dda620a6bc4be054e66da6886b941bbfa3e4c26e9cee&=&format=webp&quality=lossless&width=1538&height=68")
+            #await ctx.client.app.rest.create_message(1481738496938082435, embed = gender)
+            #await ctx.client.app.rest.create_message(1481738496938082435, content = "https://media.discordapp.net/attachments/1206982918300373062/1482064206651195442/MRwGeI0.png?ex=69b5975a&is=69b445da&hm=8dc02eb2d3f656b7cb7d3eba917aec1ccddeb4101a80409641909896a9468e06&=&format=webp&quality=lossless&width=1538&height=68")
+            #await ctx.client.app.rest.create_message(1481738496938082435, embed = genitalia)
+            #await ctx.client.app.rest.create_message(1481738496938082435, content = "https://media.discordapp.net/attachments/1206982918300373062/1482064382320971910/TgjyZtG.png?ex=69b59784&is=69b44604&hm=efd2b20426da6e80eb35c25e7f1662e4f884e122ac6d60753b692e08f93ab1fe&=&format=webp&quality=lossless&width=1538&height=68")
+            #await ctx.client.app.rest.create_message(1481738496938082435, embed = age)
+            #await ctx.client.app.rest.create_message(1481738496938082435, content = "https://cdn.discordapp.com/attachments/1481698958341308499/1482057753366102228/fNGRtNb.png?ex=69b59157&is=69b43fd7&hm=384d2f45e7bc1121e4df2ccd549380cd2962b33f1d8416f76169c3f74528141c&")
+            #await ctx.client.app.rest.create_message(1481738496938082435, embed = sexuality)
+            #await ctx.client.app.rest.create_message(1481738496938082435, content = "https://cdn.discordapp.com/attachments/1481698958341308499/1482057753366102228/fNGRtNb.png?ex=69b59157&is=69b43fd7&hm=384d2f45e7bc1121e4df2ccd549380cd2962b33f1d8416f76169c3f74528141c&")
+            #await ctx.client.app.rest.create_message(1481738496938082435, embed = position)
+            #await ctx.client.app.rest.create_message(1481738496938082435, content = "https://cdn.discordapp.com/attachments/1481698958341308499/1482057753366102228/fNGRtNb.png?ex=69b59157&is=69b43fd7&hm=384d2f45e7bc1121e4df2ccd549380cd2962b33f1d8416f76169c3f74528141c&")
+            #await ctx.client.app.rest.create_message(1481738496938082435, embed = dms)
+            #await ctx.client.app.rest.create_message(1481738496938082435, content = "https://cdn.discordapp.com/attachments/1481698958341308499/1482057753366102228/fNGRtNb.png?ex=69b59157&is=69b43fd7&hm=384d2f45e7bc1121e4df2ccd549380cd2962b33f1d8416f76169c3f74528141c&")
+            #await ctx.client.app.rest.create_message(1481738496938082435, embed = relationships)
+            #await ctx.client.app.rest.create_message(1481738496938082435, content = "https://cdn.discordapp.com/attachments/1481698958341308499/1482057753366102228/fNGRtNb.png?ex=69b59157&is=69b43fd7&hm=384d2f45e7bc1121e4df2ccd549380cd2962b33f1d8416f76169c3f74528141c&")
+
+    @client.register()
+    class rules(
+        lightbulb.SlashCommand,
+        name = "rules",
+        description = "display server rules",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            if not await _owner_only(ctx):
+                return
+            rules = hikari.Embed(
+                description = "By joining, you agree to follow Discord's ToS as well as the following rules.\n　\n  **· · ─── 𓆩♡𓆪 GENERAL RULES 𓆩♡𓆪 ─── · ·**",
+                color = 0x861f42,
+            )
+            rules.add_field("▹ **1. Be respectful**", "　\nYou must respect all users, regardless of your liking towards them. Treat others the way you want to be treated.\n　")
+            rules.add_field("▹ **2. Inappropriate Language**", "　\nThe use of profanity is allowed. However, any ill-intended derogatory language towards any user (slurs, hate speech, etc.) is prohibited. Just use common sense.\n　")
+            rules.add_field("▹ **3. No spamming**","　\nDon't send a lot of small messages right after each other. Do not disrupt chat by spamming.\n　")
+            rules.add_field("▹ **4. Pornographic/adult/other NSFW material**","　\nThis is a community server meant to share in this kind of material. However, the sending or distributing of overly graphic content—especially if not in an appropriate channel—may be deemed as punishable by moderators. Examples include but are not limited to beastiality, animal cruelty, race play, incest, or loli content. \n　")
+            rules.add_field("▹ **5. Nudes**","　\nThe sharing or distributing of nudes within the server is not allowed. If you want to send someone nudes, do so privately. Any report of unsolicited nudes being sent will result in immediate removal of the sender.\n　")
+            rules.add_field("▹ **6. Malicious Persons & Minors**","　\nCatfishes, scammers, bots, or underage persons will be banned on sight or notice. Do not expect a warning.\n　")
+            rules.add_field("▹ **7. Findom/Advertisements**","　\nFindom and any kind of advertising of findom is not allowed. Advertisements of other servers within Pandæmonium are also strictly prohibited. Other forms of advertisement are more subjective. However, as a general rule, if what you are advertising/promoting is not relevant to the channel or subject of conversation, it is not allowed. \n　")
+            rules.add_field("▹ **8. No offensive names and profile pictures**","　\nYou will be asked to change your name or picture if moderators deem them inappropriate.\n　")
+            rules.add_field("▹ **9. Server Raiding**","　\nShould go without saying, raiding or mentions of raiding are not allowed.\n")
+            rules.add_field("▹ **10. Direct & Indirect Threats**","　\nThreats to other users of DDoS, Death, DoX, abuse, and other malicious threats are absolutely prohibited and disallowed.\n　")
+            rules.add_field("▹ **11. Proper use of Channels**","　\nWhile not heavily enforced, try to stick to using channels for their intended purpose, and their intended purpose only. If you are confused regarding what a channel is used for or how to use it, ask staff or another active member in the server. Keep heavy topics in <#1481790436120068199> and do not vent in other channels.\n　")
+            femdom = hikari.Embed(
+                description = "This is a FEMDOM server, which implies a hierarchical structure.\n　\n  **· · ─── 𓆩♡𓆪 FEMDOM RULES 𓆩♡𓆪 ─── · ·**",
+                color = 0x861f42,
+            )
+            femdom.add_field("▹ **1. ALL Females are above Males**","This rule applies to every female regardless of their preferred position. Males are not to disrespect or belittle any female in any way, shape, or form. Males are to obey females within reason.")
+            femdom.add_field("▹ **2. Male Dom (Mdom) Behavior**","Any form of male dom behavior—regardless of whether or not it is a joke—will result in immediate removal. Switch males are allowed, however any dominant behavior shown inside (or if unsolicited when conversing with members outside) the server will also result in removal.")
+            femdom.add_field("▹ **3. Positions/Preferences**","Dommes are to respect other dommes as equals unless the contrary is agreed upon prior. Respect people's roles and don't push boundaries beyond limits.")
+            femdom.add_field("▹ **4. Safe word**","While this is a Femdom server, please remember that hierarchical interactions are founded on consent. If you genuinely feel uncomfortable, or that someone is being unreasonable, you may use the following emote: 🔴  as a safe word. The command: /safeword can also be used to cancel any bot impairments. These should be used any times your boundaries are being crossed. __THESE ARE TO BE RESPECTED BY ALL MEMBERS ON NOTICE__. If safewords are not being respected, please get in contact with staff using ⁠<#1481743160735567993>. If immediate intervention is required, you may also ping staff directly.")
+            mods = hikari.Embed(
+                description = "**The Admins and Mods will Mute/Kick/Ban per discretion based on all of the above rules and the severity of the infraction. If you feel mistreated DM an Admin and we will resolve the issue.**\n\n**Your presence in this server implies accepting these rules, including all further changes. These changes might be done at any time without notice, it is your responsibility to check for them.**",
+                color = 0x861f42
+            )
+            await ctx.client.app.rest.create_message(1481738459818234001, embed = rules)
+            await ctx.client.app.rest.create_message(1481738459818234001, embed = femdom)
+            await ctx.client.app.rest.create_message(1481738459818234001, embed = mods)
+            await ctx.client.app.rest.create_message(1481738459818234001, content = hikari.File("rulesbar.png"))
+    @client.register()
+    class verify(
+        lightbulb.SlashCommand,
+        name = "verify",
+        description = "display server rules",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            if not await _owner_only(ctx):
+                return
+            verify = hikari.Embed(
+                description = "**· · ── 𓆩♡𓆪 INSTRUCTIONS 𓆩♡𓆪 ── · ·**\n You may verify through one of the methods instructed below, you may use a national ID, passport or driver's license as identification. Other methods won't be accepted.",
+                color = 0x861f42,
+            )
+            verify.set_image("https://media.discordapp.net/attachments/1481698958341308499/1482699250767888454/CHNgpQW.png?ex=69b7e6c8&is=69b69548&hm=72fc1ccc8e44019abccc6e5e93c1048193c2338a1c4f5717d3bb719123ba421e&=&format=webp&quality=lossless&width=1174&height=753")
+            verify.add_field("**IMAGE VERIFICATION:**", "　You will need to take two pictures: \n ▹Picture of your ID that clearly displays your DoB and your picture, the rest of your information may be blurred or crossed out. \n ▹Selfie holding the ID showing your date of birth and picture and a piece of paper whith the server's name, current date, and your discord username written on it. \n")
+            verify.add_field("**VIDEO VERIFICATION:**", "Alternatively you can request a member of the staff team to verify you in a non recorded videocall where you'll have to simply hold your ID and show it closer to the cam as required to read the date of birth.")
+            verify.set_footer("All information/pictures provided for the verifiation process will be completely eliminated after the process.")
+            await ctx.client.app.rest.create_message(1481743187096637675, embed = verify)
+            await ctx.client.app.rest.create_message(1481743187096637675, content = hikari.File("haha.png"))
+
+    @client.register()
+    class access(
+        lightbulb.SlashCommand,
+        name = "access",
+        description = "display server rules",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            if not await _owner_only(ctx):
+                return
+            await ctx.client.app.rest.create_message(1481812610600140842, content = "# WELCOME TO PANDÆMONIUM!\n ## In order to access the server click on the button below.\n ## __Make sure you read the rules and grab your roles afterwards!__")
+            await ctx.client.app.rest.create_message(1481812610600140842, content = hikari.File("rulesbar.png"))
+    
+    @client.register()
+    class done(
+        lightbulb.SlashCommand,
+        name = "done",
+        description = "display server rules",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            if not await _owner_only(ctx):
+                return
+            await ctx.client.app.rest.create_message(1481812610600140842, content = "Interesting channels to check one you are done:\n- <#1481738459818234001>\n- <#1481794905025151150>\n- <#1481738496938082435>\n## Once you are all set, come meet us in <#1481652884582957242>! We don't bite \n-# ||unless you like that...||")
+    @client.register()
+    class info(
+        lightbulb.SlashCommand,
+        name = "info",
+        description = "display server rules",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            if not await _owner_only(ctx):
+                return
+            staff = hikari.Embed(
+                title = "Staff Contact:",
+                description = "In Pandæmonium we are committed to offering a close moderation team, if you require any assistance you can feel free to ping staff members when needed. However, if you require something to be discussed more thoroughly or privately you should use the ⁠<#1481743160735567993> channel so we can address the issue accordingly.",
+                color = 0x861f42
+            )
+            verif = hikari.Embed(
+                title = "Verification:",
+                description = "While the server is exclusively available for users over the age of 18, we understand that not everyone is keen of providing personal information to a server. Thus, all personal pictures with suggestive content must be kept to verified channels only, and don't forget that direct nudity is not allowed as stated in <#1481738459818234001>. If you wish to verify your age with our team  you may head over to ⁠<#1481743187096637675> and follow the instructions. Doing so will grant access to the channels in the [Verified] category, as well as confirming your age for the rest of the server.\n https://media.discordapp.net/attachments/1481698958341308499/1482770619115507882/I9t1Gok.png?ex=69b82940&is=69b6d7c0&hm=0d3d901665d63d1db385e5bcc7120df6894a74e513cee52627776a54ed93a43a&=&format=webp&quality=lossless&width=254&height=253",
+                color = 0x861f42
+            )
+            verif.set_image("https://media.discordapp.net/attachments/1481698958341308499/1482770619115507882/I9t1Gok.png?ex=69b82940&is=69b6d7c0&hm=0d3d901665d63d1db385e5bcc7120df6894a74e513cee52627776a54ed93a43a&=&format=webp&quality=lossless&width=254&height=253")
+            levels = hikari.Embed(
+                title = "Leveling System:",
+                description = "Perks and colors can be unlocked by being active in the server. You can check your level at any time in <#1481786030603374684> using the /level command (<@1217870452253397082>).\n\nFor information about color roles, head over to ⁠<#1482291245958037644>.\n- At level 5 you will unlock the permission to use  ⁠<#1481738312816398366>. Try to make sure to converse with people and make yourself comfortable in the server before requesting to DM anyone. We guarantee your experience will be much better this way.\n\n- At level 25 you will get access to ⁠<#1481706516217336040>. This channel can be used to make your own custom voice chats by joining it. You can also manage your created channel at any moment using <#1481706517617971370>.",
+                color = 0x861f42
+            )
+            boost = hikari.Embed(
+                title = "Boosting Perks:",
+                description = "We want to keep Pandæmonium as a common space that is enjoyable and accessible to everyone. However, if you wish to support the server to help us grow and provide more customization, cosmetics, emotes and stickers, you can do so by boosting. If you enjoy the space and and are able to do so, you'll get access to some perks as token of gratitude:\n\n- Boosting 1 time will grant you access to a wider selection of colors from ⁠<#1482291245958037644>. This will also allow you to create your own voice channel without needing to reach level 25.,\n\n- Boosting 2 times or more will allow you to request a custom role that only you will have, which can be done via ⁠<#1481743160735567993>. You will be able to choose the name, emote and color, you'll also be able to change the color of your custom role at any time by using /color-me color (<@702660517617205248>)",
+                color = 0x861f42
+            )
+            await ctx.client.app.rest.create_message(1481794905025151150, embed = staff)
+            await ctx.client.app.rest.create_message(1481794905025151150, embed = verif)
+            await ctx.client.app.rest.create_message(1481794905025151150, embed = levels)
+            await ctx.client.app.rest.create_message(1481794905025151150, embed = boost)
