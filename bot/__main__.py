@@ -117,6 +117,60 @@ def main() -> None:
             # Ephemeral ack hides the invoker; the real message is sent as a normal bot message.
             await ctx.respond("Sent.", flags=hikari.MessageFlag.EPHEMERAL)
             await ctx.client.app.rest.create_message(ctx.channel_id, self.message)
+    
+    @client.register()
+    class give_header_role_to_all(
+        lightbulb.SlashCommand,
+        name="give_header_role_to_all",
+        description="Give the header role to all members in this server.",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            if not await _admin_only(ctx):
+                return
+
+            guild_id = ctx.guild_id
+            if guild_id is None:
+                await ctx.respond(
+                    "This command can only be used in a server.",
+                    flags=hikari.MessageFlag.EPHEMERAL,
+                )
+                return
+
+            target_role_id = 1483418773338980435
+
+            await ctx.respond(
+                "Starting to give the role to all members. This may take a while...",
+                flags=hikari.MessageFlag.EPHEMERAL,
+            )
+
+            added = 0
+            already_had = 0
+            failed = 0
+
+            async for member in bot.rest.fetch_members(guild_id):
+                if member.is_bot:
+                    continue
+
+                role_ids_now = {int(r) for r in member.role_ids}
+                if target_role_id in role_ids_now:
+                    already_had += 1
+                    continue
+
+                try:
+                    await bot.rest.add_role_to_member(guild_id, member.id, target_role_id)
+                    added += 1
+                except hikari.ForbiddenError:
+                    failed += 1
+                except hikari.NotFoundError:
+                    failed += 1
+
+            await ctx.respond(
+                f"Finished. Added role to {added} members, skipped {already_had} who already had it, "
+                f"and failed for {failed} members.",
+                flags=hikari.MessageFlag.EPHEMERAL,
+            )
             
     #TICKETS NOTIFICATIONS
     async def _on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
