@@ -315,6 +315,36 @@ def main() -> None:
     bot.subscribe(hikari.GuildChannelCreateEvent, _on_channel_create)
     bot.subscribe(hikari.GuildChannelDeleteEvent, _on_channel_delete)
     bot.subscribe(hikari.MemberUpdateEvent, _on_member_update)
+
+    ATTACHMENT_ONLY_CHANNEL_IDS: set[int] = {1481787748858986558, 1481787810699677828}
+
+    async def _on_message_create(event: hikari.MessageCreateEvent) -> None:
+        message = event.message
+        if message is None:
+            return
+
+        if int(message.channel_id) not in ATTACHMENT_ONLY_CHANNEL_IDS:
+            return
+
+        author = message.author
+        if author is None or author.is_bot:
+            return
+
+        if message.attachments:
+            return
+
+        try:
+            await bot.rest.delete_message(message.channel_id, message.id)
+        except hikari.ForbiddenError:
+            logging.exception(
+                "Missing perms / role hierarchy prevents message deletion: channel=%s message=%s",
+                int(message.channel_id),
+                int(message.id),
+            )
+        except hikari.NotFoundError:
+            pass
+
+    bot.subscribe(hikari.MessageCreateEvent, _on_message_create)
     bot.run()
 
 if __name__ == "__main__":
