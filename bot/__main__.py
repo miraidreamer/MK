@@ -316,7 +316,7 @@ def main() -> None:
     bot.subscribe(hikari.GuildChannelDeleteEvent, _on_channel_delete)
     bot.subscribe(hikari.MemberUpdateEvent, _on_member_update)
 
-    ATTACHMENT_ONLY_CHANNEL_IDS: set[int] = {1481787748858986558, 1481787810699677828}
+    ATTACHMENT_ONLY_CHANNEL_IDS: set[int] = {1481787748858986558, 1481787810699677828, 1482336866702458881, 1482336926064312400}
 
     async def _on_message_create(event: hikari.MessageCreateEvent) -> None:
         message = event.message
