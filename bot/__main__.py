@@ -59,33 +59,17 @@ def main() -> None:
         1483418773338980435: {1481737302240792597}
     }
 
-    REGION_SELECT_CUSTOM_ID_PREFIX = "region_select_v2:"
-    REGION_SELECT_CUSTOM_ID_MAX_LEN = 100
+    REGION_SELECT_CUSTOM_ID = "region_select_v2"
 
-    def _build_region_custom_id(*, na: int, sa: int, eu: int, af: int, asia: int, oc: int) -> str:
-        # Compact encoding: key=id pairs separated by commas.
-        custom_id = f"{REGION_SELECT_CUSTOM_ID_PREFIX}na={na},sa={sa},eu={eu},af={af},as={asia},oc={oc}"
-        if len(custom_id) > REGION_SELECT_CUSTOM_ID_MAX_LEN:
-            raise RuntimeError("Region selector custom_id too long")
-        return custom_id
-
-    def _parse_region_custom_id(custom_id: str) -> dict[str, int] | None:
-        if not custom_id.startswith(REGION_SELECT_CUSTOM_ID_PREFIX):
-            return None
-        payload = custom_id[len(REGION_SELECT_CUSTOM_ID_PREFIX) :]
-        out: dict[str, int] = {}
-        for part in payload.split(","):
-            if "=" not in part:
-                continue
-            k, v = part.split("=", 1)
-            k = k.strip()
-            v = v.strip()
-            if not k or not v.isdigit():
-                continue
-            out[k] = int(v)
-        if {"na", "sa", "eu", "af", "as", "oc"} - set(out.keys()):
-            return None
-        return out
+    # Hardcoded region role IDs (single-select; picking one removes the others).
+    REGION_ROLE_IDS: dict[str, int] = {
+        "na": 1481913772762464309,  # North America
+        "sa": 1481913810788024412,  # South America
+        "eu": 1481913741388939274,  # Europe
+        "af": 1481913841276157972,  # Africa
+        "as": 1481913861656543303,  # Asia
+        "oc": 1481913878333100053,  # Oceania
+    }
 
     ticket_notice_message_by_channel_id: dict[int, int] = {}
 
@@ -206,13 +190,6 @@ def main() -> None:
         description="Post the region embed + dropdown selector (single choice).",
         default_member_permissions=hikari.Permissions.ADMINISTRATOR,
     ):
-        north_america_role_id = lightbulb.integer("north_america_role_id", "Role ID for North America")
-        south_america_role_id = lightbulb.integer("south_america_role_id", "Role ID for South America")
-        europe_role_id = lightbulb.integer("europe_role_id", "Role ID for Europe")
-        africa_role_id = lightbulb.integer("africa_role_id", "Role ID for Africa")
-        asia_role_id = lightbulb.integer("asia_role_id", "Role ID for Asia")
-        oceania_role_id = lightbulb.integer("oceania_role_id", "Role ID for Oceania")
-
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
             if not await _admin_only(ctx):
@@ -237,25 +214,9 @@ def main() -> None:
                 color=0x861f42,
             )
 
-            try:
-                custom_id = _build_region_custom_id(
-                    na=int(self.north_america_role_id),
-                    sa=int(self.south_america_role_id),
-                    eu=int(self.europe_role_id),
-                    af=int(self.africa_role_id),
-                    asia=int(self.asia_role_id),
-                    oc=int(self.oceania_role_id),
-                )
-            except Exception:
-                await ctx.respond(
-                    "Failed to build selector payload. Please try again.",
-                    flags=hikari.MessageFlag.EPHEMERAL,
-                )
-                return
-
             menu = (
                 special_endpoints.MessageActionRowBuilder()
-                .add_select_menu(hikari.ComponentType.STRING_SELECT_MENU, custom_id)
+                .add_select_menu(hikari.ComponentType.STRING_SELECT_MENU, REGION_SELECT_CUSTOM_ID)
                 .set_placeholder("Make sure you select your region.")
                 .set_min_values(1)
                 .set_max_values(1)
@@ -473,8 +434,7 @@ def main() -> None:
         interaction = event.interaction
         if not isinstance(interaction, hikari.ComponentInteraction):
             return
-        region_map = _parse_region_custom_id(interaction.custom_id)
-        if region_map is None:
+        if interaction.custom_id != REGION_SELECT_CUSTOM_ID:
             return
 
         member = interaction.member
@@ -486,7 +446,7 @@ def main() -> None:
             return
 
         selected = values[0]
-        target_role_id = region_map.get(selected)
+        target_role_id = REGION_ROLE_IDS.get(selected)
         if target_role_id is None:
             await interaction.create_initial_response(
                 hikari.ResponseType.MESSAGE_CREATE,
@@ -500,7 +460,7 @@ def main() -> None:
             return
 
         current_roles = {int(r) for r in member.role_ids}
-        region_roles = set(region_map.values())
+        region_roles = set(REGION_ROLE_IDS.values())
 
         removed = 0
         for role_id in (current_roles & region_roles) - {target_role_id}:
