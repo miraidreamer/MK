@@ -28,7 +28,6 @@ def main() -> None:
     OWNER_ID = 705106144183582731
     TICKET_PING_ROLE_ID = 1482666644349128745
     TICKET_NOTIFY_CHANNEL_ID = 1483375980054839297
-    DM_STATUS_SELECT_CUSTOM_ID = "dm_status_select_v1"
 
     ROLE_HEADER_CATEGORIES: dict[int, set[int]] = {
         #Information
@@ -41,14 +40,26 @@ def main() -> None:
         1482760118994210977: {1482762859372089360,1483091252906950809,1482762288816722001,1482762082536521881,1482762858247749642,1482762079399055481,1482762310157340884,1482763092008898725,1482762081727021238,1482762856272236624,1482762073774752020,1482762305232965643,1482762304385978398,1482776027746013297,1482762297071108216,1482761318560829562,1482762081336951016,1482762306072088721,1482762303026757653,1483091135759912993,1482765384041103601,1482762306952761475,1482762075884486786,1482776463508771050,1483091220275134687,1482762857346109613,1482762303462965402,1482776733592588359,1482762860030464151},
         1483418773338980435: {1481737302240792597}
     }
-
+    #Buttons
+    PING_CHAT_REVIVE_CUSTOM_ID = "ping_chat_revive"
+    PING_BUMP_REMINDER_CUSTOM_ID = "ping_bump_reminder"
+    PING_NEWS_CUSTOM_ID = "ping_news"
+    BTN_SADIST_CUSTOM_ID = "btn_sadist"
+    BTN_ROUGH_DOMME_CUSTOM_ID = "btn_rough_domme"
+    BTN_GENTLE_DOMME_CUSTOM_ID = "btn_gentle_domme"
+    BTN_MASOCHIST_CUSTOM_ID = "btn_masochist"
+    BTN_NO_BRATTING_CUSTOM_ID = "btn_no_bratting"
+    BTN_BULLY_ME_CUSTOM_ID = "btn_bully_me"
+    BTN_DONT_BULLY_CUSTOM
+    #Selections variables
     REGION_SELECT_CUSTOM_ID = "region_select_v2"
     ORIENTATION_SELECT_CUSTOM_ID = "orientation_select_v1"
     POSITION_SELECT_CUSTOM_ID = "position_select_v1"
+    DM_STATUS_SELECT_CUSTOM_ID = "dm_status_select_v1"
     RELATIONSHIP_SELECT_CUSTOM_ID = "relationship_select_v1"
     DOM_TITLES_SELECT_CUSTOM_ID = "dom_titles_select_v1"
-
-    # Hardcoded region role IDs (single-select; picking one removes the others).
+    PET_NAMES_SELECT_CUSTOM_ID = "pet_names_select_v1"
+    #Selections
     REGION_ROLE_IDS: dict[str, int] = {
         "na": 1481913772762464309,  # North America
         "sa": 1481913810788024412,  # South America
@@ -88,9 +99,6 @@ def main() -> None:
         "owned":        1481914995498422272,
         "dynamic":      1481915014209212538,
     }
-    PING_CHAT_REVIVE_CUSTOM_ID = "ping_chat_revive"
-    PING_BUMP_REMINDER_CUSTOM_ID = "ping_bump_reminder"
-    PING_NEWS_CUSTOM_ID = "ping_news"
     DOM_TITLES_ROLE_IDS: dict[str, int] = {
         "boss":         1482760892298039507,
         "captain":      1483191635431919877,
@@ -112,6 +120,45 @@ def main() -> None:
         1481913457359065180,  # Switch
         1481913488225079386,  # Sub-Lean
     }
+    PET_NAMES_ROLE_IDS: dict[str, int] = {
+        "brat":         1482761314760790176,
+        "doll":         1483415011517792378,
+        "good_boy_girl": 1483415293442265099,
+        "kitten":       1483480478085550120,
+        "pet":          1482761312714100867,
+        "puppy":        1483904296582910002,
+        "slave":        1482761224004567092,
+        "thing":        1483435063508209674,
+    }
+    PET_NAMES_REQUIRED_ROLE_IDS: set[int] = {
+        1481913457359065180,  # Switch
+        1481913488225079386,  # Sub-Lean
+        1481913541899325510,  # Submissive
+    }
+    INTERACTION_STYLE_ROLE_IDS: dict[str, int] = {
+        BTN_SADIST_CUSTOM_ID:       1482761319416332432,
+        BTN_ROUGH_DOMME_CUSTOM_ID:  1483904318573645986,
+        BTN_GENTLE_DOMME_CUSTOM_ID: 1483904373280211024,
+        BTN_MASOCHIST_CUSTOM_ID:    1482761326551109633,
+        BTN_NO_BRATTING_CUSTOM_ID:  1482761007821750413,
+        BTN_BULLY_ME_CUSTOM_ID:     1482761316149231836,
+        BTN_DONT_BULLY_CUSTOM_ID:   1482761317399003248,
+        BTN_FLIRT_CUSTOM_ID:        1483435512399396936,
+        BTN_DONT_FLIRT_CUSTOM_ID:   1483435579432632340,
+    }
+    INTERACTION_STYLE_DOM_REQUIRED: set[str] = {
+        BTN_SADIST_CUSTOM_ID,
+        BTN_ROUGH_DOMME_CUSTOM_ID,
+        BTN_GENTLE_DOMME_CUSTOM_ID,
+        BTN_NO_BRATTING_CUSTOM_ID,
+    }
+    INTERACTION_STYLE_SUB_REQUIRED: set[str] = {
+        BTN_MASOCHIST_CUSTOM_ID,
+    }
+    INTERACTION_STYLE_MUTEX: list[tuple[str, str]] = [
+        (BTN_BULLY_ME_CUSTOM_ID, BTN_DONT_BULLY_CUSTOM_ID),
+        (BTN_FLIRT_CUSTOM_ID, BTN_DONT_FLIRT_CUSTOM_ID),
+    ]
     ticket_notice_message_by_channel_id: dict[int, int] = {}
 
     async def _owner_only(ctx: lightbulb.Context) -> bool:
@@ -520,6 +567,68 @@ def main() -> None:
 
             await ctx.respond("Posted.", flags=hikari.MessageFlag.EPHEMERAL)
             await bot.rest.create_message(ctx.channel_id, embed=dom_titles_embed, components=[dom_titles_menu])
+            pet_names_embed = hikari.Embed(
+                title="PET NAMES",
+                description=(
+                    "You can select all the pet names you like being called.\n"
+                    "(Requires a switch or submissive role)"
+                ),
+                color=0x861f42,
+            )
+
+            pet_names_row = special_endpoints.MessageActionRowBuilder()
+            pet_names_menu = (
+                pet_names_row.add_text_menu(
+                    PET_NAMES_SELECT_CUSTOM_ID,
+                    placeholder="Select your pet names.",
+                    min_values=0,
+                    max_values=len(PET_NAMES_ROLE_IDS),
+                )
+                .add_option("Brat", "brat")
+                .add_option("Doll", "doll")
+                .add_option("Good Boy/Girl", "good_boy_girl")
+                .add_option("Kitten", "kitten")
+                .add_option("Pet", "pet")
+                .add_option("Puppy", "puppy")
+                .add_option("Slave", "slave")
+                .add_option("Thing", "thing")
+                .parent
+            )
+
+            await bot.rest.create_message(ctx.channel_id, embed=pet_names_embed, components=[pet_names_menu])
+            interaction_style_embed = hikari.Embed(
+                title="INTERACTION STYLE",
+                description=(
+                    "⚜️ Sadistic　　　　　　　　　　　　　　　　\n"
+                    "<:ae_break_the_subs:1483494430546591834> Rough Domme\n"
+                    "<:ae_head_pats:1484158676943114290> Gentle Domme\n"
+                    "❤️‍🔥 Masochist\n"
+                    "🚫 Don't Brat\n"
+                    "✅ Bully Me\n"
+                    "❌ Don't Bully Me\n"
+                    "💚 Flirt\n"
+                    "❤️ Don't Flirt"
+                ),
+                color=0x861f42,
+            )
+
+            interaction_style_row1 = (
+                special_endpoints.MessageActionRowBuilder()
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_SADIST_CUSTOM_ID, emoji=hikari.Emoji.parse("⚜️"), label="Sadist")
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_ROUGH_DOMME_CUSTOM_ID, emoji=hikari.Emoji.parse("<:ae_break_the_subs:1483494430546591834>"), label="Rough Domme")
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_GENTLE_DOMME_CUSTOM_ID, emoji=hikari.Emoji.parse("<:ae_head_pats:1484158676943114290>"), label="Gentle Domme")
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_MASOCHIST_CUSTOM_ID, emoji=hikari.Emoji.parse("❤️‍🔥"), label="Masochist")
+                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_NO_BRATTING_CUSTOM_ID, emoji=hikari.Emoji.parse("🚫"), label="Don't Brat")
+            )
+            interaction_style_row2 = (
+                special_endpoints.MessageActionRowBuilder()
+                .add_interactive_button(hikari.ButtonStyle.SUCCESS, BTN_BULLY_ME_CUSTOM_ID, emoji=hikari.Emoji.parse("✅"), label="Bully Me")
+                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_DONT_BULLY_CUSTOM_ID, emoji=hikari.Emoji.parse("❌"), label="Don't Bully Me")
+                .add_interactive_button(hikari.ButtonStyle.SUCCESS, BTN_FLIRT_CUSTOM_ID, emoji=hikari.Emoji.parse("💚"), label="Flirt")
+                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_DONT_FLIRT_CUSTOM_ID, emoji=hikari.Emoji.parse("❤️"), label="Don't Flirt")
+            )
+
+            await bot.rest.create_message(ctx.channel_id, embed=interaction_style_embed, components=[interaction_style_row1, interaction_style_row2])
     #TICKETS NOTIFICATIONS
     async def _on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
         channel = event.channel
@@ -692,6 +801,10 @@ def main() -> None:
             toggle_role_id = None
         elif interaction.custom_id == DOM_TITLES_SELECT_CUSTOM_ID:
             toggle_role_id = None
+        elif interaction.custom_id == PET_NAMES_SELECT_CUSTOM_ID:
+            toggle_role_id = None
+        elif interaction.custom_id in INTERACTION_STYLE_ROLE_IDS:
+            toggle_role_id = None
         else:
             return
 
@@ -714,7 +827,7 @@ def main() -> None:
 
         values = interaction.values or []
 
-        MULTI_SELECT_CUSTOM_IDS = {RELATIONSHIP_SELECT_CUSTOM_ID, DOM_TITLES_SELECT_CUSTOM_ID}
+        MULTI_SELECT_CUSTOM_IDS = {RELATIONSHIP_SELECT_CUSTOM_ID, DOM_TITLES_SELECT_CUSTOM_ID, PET_NAMES_SELECT_CUSTOM_ID}
         if interaction.custom_id not in MULTI_SELECT_CUSTOM_IDS and not values:
             return
 
@@ -831,6 +944,85 @@ def main() -> None:
                     await bot.rest.add_role_to_member(guild_id, member.id, role_id)
                 except (hikari.ForbiddenError, hikari.NotFoundError):
                     pass
+            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+            return
+        if interaction.custom_id == PET_NAMES_SELECT_CUSTOM_ID:
+            current_roles = {int(r) for r in member.role_ids}
+            pet_names_roles = set(PET_NAMES_ROLE_IDS.values())
+            if not (current_roles & PET_NAMES_REQUIRED_ROLE_IDS):
+                for role_id in current_roles & pet_names_roles:
+                    try:
+                        await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                    except (hikari.ForbiddenError, hikari.NotFoundError):
+                        pass
+                await interaction.create_initial_response(
+                    hikari.ResponseType.MESSAGE_CREATE,
+                    "You need a Switch, Sub-Lean, or Submissive role to select pet names.",
+                    flags=hikari.MessageFlag.EPHEMERAL,
+                )
+                return
+            selected_values = set(interaction.values or [])
+            target_role_ids = {PET_NAMES_ROLE_IDS[v] for v in selected_values if v in PET_NAMES_ROLE_IDS}
+            for role_id in (current_roles & pet_names_roles) - target_role_ids:
+                try:
+                    await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            for role_id in target_role_ids - current_roles:
+                try:
+                    await bot.rest.add_role_to_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+            return
+        if interaction.custom_id in INTERACTION_STYLE_ROLE_IDS:
+            current_roles = {int(r) for r in member.role_ids}
+            role_id = INTERACTION_STYLE_ROLE_IDS[interaction.custom_id]
+
+            if interaction.custom_id in INTERACTION_STYLE_DOM_REQUIRED:
+                if not (current_roles & {
+                    1481913083801763901,  # Dominant
+                    1481913412907831410,  # Dom-Lean
+                    1481913457359065180,  # Switch
+                    1481913488225079386,  # Sub-Lean
+                }):
+                    await interaction.create_initial_response(
+                        hikari.ResponseType.MESSAGE_CREATE,
+                        "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select this.",
+                        flags=hikari.MessageFlag.EPHEMERAL,
+                    )
+                    return
+
+            if interaction.custom_id in INTERACTION_STYLE_SUB_REQUIRED:
+                if not (current_roles & {
+                    1481913488225079386,  # Sub-Lean
+                    1481913541899325510,  # Submissive
+                }):
+                    await interaction.create_initial_response(
+                        hikari.ResponseType.MESSAGE_CREATE,
+                        "You need a Sub-Lean or Submissive role to select this.",
+                        flags=hikari.MessageFlag.EPHEMERAL,
+                    )
+                    return
+
+            if role_id in current_roles:
+                await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+            else:
+                await bot.rest.add_role_to_member(guild_id, member.id, role_id)
+                for btn_a, btn_b in INTERACTION_STYLE_MUTEX:
+                    if interaction.custom_id == btn_a:
+                        opposite = INTERACTION_STYLE_ROLE_IDS[btn_b]
+                    elif interaction.custom_id == btn_b:
+                        opposite = INTERACTION_STYLE_ROLE_IDS[btn_a]
+                    else:
+                        continue
+                    if opposite in current_roles:
+                        try:
+                            await bot.rest.remove_role_from_member(guild_id, member.id, opposite)
+                        except (hikari.ForbiddenError, hikari.NotFoundError):
+                            pass
+                    break
+
             await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
             return
 
