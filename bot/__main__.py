@@ -281,6 +281,34 @@ def main() -> None:
 
     bot.subscribe(hikari.StartingEvent, client.start)
     
+    @client.register()
+    class give_verified(
+        lightbulb.SlashCommand,
+        name="give_verified",
+        description="Give the verified role to a user.",
+        default_member_permissions=hikari.Permissions.NONE,
+    ):
+        target = lightbulb.user("user", "The user to verify.")
+
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            member = getattr(ctx, "member", None)
+
+            if 1482666644349128745 not in {int(r) for r in member.role_ids}:
+                await ctx.respond("You don't have permission to use this command.", flags=hikari.MessageFlag.EPHEMERAL)
+                return
+
+            guild_id = ctx.guild_id
+            if guild_id is None:
+                return
+
+            try:
+                await bot.rest.add_role_to_member(guild_id, self.target.id, 1481917559904276583)
+                await ctx.respond(f"Successfully verified <@{self.target.id}>.", flags=hikari.MessageFlag.EPHEMERAL)
+            except hikari.ForbiddenError:
+                await ctx.respond("I don't have permission to assign that role.", flags=hikari.MessageFlag.EPHEMERAL)
+            except hikari.NotFoundError:
+                await ctx.respond("User or role not found.", flags=hikari.MessageFlag.EPHEMERAL)
     
     @client.register()
     class say(
