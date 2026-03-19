@@ -975,7 +975,7 @@ def main() -> None:
             toggle_role_id = None
         elif interaction.custom_id == KINKS_2_SELECT_CUSTOM_ID:
             toggle_role_id = None
-        elif interaction.custom_id == KINKS_2_SELECT_CUSTOM_ID:
+        elif interaction.custom_id == BOOSTER_COLORS_SELECT_CUSTOM_ID:
             toggle_role_id = None
         elif interaction.custom_id in INTERACTION_STYLE_ROLE_IDS:
             toggle_role_id = INTERACTION_STYLE_ROLE_IDS[interaction.custom_id]
