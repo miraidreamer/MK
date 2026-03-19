@@ -632,7 +632,7 @@ def main() -> None:
                 .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_ROUGH_DOMME_CUSTOM_ID, emoji=hikari.Emoji.parse("<:ae_break_the_subs:1483494430546591834>"))
                 .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_GENTLE_DOMME_CUSTOM_ID, emoji=hikari.Emoji.parse("<:ae_head_pats:1484158676943114290>"))
                 .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_MASOCHIST_CUSTOM_ID, emoji=hikari.Emoji.parse("❤️‍🔥"))
-                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_INNOCENT_CUSTOM_ID, emoji=hikari.Emoji.parse("<:ae_innocent:1483063573906198649> "))
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_INNOCENT_CUSTOM_ID, emoji=hikari.Emoji.parse("<:ae_innocent:1483063573906198649>"))
             )
             interaction_style_row2 = (
                 special_endpoints.MessageActionRowBuilder()
