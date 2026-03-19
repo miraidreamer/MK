@@ -216,7 +216,7 @@ def main() -> None:
 
             menu = (
                 special_endpoints.MessageActionRowBuilder()
-                .add_select_menu(REGION_SELECT_CUSTOM_ID)
+                .add_select_menu(3, REGION_SELECT_CUSTOM_ID)
                 .set_placeholder("Make sure you select your region.")
                 .set_min_values(1)
                 .set_max_values(1)
