@@ -41,6 +41,12 @@ def main() -> None:
         1483418773338980435: {1481737302240792597}
     }
     #Buttons
+    #Pings
+    PING_CHAT_REVIVE_CUSTOM_ID = "ping_chat_revive"
+    PING_BUMP_REMINDER_CUSTOM_ID = "ping_bump_reminder"
+    PING_NEWS_CUSTOM_ID = "ping_news"
+    #Prefs
+    BTN_SADIST_CUSTOM_ID = "btn_sadist"
     BTN_SADIST_CUSTOM_ID = "btn_sadist"
     BTN_ROUGH_DOMME_CUSTOM_ID = "btn_rough_domme"
     BTN_GENTLE_DOMME_CUSTOM_ID = "btn_gentle_domme"
@@ -133,6 +139,11 @@ def main() -> None:
         1481913457359065180,  # Switch
         1481913488225079386,  # Sub-Lean
         1481913541899325510,  # Submissive
+    }
+    PING_ROLE_IDS: dict[str, int] = {
+        PING_CHAT_REVIVE_CUSTOM_ID: 1482874789831118848,
+        PING_BUMP_REMINDER_CUSTOM_ID: 1482874862677786685,
+        PING_NEWS_CUSTOM_ID: 1482874915840462900,
     }
     INTERACTION_STYLE_ROLE_IDS: dict[str, int] = {
         BTN_SADIST_CUSTOM_ID:       1482761319416332432,
@@ -775,12 +786,6 @@ def main() -> None:
             return
         DICK_ROLE_ID = 1481824903513506096
         PUSSY_ROLE_ID = 1481825236843495535
-
-        PING_ROLE_IDS: dict[str, int] = {
-            PING_CHAT_REVIVE_CUSTOM_ID: 1482874789831118848,
-            PING_BUMP_REMINDER_CUSTOM_ID: 1482874862677786685,
-            PING_NEWS_CUSTOM_ID: 1482874915840462900,
-        }
 
         if interaction.custom_id == "gender_dick":
             toggle_role_id = DICK_ROLE_ID
