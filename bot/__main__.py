@@ -294,31 +294,23 @@ def main() -> None:
             color=0x861f42,
         )
 
-        ORIENTATION_ROLE_IDS: dict[str, int] = {
-            "straight":    1481911068111536168,
-            "lesbian":     1481912149289861305,
-            "bipan":       1481912198153638020,
-            "asexual":     1481912363199238144,
-            "other":       1481912666850197615,
-        }
-
-        orientation_row = special_endpoints.MessageActionRowBuilder()
-        orientation_menu = (
-            orientation_row.add_text_menu(
-                ORIENTATION_SELECT_CUSTOM_ID,
-                placeholder="Select your orientation.",
-                min_values=1,
-                max_values=1,
+            orientation_row = special_endpoints.MessageActionRowBuilder()
+            orientation_menu = (
+                orientation_row.add_text_menu(
+                    ORIENTATION_SELECT_CUSTOM_ID,
+                    placeholder="Select your orientation.",
+                    min_values=1,
+                    max_values=1,
+                )
+                .add_option("Straight", "straight", emoji=hikari.Emoji.parse("<:Straight:1482033959377440969>"))
+                .add_option("Lesbian", "lesbian", emoji=hikari.Emoji.parse("<:Lesbian:1482034028206096546>"))
+                .add_option("Bi/Pan", "bipan", emoji=hikari.Emoji.parse("<:BiPan:1482034060854558800>"))
+                .add_option("Asexual", "asexual", emoji=hikari.Emoji.parse("<:Asexual:1482034955579166934>"))
+                .add_option("Other", "other", emoji=hikari.Emoji.parse("<:Other:1482033993930113055>"))
+                .parent
             )
-            .add_option("Straight", "straight", emoji=hikari.Emoji.parse("<:Straight:1482033959377440969>"))
-            .add_option("Lesbian", "lesbian", emoji=hikari.Emoji.parse("<:Lesbian:1482034028206096546>"))
-            .add_option("Bi/Pan", "bipan", emoji=hikari.Emoji.parse("<:BiPan:1482034060854558800>"))
-            .add_option("Asexual", "asexual", emoji=hikari.Emoji.parse("<:Asexual:1482034955579166934>"))
-            .add_option("Other", "other", emoji=hikari.Emoji.parse("<:Other:1482033993930113055>"))
-            .parent
-        )
 
-        await bot.rest.create_message(ctx.channel_id, embed=orientation_embed, components=[orientation_menu])
+            await bot.rest.create_message(ctx.channel_id, embed=orientation_embed, components=[orientation_menu])
             
     #TICKETS NOTIFICATIONS
     async def _on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
