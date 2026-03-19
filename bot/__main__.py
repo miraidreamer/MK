@@ -488,7 +488,7 @@ def main() -> None:
             dom_titles_embed = hikari.Embed(
                 title="DOMINANT TITLES",
                 description=(
-                    "You may select the roles that you'd like from the following list. "
+                    "You may select the roles that you'd like from the following list. \n"
                     "(Requires a dominant or switch role)"
                 ),
                 color=0x861f42,
@@ -714,7 +714,8 @@ def main() -> None:
 
         values = interaction.values or []
 
-        if interaction.custom_id != RELATIONSHIP_SELECT_CUSTOM_ID and not values:
+        MULTI_SELECT_CUSTOM_IDS = {RELATIONSHIP_SELECT_CUSTOM_ID, DOM_TITLES_SELECT_CUSTOM_ID}
+        if interaction.custom_id not in MULTI_SELECT_CUSTOM_IDS and not values:
             return
 
         selected = values[0] if values else ""
