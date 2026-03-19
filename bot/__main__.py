@@ -28,13 +28,8 @@ def main() -> None:
     OWNER_ID = 705106144183582731
     TICKET_PING_ROLE_ID = 1482666644349128745
     TICKET_NOTIFY_CHANNEL_ID = 1483375980054839297
+    DM_STATUS_SELECT_CUSTOM_ID = "dm_status_select_v1"
 
-    # Role "header" categories:
-    # - key: header role id
-    # - value: set of child role ids that belong to that header/category
-    #
-    # If a member has ANY child role in a category -> ensure header role is present.
-    # If a member has NO child roles in a category -> ensure header role is removed.
     ROLE_HEADER_CATEGORIES: dict[int, set[int]] = {
         #Information
         1482294189688488149: {1481825839145549865,1481825968254353531,1481826057391706194,1481827181381550251,1481817336397692938,1481818163434754202,1481818128223698944,1481817996388208702,1481818231072100453,1481818168891801802,1481817961764491416,1481824903513506096,1481825236843495535,1481911068111536168,1481912149289861305,1481912198153638020,1481912363199238144,1481912666850197615,1481913772762464309,1481913810788024412,1481913741388939274,1481913841276157972,1481913861656543303,1481913878333100053},
@@ -75,7 +70,16 @@ def main() -> None:
         "submissive":  1481913541899325510,
     }
     POSITION_RESTRICTED_ROLE_IDS: set[int] = {1481817961764491416, 1481818168891801802}
-
+    DM_STATUS_ROLE_IDS: dict[str, int] = {
+        "open":             1481913980304756936,
+        "open_verified":    1481915358054187080,
+        "ask_me":           1481914089587478599,
+        "ask_owner":        1481914151403258007,
+        "closed":           1481914041554436237,
+    }
+    PING_CHAT_REVIVE_CUSTOM_ID = "ping_chat_revive"
+    PING_BUMP_REMINDER_CUSTOM_ID = "ping_bump_reminder"
+    PING_NEWS_CUSTOM_ID = "ping_news"
     ticket_notice_message_by_channel_id: dict[int, int] = {}
 
     async def _owner_only(ctx: lightbulb.Context) -> bool:
@@ -189,10 +193,10 @@ def main() -> None:
             )
 
     @client.register()
-    class post_region_selector(
+    class post_role_selector(
         lightbulb.SlashCommand,
-        name="post_region_selector",
-        description="Post the region embed + dropdown selector (single choice).",
+        name="post_roles_selector",
+        description="Sends all the role selection menu.",
         default_member_permissions=hikari.Permissions.ADMINISTRATOR,
     ):
         @lightbulb.invoke
@@ -311,10 +315,10 @@ def main() -> None:
             position_embed = hikari.Embed(
                 title="POSITION",
                 description=(
-                    "<a:Dominant:1482036391977291901> Dominant　　　　　　　　　　　　　　　　　　　　　"
-                    "<:DomLean:1482036433219879063> Dom-Lean "
-                   "<:Switch:1482036472713449542> Switch "
-                    "<:SubLean:1482038379200647300> Sub-Lean "
+                    "<a:Dominant:1482036391977291901> Dominant　　　　　　　　　　　　　　　　　　　　　\n"
+                    "<:DomLean:1482036433219879063> Dom-Lean \n"
+                   "<:Switch:1482036472713449542> Switch \n"
+                    "<:SubLean:1482038379200647300> Sub-Lean \n"
                     "<:Sub:1482036591512785117> Submissive"
                 ),
                 color=0x861f42,
@@ -337,8 +341,69 @@ def main() -> None:
             )
 
             await bot.rest.create_message(ctx.channel_id, embed=position_embed, components=[position_menu])
+            dm_status_embed = hikari.Embed(
+                title="DM STATUS",
+                description=(
+                    "🔓 Open　　　　　　　　　　　　　　　　　　　　　　\n"
+                    "☑️ Open for verified\n"
+                    "❔ Ask me\n"
+                    "❓ Ask my owner\n"
+                    "🔒 Closed"
+                ),
+                color=0x861f42,
+            )
 
+            dm_status_row = special_endpoints.MessageActionRowBuilder()
+            dm_status_menu = (
+                dm_status_row.add_text_menu(
+                    DM_STATUS_SELECT_CUSTOM_ID,
+                    placeholder="Select your DM status.",
+                    min_values=1,
+                    max_values=1,
+                )
+                .add_option("Open", "open", emoji=hikari.Emoji.parse("🔓"))
+                .add_option("Open for verified", "open_verified", emoji=hikari.Emoji.parse("☑️"))
+                .add_option("Ask me", "ask_me", emoji=hikari.Emoji.parse("❔"))
+                .add_option("Ask my owner", "ask_owner", emoji=hikari.Emoji.parse("❓"))
+                .add_option("Closed", "closed", emoji=hikari.Emoji.parse("🔒"))
+                .parent
+            )
 
+            await bot.rest.create_message(ctx.channel_id, embed=dm_status_embed, components=[dm_status_menu])
+            pings_embed = hikari.Embed(
+                title="PINGS",
+                description=(
+                    "🗨️ Chat revive ping\n"
+                    "🔝 Bump reminder\n"
+                    "🗞️ News ping"
+                ),
+                color=0x861f42,
+            )
+
+            pings_row = (
+                special_endpoints.MessageActionRowBuilder()
+                .add_interactive_button(
+                    hikari.ButtonStyle.SECONDARY,
+                    PING_CHAT_REVIVE_CUSTOM_ID,
+                    emoji=hikari.Emoji.parse("🗨️"),
+                    label="Chat revive ping",
+                )
+                .add_interactive_button(
+                    hikari.ButtonStyle.SECONDARY,
+                    PING_BUMP_REMINDER_CUSTOM_ID,
+                    emoji=hikari.Emoji.parse("🔝"),
+                    label="Bump reminder",
+                )
+                .add_interactive_button(
+                    hikari.ButtonStyle.SECONDARY,
+                    PING_NEWS_CUSTOM_ID,
+                    emoji=hikari.Emoji.parse("🗞️"),
+                    label="News ping",
+                )
+            )
+
+            await bot.rest.create_message(ctx.channel_id, embed=pings_embed, components=[pings_row])
+    
     #TICKETS NOTIFICATIONS
     async def _on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
         channel = event.channel
@@ -487,15 +552,25 @@ def main() -> None:
         DICK_ROLE_ID = 1481824903513506096
         PUSSY_ROLE_ID = 1481825236843495535
 
+        PING_ROLE_IDS: dict[str, int] = {
+            PING_CHAT_REVIVE_CUSTOM_ID: 1482874789831118848,
+            PING_BUMP_REMINDER_CUSTOM_ID: 1482874862677786685,
+            PING_NEWS_CUSTOM_ID: 1482874915840462900,
+        }
+
         if interaction.custom_id == "gender_dick":
             toggle_role_id = DICK_ROLE_ID
         elif interaction.custom_id == "gender_pussy":
             toggle_role_id = PUSSY_ROLE_ID
+        elif interaction.custom_id in PING_ROLE_IDS:
+            toggle_role_id = PING_ROLE_IDS[interaction.custom_id]
         elif interaction.custom_id == REGION_SELECT_CUSTOM_ID:
             toggle_role_id = None
         elif interaction.custom_id == ORIENTATION_SELECT_CUSTOM_ID:
             toggle_role_id = None
         elif interaction.custom_id == POSITION_SELECT_CUSTOM_ID:
+            toggle_role_id = None
+        elif interaction.custom_id == DM_STATUS_SELECT_CUSTOM_ID:
             toggle_role_id = None
         else:
             return
@@ -560,6 +635,25 @@ def main() -> None:
                 return
             position_roles = set(POSITION_ROLE_IDS.values())
             for role_id in (current_roles & position_roles) - {target_role_id}:
+                try:
+                    await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            if target_role_id not in current_roles:
+                try:
+                    await bot.rest.add_role_to_member(guild_id, member.id, target_role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+            return
+        if interaction.custom_id == DM_STATUS_SELECT_CUSTOM_ID:
+            target_role_id = DM_STATUS_ROLE_IDS.get(selected)
+            if target_role_id is None:
+                await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+                return
+            current_roles = {int(r) for r in member.role_ids}
+            dm_status_roles = set(DM_STATUS_ROLE_IDS.values())
+            for role_id in (current_roles & dm_status_roles) - {target_role_id}:
                 try:
                     await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
                 except (hikari.ForbiddenError, hikari.NotFoundError):
