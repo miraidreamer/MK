@@ -136,6 +136,7 @@ def main() -> None:
         "thing":        1483435063508209674,
     }
     PET_NAMES_REQUIRED_ROLE_IDS: set[int] = {
+        1481913412907831410,  # Dom-lean
         1481913457359065180,  # Switch
         1481913488225079386,  # Sub-Lean
         1481913541899325510,  # Submissive
@@ -808,7 +809,7 @@ def main() -> None:
         elif interaction.custom_id == PET_NAMES_SELECT_CUSTOM_ID:
             toggle_role_id = None
         elif interaction.custom_id in INTERACTION_STYLE_ROLE_IDS:
-            toggle_role_id = None
+            toggle_role_id = INTERACTION_STYLE_ROLE_IDS[interaction.custom_id]
         else:
             return
 
@@ -818,10 +819,51 @@ def main() -> None:
             if guild_id is None or member is None:
                 return
             current_roles = {int(r) for r in member.role_ids}
+
+            if interaction.custom_id in INTERACTION_STYLE_DOM_REQUIRED:
+                if not (current_roles & {
+                    1481913083801763901,
+                    1481913412907831410,
+                    1481913457359065180,
+                    1481913488225079386,
+                }):
+                    await interaction.create_initial_response(
+                        hikari.ResponseType.MESSAGE_CREATE,
+                        "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select this.",
+                        flags=hikari.MessageFlag.EPHEMERAL,
+                    )
+                    return
+
+            if interaction.custom_id in INTERACTION_STYLE_SUB_REQUIRED:
+                if not (current_roles & {
+                    1481913488225079386,
+                    1481913541899325510,
+                }):
+                    await interaction.create_initial_response(
+                        hikari.ResponseType.MESSAGE_CREATE,
+                        "You need a Sub-Lean or Submissive role to select this.",
+                        flags=hikari.MessageFlag.EPHEMERAL,
+                    )
+                    return
+
             if toggle_role_id in current_roles:
                 await bot.rest.remove_role_from_member(guild_id, member.id, toggle_role_id)
             else:
                 await bot.rest.add_role_to_member(guild_id, member.id, toggle_role_id)
+                for btn_a, btn_b in INTERACTION_STYLE_MUTEX:
+                    if interaction.custom_id == btn_a:
+                        opposite = INTERACTION_STYLE_ROLE_IDS[btn_b]
+                    elif interaction.custom_id == btn_b:
+                        opposite = INTERACTION_STYLE_ROLE_IDS[btn_a]
+                    else:
+                        continue
+                    if opposite in current_roles:
+                        try:
+                            await bot.rest.remove_role_from_member(guild_id, member.id, opposite)
+                        except (hikari.ForbiddenError, hikari.NotFoundError):
+                            pass
+                    break
+
             await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
             return
 
