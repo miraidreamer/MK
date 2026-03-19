@@ -201,10 +201,10 @@ def main() -> None:
                 )
                 return
 
-            embed = hikari.Embed(
+            region = hikari.Embed(
                 title="REGION",
                 description=(
-                    "<:NorthAmerica:1482039930095140955> North America\n"
+                    "<:NorthAmerica:1482039930095140955> North America 　　　　　　　　　　　　　　　　　　\n"
                     "<:SouthAmerica:1482039974579802287> South America\n"
                     "<:Europe:1482040003667165305> Europe\n"
                     "<:Africa:1482040032645742623> Africa\n"
@@ -215,7 +215,7 @@ def main() -> None:
             )
 
             row = special_endpoints.MessageActionRowBuilder()
-            menu = (
+            regionmenu = (
                 row.add_text_menu(
                     REGION_SELECT_CUSTOM_ID,
                     placeholder="Make sure you select your region.",
@@ -250,7 +250,31 @@ def main() -> None:
             )
 
             await ctx.respond("Posted.", flags=hikari.MessageFlag.EPHEMERAL)
-            await bot.rest.create_message(ctx.channel_id, embed=embed, components=[menu])
+            await bot.rest.create_message(ctx.channel_id, embed=region, components=[regionmenu])
+
+            gender_embed = hikari.Embed(
+                title="GENDER",
+                description=":burrito: I have a dick\n:taco: I have a pussy",
+                color=0x861f42,
+            )
+
+            gender_row = (
+                special_endpoints.MessageActionRowBuilder()
+                .add_interactive_button(
+                    hikari.ButtonStyle.SECONDARY,
+                    "gender_dick",
+                    emoji=hikari.Emoji.parse("🌯"),
+                    label="I have a dick",
+                )
+                .add_interactive_button(
+                    hikari.ButtonStyle.SECONDARY,
+                    "gender_pussy",
+                    emoji=hikari.Emoji.parse("🌮"),
+                    label="I have a pussy",
+                )
+            )
+
+            await bot.rest.create_message(ctx.channel_id, embed=gender_embed, components=[gender_row])
             
     #TICKETS NOTIFICATIONS
     async def _on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
@@ -473,12 +497,6 @@ def main() -> None:
                 added = 1
             except (hikari.ForbiddenError, hikari.NotFoundError):
                 pass
-
-        await interaction.create_initial_response(
-            hikari.ResponseType.MESSAGE_CREATE,
-            f"Updated your region role. Added: {added}, removed: {removed}.",
-            flags=hikari.MessageFlag.EPHEMERAL,
-        )
 
     bot.subscribe(hikari.InteractionCreateEvent, _on_interaction_create)
     bot.run()
