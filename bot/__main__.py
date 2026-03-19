@@ -13,15 +13,6 @@ def _get_env(name: str) -> str:
         raise RuntimeError(f"Missing required environment variable: {name}")
     return value
 
-
-def _get_env_int(name: str) -> int:
-    value = _get_env(name)
-    try:
-        return int(value)
-    except ValueError as e:
-        raise RuntimeError(f"Environment variable {name} must be an integer") from e
-
-
 def main() -> None:
     load_dotenv()
 
@@ -66,15 +57,6 @@ def main() -> None:
         #Kinks
         1482760118994210977: {1482762859372089360,1483091252906950809,1482762288816722001,1482762082536521881,1482762858247749642,1482762079399055481,1482762310157340884,1482763092008898725,1482762081727021238,1482762856272236624,1482762073774752020,1482762305232965643,1482762304385978398,1482776027746013297,1482762297071108216,1482761318560829562,1482762081336951016,1482762306072088721,1482762303026757653,1483091135759912993,1482765384041103601,1482762306952761475,1482762075884486786,1482776463508771050,1483091220275134687,1482762857346109613,1482762303462965402,1482776733592588359,1482762860030464151},
         1483418773338980435: {1481737302240792597}
-    }
-
-    REGION_ROLE_IDS: dict[str, int] = {
-        "na": _get_env_int("1481913772762464309"),
-        "sa": _get_env_int("1481913810788024412"),
-        "eu": _get_env_int("1481913741388939274"),
-        "af": _get_env_int("1481913841276157972"),
-        "as": _get_env_int("1481913861656543303"),
-        "oc": _get_env_int("1481913878333100053"),
     }
 
     REGION_SELECT_CUSTOM_ID = "region_select_v1"
@@ -230,32 +212,32 @@ def main() -> None:
                 .set_max_values(1)
                 .add_option(
                     "North America",
-                    "na",
+                    "1481913772762464309",
                     emoji=hikari.Emoji.parse("<:NorthAmerica:1482039930095140955>"),
                 )
                 .add_option(
                     "South America",
-                    "sa",
+                    "1481913810788024412",
                     emoji=hikari.Emoji.parse("<:SouthAmerica:1482039974579802287>"),
                 )
                 .add_option(
                     "Europe",
-                    "eu",
+                    "1481913741388939274",
                     emoji=hikari.Emoji.parse("<:Europe:1482040003667165305>"),
                 )
                 .add_option(
                     "Africa",
-                    "af",
+                    "1481913841276157972",
                     emoji=hikari.Emoji.parse("<:Africa:1482040032645742623>"),
                 )
                 .add_option(
                     "Asia",
-                    "as",
+                    "1481913861656543303",
                     emoji=hikari.Emoji.parse("<:Asia:1482040064870711376>"),
                 )
                 .add_option(
                     "Oceania",
-                    "oc",
+                    "1481913878333100053",
                     emoji=hikari.Emoji.parse("<:Oceania:1482040104854884372>"),
                 )
                 .parent
