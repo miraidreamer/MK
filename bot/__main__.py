@@ -386,19 +386,16 @@ def main() -> None:
                     hikari.ButtonStyle.SECONDARY,
                     PING_CHAT_REVIVE_CUSTOM_ID,
                     emoji=hikari.Emoji.parse("🗨️"),
-                    label="Chat revive ping",
                 )
                 .add_interactive_button(
                     hikari.ButtonStyle.SECONDARY,
                     PING_BUMP_REMINDER_CUSTOM_ID,
                     emoji=hikari.Emoji.parse("🔝"),
-                    label="Bump reminder",
                 )
                 .add_interactive_button(
                     hikari.ButtonStyle.SECONDARY,
                     PING_NEWS_CUSTOM_ID,
                     emoji=hikari.Emoji.parse("🗞️"),
-                    label="News ping",
                 )
             )
 
