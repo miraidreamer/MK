@@ -559,10 +559,6 @@ def main() -> None:
             )
             return
 
-        guild_id = interaction.guild_id
-        if guild_id is None:
-            return
-
         current_roles = {int(r) for r in member.role_ids}
         region_roles = set(REGION_ROLE_IDS.values())
 
@@ -581,6 +577,7 @@ def main() -> None:
                 added = 1
             except (hikari.ForbiddenError, hikari.NotFoundError):
                 pass
+        await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
 
     bot.subscribe(hikari.InteractionCreateEvent, _on_interaction_create)
     bot.run()
