@@ -383,7 +383,7 @@ def main() -> None:
             relationship_embed = hikari.Embed(
                 title="RELATIONSHIP",
                 description=(
-                    "<a:taken:1482043730901995560> In a relationship 　　　　　　　　　　　　　　　　\n"
+                    "<a:taken:1482043730901995560> In a relationship 　　　　　　　　　　　　　　　　　\n"
                     "<a:single:1482043767400829071> Not in a relationship\n"
                     "<a:mono:1482043799835508987> Monogamous\n"
                     "<a:poly:1482043830231499001> Polyamorous\n"
