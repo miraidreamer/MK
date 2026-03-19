@@ -59,7 +59,33 @@ def main() -> None:
         1483418773338980435: {1481737302240792597}
     }
 
-    REGION_SELECT_CUSTOM_ID = "region_select_v1"
+    REGION_SELECT_CUSTOM_ID_PREFIX = "region_select_v2:"
+    REGION_SELECT_CUSTOM_ID_MAX_LEN = 100
+
+    def _build_region_custom_id(*, na: int, sa: int, eu: int, af: int, asia: int, oc: int) -> str:
+        # Compact encoding: key=id pairs separated by commas.
+        custom_id = f"{REGION_SELECT_CUSTOM_ID_PREFIX}na={na},sa={sa},eu={eu},af={af},as={asia},oc={oc}"
+        if len(custom_id) > REGION_SELECT_CUSTOM_ID_MAX_LEN:
+            raise RuntimeError("Region selector custom_id too long")
+        return custom_id
+
+    def _parse_region_custom_id(custom_id: str) -> dict[str, int] | None:
+        if not custom_id.startswith(REGION_SELECT_CUSTOM_ID_PREFIX):
+            return None
+        payload = custom_id[len(REGION_SELECT_CUSTOM_ID_PREFIX) :]
+        out: dict[str, int] = {}
+        for part in payload.split(","):
+            if "=" not in part:
+                continue
+            k, v = part.split("=", 1)
+            k = k.strip()
+            v = v.strip()
+            if not k or not v.isdigit():
+                continue
+            out[k] = int(v)
+        if {"na", "sa", "eu", "af", "as", "oc"} - set(out.keys()):
+            return None
+        return out
 
     ticket_notice_message_by_channel_id: dict[int, int] = {}
 
@@ -177,9 +203,16 @@ def main() -> None:
     class post_region_selector(
         lightbulb.SlashCommand,
         name="post_region_selector",
-        description="Post the region embed + dropdown selector.",
+        description="Post the region embed + dropdown selector (single choice).",
         default_member_permissions=hikari.Permissions.ADMINISTRATOR,
     ):
+        north_america_role_id = lightbulb.integer("1481913772762464309", "Role ID for North America")
+        south_america_role_id = lightbulb.integer("1481913810788024412", "Role ID for South America")
+        europe_role_id = lightbulb.integer("1481913741388939274", "Role ID for Europe")
+        africa_role_id = lightbulb.integer("1481913841276157972", "Role ID for Africa")
+        asia_role_id = lightbulb.integer("1481913861656543303", "Role ID for Asia")
+        oceania_role_id = lightbulb.integer("1481913878333100053", "Role ID for Oceania")
+
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
             if not await _admin_only(ctx):
@@ -204,40 +237,56 @@ def main() -> None:
                 color=0x861f42,
             )
 
+            try:
+                custom_id = _build_region_custom_id(
+                    na=int(self.north_america_role_id),
+                    sa=int(self.south_america_role_id),
+                    eu=int(self.europe_role_id),
+                    af=int(self.africa_role_id),
+                    asia=int(self.asia_role_id),
+                    oc=int(self.oceania_role_id),
+                )
+            except Exception:
+                await ctx.respond(
+                    "Failed to build selector payload. Please try again.",
+                    flags=hikari.MessageFlag.EPHEMERAL,
+                )
+                return
+
             menu = (
                 special_endpoints.MessageActionRowBuilder()
-                .add_select_menu(REGION_SELECT_CUSTOM_ID)
+                .add_select_menu(custom_id)
                 .set_placeholder("Make sure you select your region.")
                 .set_min_values(1)
                 .set_max_values(1)
                 .add_option(
                     "North America",
-                    "1481913772762464309",
+                    "na",
                     emoji=hikari.Emoji.parse("<:NorthAmerica:1482039930095140955>"),
                 )
                 .add_option(
                     "South America",
-                    "1481913810788024412",
+                    "sa",
                     emoji=hikari.Emoji.parse("<:SouthAmerica:1482039974579802287>"),
                 )
                 .add_option(
                     "Europe",
-                    "1481913741388939274",
+                    "eu",
                     emoji=hikari.Emoji.parse("<:Europe:1482040003667165305>"),
                 )
                 .add_option(
                     "Africa",
-                    "1481913841276157972",
+                    "af",
                     emoji=hikari.Emoji.parse("<:Africa:1482040032645742623>"),
                 )
                 .add_option(
                     "Asia",
-                    "1481913861656543303",
+                    "as",
                     emoji=hikari.Emoji.parse("<:Asia:1482040064870711376>"),
                 )
                 .add_option(
                     "Oceania",
-                    "1481913878333100053",
+                    "oc",
                     emoji=hikari.Emoji.parse("<:Oceania:1482040104854884372>"),
                 )
                 .parent
@@ -424,7 +473,8 @@ def main() -> None:
         interaction = event.interaction
         if not isinstance(interaction, hikari.ComponentInteraction):
             return
-        if interaction.custom_id != REGION_SELECT_CUSTOM_ID:
+        region_map = _parse_region_custom_id(interaction.custom_id)
+        if region_map is None:
             return
 
         member = interaction.member
@@ -436,7 +486,7 @@ def main() -> None:
             return
 
         selected = values[0]
-        target_role_id = REGION_ROLE_IDS.get(selected)
+        target_role_id = region_map.get(selected)
         if target_role_id is None:
             await interaction.create_initial_response(
                 hikari.ResponseType.MESSAGE_CREATE,
@@ -450,7 +500,7 @@ def main() -> None:
             return
 
         current_roles = {int(r) for r in member.role_ids}
-        region_roles = set(REGION_ROLE_IDS.values())
+        region_roles = set(region_map.values())
 
         removed = 0
         for role_id in (current_roles & region_roles) - {target_role_id}:
