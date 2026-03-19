@@ -45,6 +45,7 @@ def main() -> None:
     REGION_SELECT_CUSTOM_ID = "region_select_v2"
     ORIENTATION_SELECT_CUSTOM_ID = "orientation_select_v1"
     POSITION_SELECT_CUSTOM_ID = "position_select_v1"
+    RELATIONSHIP_SELECT_CUSTOM_ID = "relationship_select_v1"
 
     # Hardcoded region role IDs (single-select; picking one removes the others).
     REGION_ROLE_IDS: dict[str, int] = {
@@ -76,6 +77,15 @@ def main() -> None:
         "ask_me":           1481914089587478599,
         "ask_owner":        1481914151403258007,
         "closed":           1481914041554436237,
+    }
+    RELATIONSHIP_ROLE_IDS: dict[str, int] = {
+        "taken":        1481914319938523246,
+        "single":       1481914466542157875,
+        "mono":         1481914516588724245,
+        "poly":         1481914564659515404,
+        "owner":        1481914918537134192,
+        "owned":        1481914995498422272,
+        "dynamic":      1481915014209212538,
     }
     PING_CHAT_REVIVE_CUSTOM_ID = "ping_chat_revive"
     PING_BUMP_REMINDER_CUSTOM_ID = "ping_bump_reminder"
@@ -370,6 +380,40 @@ def main() -> None:
             )
 
             await bot.rest.create_message(ctx.channel_id, embed=dm_status_embed, components=[dm_status_menu])
+            relationship_embed = hikari.Embed(
+                title="RELATIONSHIP",
+                description=(
+                    "<a:taken:1482043730901995560> In a relationship　　　　　　　　\n"
+                    "<a:single:1482043767400829071> Not in a relationship\n"
+                    "<a:mono:1482043799835508987> Monogamous\n"
+                    "<a:poly:1482043830231499001> Polyamorous\n"
+                    "<:owner:1482043872124076094> Owner\n"
+                    "<:owned:1482043908207804598> Owned\n"
+                    "<a:dynamic:1482043956979044444> In a dynamic"
+                ),
+                color=0x861f42,
+            )
+            
+            relationship_row = special_endpoints.MessageActionRowBuilder()
+            relationship_menu = (
+                relationship_row.add_text_menu(
+                    RELATIONSHIP_SELECT_CUSTOM_ID,
+                    placeholder="Select your relationship status.",
+                    min_values=0,
+                    max_values=7,
+                )
+                .add_option("In a relationship", "taken", emoji=hikari.Emoji.parse("<a:taken:1482043730901995560>"))
+                .add_option("Not in a relationship", "single", emoji=hikari.Emoji.parse("<a:single:1482043767400829071>"))
+                .add_option("Monogamous", "mono", emoji=hikari.Emoji.parse("<a:mono:1482043799835508987>"))
+                .add_option("Polyamorous", "poly", emoji=hikari.Emoji.parse("<a:poly:1482043830231499001>"))
+                .add_option("Owner", "owner", emoji=hikari.Emoji.parse("<:owner:1482043872124076094>"))
+                .add_option("Owned", "owned", emoji=hikari.Emoji.parse("<:owned:1482043908207804598>"))
+                .add_option("In a dynamic", "dynamic", emoji=hikari.Emoji.parse("<a:dynamic:1482043956979044444>"))
+                .parent
+            )
+            
+            await bot.rest.create_message(ctx.channel_id, embed=relationship_embed, components=[relationship_menu])
+            
             pings_embed = hikari.Embed(
                 title="PINGS",
                 description=(
@@ -569,6 +613,8 @@ def main() -> None:
             toggle_role_id = None
         elif interaction.custom_id == DM_STATUS_SELECT_CUSTOM_ID:
             toggle_role_id = None
+        elif interaction.custom_id == RELATIONSHIP_SELECT_CUSTOM_ID:
+            toggle_role_id = None
         else:
             return
 
@@ -658,6 +704,23 @@ def main() -> None:
             if target_role_id not in current_roles:
                 try:
                     await bot.rest.add_role_to_member(guild_id, member.id, target_role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+            return
+        if interaction.custom_id == RELATIONSHIP_SELECT_CUSTOM_ID:
+            selected_values = set(interaction.values or [])
+            current_roles = {int(r) for r in member.role_ids}
+            relationship_roles = set(RELATIONSHIP_ROLE_IDS.values())
+            target_role_ids = {RELATIONSHIP_ROLE_IDS[v] for v in selected_values if v in RELATIONSHIP_ROLE_IDS}
+            for role_id in (current_roles & relationship_roles) - target_role_ids:
+                try:
+                    await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            for role_id in target_role_ids - current_roles:
+                try:
+                    await bot.rest.add_role_to_member(guild_id, member.id, role_id)
                 except (hikari.ForbiddenError, hikari.NotFoundError):
                     pass
             await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
