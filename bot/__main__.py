@@ -214,44 +214,23 @@ def main() -> None:
                 color=0x861f42,
             )
 
-            menu = (
-                special_endpoints.MessageActionRowBuilder()
-                .add_select_menu(3, REGION_SELECT_CUSTOM_ID)
+            select_menu = (
+                special_endpoints.TextSelectMenuBuilder(
+                    container=special_endpoints.MessageActionRowBuilder(),
+                    custom_id=REGION_SELECT_CUSTOM_ID,
+                )
                 .set_placeholder("Make sure you select your region.")
                 .set_min_values(1)
                 .set_max_values(1)
-                .add_option(
-                    "North America",
-                    "na",
-                    emoji=hikari.Emoji.parse("<:NorthAmerica:1482039930095140955>"),
-                )
-                .add_option(
-                    "South America",
-                    "sa",
-                    emoji=hikari.Emoji.parse("<:SouthAmerica:1482039974579802287>"),
-                )
-                .add_option(
-                    "Europe",
-                    "eu",
-                    emoji=hikari.Emoji.parse("<:Europe:1482040003667165305>"),
-                )
-                .add_option(
-                    "Africa",
-                    "af",
-                    emoji=hikari.Emoji.parse("<:Africa:1482040032645742623>"),
-                )
-                .add_option(
-                    "Asia",
-                    "as",
-                    emoji=hikari.Emoji.parse("<:Asia:1482040064870711376>"),
-                )
-                .add_option(
-                    "Oceania",
-                    "oc",
-                    emoji=hikari.Emoji.parse("<:Oceania:1482040104854884372>"),
-                )
-                .parent
+                .add_option("North America", "na", emoji=hikari.Emoji.parse("<:NorthAmerica:1482039930095140955>"))
+                .add_option("South America", "sa", emoji=hikari.Emoji.parse("<:SouthAmerica:1482039974579802287>"))
+                .add_option("Europe", "eu", emoji=hikari.Emoji.parse("<:Europe:1482040003667165305>"))
+                .add_option("Africa", "af", emoji=hikari.Emoji.parse("<:Africa:1482040032645742623>"))
+                .add_option("Asia", "as", emoji=hikari.Emoji.parse("<:Asia:1482040064870711376>"))
+                .add_option("Oceania", "oc", emoji=hikari.Emoji.parse("<:Oceania:1482040104854884372>"))
             )
+
+            menu = select_menu.parent
 
             await ctx.respond("Posted.", flags=hikari.MessageFlag.EPHEMERAL)
             await bot.rest.create_message(ctx.channel_id, embed=embed, components=[menu])
