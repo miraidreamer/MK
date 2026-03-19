@@ -636,10 +636,11 @@ def main() -> None:
             return
 
         values = interaction.values or []
-        if not values:
+
+        if interaction.custom_id != RELATIONSHIP_SELECT_CUSTOM_ID and not values:
             return
 
-        selected = values[0]
+        selected = values[0] if values else ""
         
         guild_id = interaction.guild_id
         if guild_id is None:
