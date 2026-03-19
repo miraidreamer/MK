@@ -454,7 +454,29 @@ def main() -> None:
         interaction = event.interaction
         if not isinstance(interaction, hikari.ComponentInteraction):
             return
-        if interaction.custom_id != REGION_SELECT_CUSTOM_ID:
+        DICK_ROLE_ID = 1481824903513506096
+        PUSSY_ROLE_ID = 1481825236843495535
+
+        if interaction.custom_id == "gender_dick":
+            toggle_role_id = DICK_ROLE_ID
+        elif interaction.custom_id == "gender_pussy":
+            toggle_role_id = PUSSY_ROLE_ID
+        elif interaction.custom_id == REGION_SELECT_CUSTOM_ID:
+            toggle_role_id = None
+        else:
+            return
+
+        if toggle_role_id is not None:
+            guild_id = interaction.guild_id
+            member = interaction.member
+            if guild_id is None or member is None:
+                return
+            current_roles = {int(r) for r in member.role_ids}
+            if toggle_role_id in current_roles:
+                await bot.rest.remove_role_from_member(guild_id, member.id, toggle_role_id)
+            else:
+                await bot.rest.add_role_to_member(guild_id, member.id, toggle_role_id)
+            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
             return
 
         member = interaction.member
