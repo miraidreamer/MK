@@ -14,6 +14,14 @@ def _get_env(name: str) -> str:
     return value
 
 
+def _get_env_int(name: str) -> int:
+    value = _get_env(name)
+    try:
+        return int(value)
+    except ValueError as e:
+        raise RuntimeError(f"Environment variable {name} must be an integer") from e
+
+
 def main() -> None:
     load_dotenv()
 
@@ -59,6 +67,17 @@ def main() -> None:
         1482760118994210977: {1482762859372089360,1483091252906950809,1482762288816722001,1482762082536521881,1482762858247749642,1482762079399055481,1482762310157340884,1482763092008898725,1482762081727021238,1482762856272236624,1482762073774752020,1482762305232965643,1482762304385978398,1482776027746013297,1482762297071108216,1482761318560829562,1482762081336951016,1482762306072088721,1482762303026757653,1483091135759912993,1482765384041103601,1482762306952761475,1482762075884486786,1482776463508771050,1483091220275134687,1482762857346109613,1482762303462965402,1482776733592588359,1482762860030464151},
         1483418773338980435: {1481737302240792597}
     }
+
+    REGION_ROLE_IDS: dict[str, int] = {
+        "na": _get_env_int("1481913772762464309"),
+        "sa": _get_env_int("1481913810788024412"),
+        "eu": _get_env_int("1481913741388939274"),
+        "af": _get_env_int("1481913841276157972"),
+        "as": _get_env_int("1481913861656543303"),
+        "oc": _get_env_int("1481913878333100053"),
+    }
+
+    REGION_SELECT_CUSTOM_ID = "region_select_v1"
 
     ticket_notice_message_by_channel_id: dict[int, int] = {}
 
@@ -171,6 +190,79 @@ def main() -> None:
                 f"and failed for {failed} members.",
                 flags=hikari.MessageFlag.EPHEMERAL,
             )
+
+    @client.register()
+    class post_region_selector(
+        lightbulb.SlashCommand,
+        name="post_region_selector",
+        description="Post the region embed + dropdown selector.",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            if not await _admin_only(ctx):
+                return
+            if ctx.channel_id is None:
+                await ctx.respond(
+                    "Couldn't determine what channel to send to.",
+                    flags=hikari.MessageFlag.EPHEMERAL,
+                )
+                return
+
+            embed = hikari.Embed(
+                title="REGION",
+                description=(
+                    "<:NorthAmerica:1482039930095140955> North America\n"
+                    "<:SouthAmerica:1482039974579802287> South America\n"
+                    "<:Europe:1482040003667165305> Europe\n"
+                    "<:Africa:1482040032645742623> Africa\n"
+                    "<:Asia:1482040064870711376> Asia\n"
+                    "<:Oceania:1482040104854884372> Oceania"
+                ),
+                color=0x861f42,
+            )
+
+            menu = (
+                special_endpoints.MessageActionRowBuilder()
+                .add_select_menu(REGION_SELECT_CUSTOM_ID)
+                .set_placeholder("Make sure you select your region.")
+                .set_min_values(1)
+                .set_max_values(1)
+                .add_option(
+                    "North America",
+                    "na",
+                    emoji=hikari.Emoji.parse("<:NorthAmerica:1482039930095140955>"),
+                )
+                .add_option(
+                    "South America",
+                    "sa",
+                    emoji=hikari.Emoji.parse("<:SouthAmerica:1482039974579802287>"),
+                )
+                .add_option(
+                    "Europe",
+                    "eu",
+                    emoji=hikari.Emoji.parse("<:Europe:1482040003667165305>"),
+                )
+                .add_option(
+                    "Africa",
+                    "af",
+                    emoji=hikari.Emoji.parse("<:Africa:1482040032645742623>"),
+                )
+                .add_option(
+                    "Asia",
+                    "as",
+                    emoji=hikari.Emoji.parse("<:Asia:1482040064870711376>"),
+                )
+                .add_option(
+                    "Oceania",
+                    "oc",
+                    emoji=hikari.Emoji.parse("<:Oceania:1482040104854884372>"),
+                )
+                .parent
+            )
+
+            await ctx.respond("Posted.", flags=hikari.MessageFlag.EPHEMERAL)
+            await bot.rest.create_message(ctx.channel_id, embed=embed, components=[menu])
             
     #TICKETS NOTIFICATIONS
     async def _on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
@@ -345,6 +437,62 @@ def main() -> None:
             pass
 
     bot.subscribe(hikari.MessageCreateEvent, _on_message_create)
+
+    async def _on_interaction_create(event: hikari.InteractionCreateEvent) -> None:
+        interaction = event.interaction
+        if not isinstance(interaction, hikari.ComponentInteraction):
+            return
+        if interaction.custom_id != REGION_SELECT_CUSTOM_ID:
+            return
+
+        member = interaction.member
+        if member is None:
+            return
+
+        values = interaction.values or []
+        if not values:
+            return
+
+        selected = values[0]
+        target_role_id = REGION_ROLE_IDS.get(selected)
+        if target_role_id is None:
+            await interaction.create_initial_response(
+                hikari.ResponseType.MESSAGE_CREATE,
+                "Unknown selection.",
+                flags=hikari.MessageFlag.EPHEMERAL,
+            )
+            return
+
+        guild_id = interaction.guild_id
+        if guild_id is None:
+            return
+
+        current_roles = {int(r) for r in member.role_ids}
+        region_roles = set(REGION_ROLE_IDS.values())
+
+        removed = 0
+        for role_id in (current_roles & region_roles) - {target_role_id}:
+            try:
+                await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                removed += 1
+            except (hikari.ForbiddenError, hikari.NotFoundError):
+                pass
+
+        added = 0
+        if target_role_id not in current_roles:
+            try:
+                await bot.rest.add_role_to_member(guild_id, member.id, target_role_id)
+                added = 1
+            except (hikari.ForbiddenError, hikari.NotFoundError):
+                pass
+
+        await interaction.create_initial_response(
+            hikari.ResponseType.MESSAGE_CREATE,
+            f"Updated your region role. Added: {added}, removed: {removed}.",
+            flags=hikari.MessageFlag.EPHEMERAL,
+        )
+
+    bot.subscribe(hikari.InteractionCreateEvent, _on_interaction_create)
     bot.run()
 
 if __name__ == "__main__":
