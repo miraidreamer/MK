@@ -47,7 +47,6 @@ def main() -> None:
     PING_NEWS_CUSTOM_ID = "ping_news"
     #Prefs
     BTN_SADIST_CUSTOM_ID = "btn_sadist"
-    BTN_SADIST_CUSTOM_ID = "btn_sadist"
     BTN_ROUGH_DOMME_CUSTOM_ID = "btn_rough_domme"
     BTN_GENTLE_DOMME_CUSTOM_ID = "btn_gentle_domme"
     BTN_MASOCHIST_CUSTOM_ID = "btn_masochist"
@@ -68,6 +67,7 @@ def main() -> None:
     KINKS_1_SELECT_CUSTOM_ID = "kinks_1_select_v1"
     KINKS_2_SELECT_CUSTOM_ID = "kinks_2_select_v1"
     BOOSTER_COLORS_SELECT_CUSTOM_ID = "booster_colors_select_v1"
+    LEVELS_SELECT_CUSTOM_ID = "levels_select_v1"
     #Selections
     REGION_ROLE_IDS: dict[str, int] = {
         "na": 1481913772762464309,  # North America
@@ -202,6 +202,20 @@ def main() -> None:
         "mediumpurple":  1482728864370135220,
         "mauve":         1482730120220246127,
         "battleship":    1483071015541276772,
+    }
+    LEVELS_ROLE_IDS: dict[str, int] = {
+        "level_100": 1482726503677431808,
+        "level_75":  1482726497134575656,
+        "level_50":  1482726137938444480,
+        "level_30":  1482725894702502050,
+        "level_10":  1482725106210963537,
+    }
+    LEVELS_REQUIRED_ROLE_IDS: dict[str, int] = {
+        "level_100": 1481718271513198643,
+        "level_75":  1481718240353976442,
+        "level_50":  1481718189736984608,
+        "level_30":  1481718161673031681,
+        "level_10":  1481718118551388423,
     }
     BOOSTER_ROLE_ID = 1481797220411117710
     PING_ROLE_IDS: dict[str, int] = {
@@ -833,6 +847,35 @@ def main() -> None:
             )
 
             await bot.rest.create_message(ctx.channel_id, embed=booster_colors_embed, components=[booster_colors_menu])
+            levels_embed = hikari.Embed(
+                title="LEVELS",
+                description=(
+                    "<@&1482726503677431808>\n"
+                    "<@&1482726497134575656>\n"
+                    "<@&1482726137938444480>\n"
+                    "<@&1482725894702502050>\n"
+                    "<@&1482725106210963537>"
+                ),
+                color=0x861f42,
+            )
+
+            levels_row = special_endpoints.MessageActionRowBuilder()
+            levels_menu = (
+                levels_row.add_text_menu(
+                    LEVELS_SELECT_CUSTOM_ID,
+                    placeholder="Select your level role.",
+                    min_values=0,
+                    max_values=1,
+                )
+                .add_option("Level 100+", "level_100")
+                .add_option("Level 75", "level_75")
+                .add_option("Level 50", "level_50")
+                .add_option("Level 30", "level_30")
+                .add_option("Level 10", "level_10")
+                .parent
+            )
+
+            await bot.rest.create_message(ctx.channel_id, embed=levels_embed, components=[levels_menu])
     #TICKETS NOTIFICATIONS
     async def _on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
         channel = event.channel
@@ -977,6 +1020,8 @@ def main() -> None:
             toggle_role_id = None
         elif interaction.custom_id == BOOSTER_COLORS_SELECT_CUSTOM_ID:
             toggle_role_id = None
+        elif interaction.custom_id == LEVELS_SELECT_CUSTOM_ID:
+            toggle_role_id = None
         elif interaction.custom_id in INTERACTION_STYLE_ROLE_IDS:
             toggle_role_id = INTERACTION_STYLE_ROLE_IDS[interaction.custom_id]
         else:
@@ -1042,7 +1087,7 @@ def main() -> None:
 
         values = interaction.values or []
 
-        MULTI_SELECT_CUSTOM_IDS = {RELATIONSHIP_SELECT_CUSTOM_ID, DOM_TITLES_SELECT_CUSTOM_ID, PET_NAMES_SELECT_CUSTOM_ID, KINKS_1_SELECT_CUSTOM_ID, KINKS_2_SELECT_CUSTOM_ID, BOOSTER_COLORS_SELECT_CUSTOM_ID}
+        MULTI_SELECT_CUSTOM_IDS = {RELATIONSHIP_SELECT_CUSTOM_ID, DOM_TITLES_SELECT_CUSTOM_ID, PET_NAMES_SELECT_CUSTOM_ID, KINKS_1_SELECT_CUSTOM_ID, KINKS_2_SELECT_CUSTOM_ID, BOOSTER_COLORS_SELECT_CUSTOM_ID, LEVELS_SELECT_CUSTOM_ID}
         if interaction.custom_id not in MULTI_SELECT_CUSTOM_IDS and not values:
             return
 
@@ -1298,7 +1343,44 @@ def main() -> None:
                     pass
             await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
             return
+        if interaction.custom_id == LEVELS_SELECT_CUSTOM_ID:
+            current_roles = {int(r) for r in member.role_ids}
+            level_roles = set(LEVELS_ROLE_IDS.values())
+            selected_values = set(interaction.values or [])
 
+            if not selected_values:
+                for role_id in current_roles & level_roles:
+                    try:
+                        await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                    except (hikari.ForbiddenError, hikari.NotFoundError):
+                        pass
+                await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+                return
+
+            selected = next(iter(selected_values))
+            required_role_id = LEVELS_REQUIRED_ROLE_IDS.get(selected)
+            if required_role_id not in current_roles:
+                await interaction.create_initial_response(
+                    hikari.ResponseType.MESSAGE_CREATE,
+                    "You don't have the required level to select this role.",
+                    flags=hikari.MessageFlag.EPHEMERAL,
+                )
+                return
+
+            target_role_id = LEVELS_ROLE_IDS[selected]
+            for role_id in (current_roles & level_roles) - {target_role_id}:
+                try:
+                    await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            if target_role_id not in current_roles:
+                try:
+                    await bot.rest.add_role_to_member(guild_id, member.id, target_role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+            return
+        
         target_role_id = REGION_ROLE_IDS.get(selected)
         if target_role_id is None:
             await interaction.create_initial_response(
