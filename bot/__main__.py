@@ -41,16 +41,15 @@ def main() -> None:
         1483418773338980435: {1481737302240792597}
     }
     #Buttons
-    PING_CHAT_REVIVE_CUSTOM_ID = "ping_chat_revive"
-    PING_BUMP_REMINDER_CUSTOM_ID = "ping_bump_reminder"
-    PING_NEWS_CUSTOM_ID = "ping_news"
     BTN_SADIST_CUSTOM_ID = "btn_sadist"
     BTN_ROUGH_DOMME_CUSTOM_ID = "btn_rough_domme"
     BTN_GENTLE_DOMME_CUSTOM_ID = "btn_gentle_domme"
     BTN_MASOCHIST_CUSTOM_ID = "btn_masochist"
     BTN_NO_BRATTING_CUSTOM_ID = "btn_no_bratting"
     BTN_BULLY_ME_CUSTOM_ID = "btn_bully_me"
-    BTN_DONT_BULLY_CUSTOM
+    BTN_DONT_BULLY_CUSTOM_ID = "btn_dont_bully"
+    BTN_FLIRT_CUSTOM_ID = "btn_flirt"
+    BTN_DONT_FLIRT_CUSTOM_ID = "btn_dont_flirt"
     #Selections variables
     REGION_SELECT_CUSTOM_ID = "region_select_v2"
     ORIENTATION_SELECT_CUSTOM_ID = "orientation_select_v1"
