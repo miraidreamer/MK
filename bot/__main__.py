@@ -51,6 +51,7 @@ def main() -> None:
     BTN_ROUGH_DOMME_CUSTOM_ID = "btn_rough_domme"
     BTN_GENTLE_DOMME_CUSTOM_ID = "btn_gentle_domme"
     BTN_MASOCHIST_CUSTOM_ID = "btn_masochist"
+    BTN_INNOCENT_CUSTOM_ID = "btn_innocent"
     BTN_NO_BRATTING_CUSTOM_ID = "btn_no_bratting"
     BTN_BULLY_ME_CUSTOM_ID = "btn_bully_me"
     BTN_DONT_BULLY_CUSTOM_ID = "btn_dont_bully"
@@ -151,6 +152,7 @@ def main() -> None:
         BTN_ROUGH_DOMME_CUSTOM_ID:  1483904318573645986,
         BTN_GENTLE_DOMME_CUSTOM_ID: 1483904373280211024,
         BTN_MASOCHIST_CUSTOM_ID:    1482761326551109633,
+        BTN_INNOCENT_CUSTOM_ID:     1484170143717130280,
         BTN_NO_BRATTING_CUSTOM_ID:  1482761007821750413,
         BTN_BULLY_ME_CUSTOM_ID:     1482761316149231836,
         BTN_DONT_BULLY_CUSTOM_ID:   1482761317399003248,
@@ -614,6 +616,7 @@ def main() -> None:
                     "<:ae_break_the_subs:1483494430546591834> Rough Domme\n"
                     "<:ae_head_pats:1484158676943114290> Gentle Domme\n"
                     "❤️‍🔥 Masochist\n"
+                    "<:ae_innocent:1483063573906198649> Innocent\n"
                     "🚫 Don't Brat\n"
                     "✅ Bully Me\n"
                     "❌ Don't Bully Me\n"
@@ -629,10 +632,11 @@ def main() -> None:
                 .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_ROUGH_DOMME_CUSTOM_ID, emoji=hikari.Emoji.parse("<:ae_break_the_subs:1483494430546591834>"))
                 .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_GENTLE_DOMME_CUSTOM_ID, emoji=hikari.Emoji.parse("<:ae_head_pats:1484158676943114290>"))
                 .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_MASOCHIST_CUSTOM_ID, emoji=hikari.Emoji.parse("❤️‍🔥"))
-                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_NO_BRATTING_CUSTOM_ID, emoji=hikari.Emoji.parse("🚫"))
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_INNOCENT_CUSTOM_ID, emoji=hikari.Emoji.parse("<:ae_innocent:1483063573906198649> "))
             )
             interaction_style_row2 = (
                 special_endpoints.MessageActionRowBuilder()
+                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_NO_BRATTING_CUSTOM_ID, emoji=hikari.Emoji.parse("🚫"))
                 .add_interactive_button(hikari.ButtonStyle.SUCCESS, BTN_BULLY_ME_CUSTOM_ID, emoji=hikari.Emoji.parse("✅"))
                 .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_DONT_BULLY_CUSTOM_ID, emoji=hikari.Emoji.parse("❌"))
                 .add_interactive_button(hikari.ButtonStyle.SUCCESS, BTN_FLIRT_CUSTOM_ID, emoji=hikari.Emoji.parse("💚"))
