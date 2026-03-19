@@ -67,6 +67,7 @@ def main() -> None:
     PET_NAMES_SELECT_CUSTOM_ID = "pet_names_select_v1"
     KINKS_1_SELECT_CUSTOM_ID = "kinks_1_select_v1"
     KINKS_2_SELECT_CUSTOM_ID = "kinks_2_select_v1"
+    BOOSTER_COLORS_SELECT_CUSTOM_ID = "booster_colors_select_v1"
     #Selections
     REGION_ROLE_IDS: dict[str, int] = {
         "na": 1481913772762464309,  # North America
@@ -188,6 +189,21 @@ def main() -> None:
         "watersports":      1482762860030464151,
         "wax_play":         1483809153037369346,
     }
+    BOOSTER_COLORS_ROLE_IDS: dict[str, int] = {
+        "eerie_black":   1482729638068486174,
+        "carmine":       1482729472946995273,
+        "light_coral":   1482727679760531538,
+        "tomato":        1482727592904884235,
+        "gold":          1482730608932421786,
+        "moccasin":      1482727433290383380,
+        "teal":          1482727166503555124,
+        "tea":           1482730934384984239,
+        "powderblue":    1482728327977504789,
+        "mediumpurple":  1482728864370135220,
+        "mauve":         1482730120220246127,
+        "battleship":    1483071015541276772,
+    }
+    BOOSTER_ROLE_ID = 1481797220411117710
     PING_ROLE_IDS: dict[str, int] = {
         PING_CHAT_REVIVE_CUSTOM_ID: 1482874789831118848,
         PING_BUMP_REMINDER_CUSTOM_ID: 1482874862677786685,
@@ -774,6 +790,49 @@ def main() -> None:
             )
 
             await bot.rest.create_message(ctx.channel_id, embed=kinks_2_embed, components=[kinks_2_menu])
+            booster_colors_embed = hikari.Embed(
+                title="BOOSTER COLORS",
+                description=(
+                    "<@&1482729638068486174>\n"
+                    "<@&1482729472946995273>\n"
+                    "<@&1482727679760531538>\n"
+                    "<@&1482727592904884235>\n"
+                    "<@&1482730608932421786>\n"
+                    "<@&1482727433290383380>\n"
+                    "<@&1482727166503555124>\n"
+                    "<@&1482730934384984239>\n"
+                    "<@&1482728327977504789>\n"
+                    "<@&1482728864370135220>\n"
+                    "<@&1482730120220246127>\n"
+                    "<@&1483071015541276772>"
+                ),
+                color=0x861f42,
+            )
+
+            booster_colors_row = special_endpoints.MessageActionRowBuilder()
+            booster_colors_menu = (
+                booster_colors_row.add_text_menu(
+                    BOOSTER_COLORS_SELECT_CUSTOM_ID,
+                    placeholder="Select your color.",
+                    min_values=0,
+                    max_values=1,
+                )
+                .add_option("Eerie Black", "eerie_black")
+                .add_option("Carmine", "carmine")
+                .add_option("Light Coral", "light_coral")
+                .add_option("Tomato", "tomato")
+                .add_option("Gold", "gold")
+                .add_option("Moccasin", "moccasin")
+                .add_option("Teal", "teal")
+                .add_option("Tea", "tea")
+                .add_option("Powderblue", "powderblue")
+                .add_option("Mediumpurple", "mediumpurple")
+                .add_option("Mauve", "mauve")
+                .add_option("Battleship", "battleship")
+                .parent
+            )
+
+            await bot.rest.create_message(ctx.channel_id, embed=booster_colors_embed, components=[booster_colors_menu])
     #TICKETS NOTIFICATIONS
     async def _on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
         channel = event.channel
@@ -916,6 +975,8 @@ def main() -> None:
             toggle_role_id = None
         elif interaction.custom_id == KINKS_2_SELECT_CUSTOM_ID:
             toggle_role_id = None
+        elif interaction.custom_id == KINKS_2_SELECT_CUSTOM_ID:
+            toggle_role_id = None
         elif interaction.custom_id in INTERACTION_STYLE_ROLE_IDS:
             toggle_role_id = INTERACTION_STYLE_ROLE_IDS[interaction.custom_id]
         else:
@@ -981,7 +1042,7 @@ def main() -> None:
 
         values = interaction.values or []
 
-        MULTI_SELECT_CUSTOM_IDS = {RELATIONSHIP_SELECT_CUSTOM_ID, DOM_TITLES_SELECT_CUSTOM_ID, PET_NAMES_SELECT_CUSTOM_ID, KINKS_1_SELECT_CUSTOM_ID, KINKS_2_SELECT_CUSTOM_ID}
+        MULTI_SELECT_CUSTOM_IDS = {RELATIONSHIP_SELECT_CUSTOM_ID, DOM_TITLES_SELECT_CUSTOM_ID, PET_NAMES_SELECT_CUSTOM_ID, KINKS_1_SELECT_CUSTOM_ID, KINKS_2_SELECT_CUSTOM_ID, BOOSTER_COLORS_SELECT_CUSTOM_ID}
         if interaction.custom_id not in MULTI_SELECT_CUSTOM_IDS and not values:
             return
 
@@ -1202,6 +1263,30 @@ def main() -> None:
             kinks_2_roles = set(KINKS_2_ROLE_IDS.values())
             target_role_ids = {KINKS_2_ROLE_IDS[v] for v in selected_values if v in KINKS_2_ROLE_IDS}
             for role_id in (current_roles & kinks_2_roles) - target_role_ids:
+                try:
+                    await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            for role_id in target_role_ids - current_roles:
+                try:
+                    await bot.rest.add_role_to_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+            return
+        if interaction.custom_id == BOOSTER_COLORS_SELECT_CUSTOM_ID:
+            current_roles = {int(r) for r in member.role_ids}
+            if BOOSTER_ROLE_ID not in current_roles:
+                await interaction.create_initial_response(
+                    hikari.ResponseType.MESSAGE_CREATE,
+                    "Only boosters can select a color from this menu.",
+                    flags=hikari.MessageFlag.EPHEMERAL,
+                )
+                return
+            selected_values = set(interaction.values or [])
+            booster_color_roles = set(BOOSTER_COLORS_ROLE_IDS.values())
+            target_role_ids = {BOOSTER_COLORS_ROLE_IDS[v] for v in selected_values if v in BOOSTER_COLORS_ROLE_IDS}
+            for role_id in (current_roles & booster_color_roles) - target_role_ids:
                 try:
                     await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
                 except (hikari.ForbiddenError, hikari.NotFoundError):
