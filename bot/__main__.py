@@ -206,12 +206,12 @@ def main() -> None:
         description="Post the region embed + dropdown selector (single choice).",
         default_member_permissions=hikari.Permissions.ADMINISTRATOR,
     ):
-        north_america_role_id = lightbulb.integer("1481913772762464309", "Role ID for North America")
-        south_america_role_id = lightbulb.integer("1481913810788024412", "Role ID for South America")
-        europe_role_id = lightbulb.integer("1481913741388939274", "Role ID for Europe")
-        africa_role_id = lightbulb.integer("1481913841276157972", "Role ID for Africa")
-        asia_role_id = lightbulb.integer("1481913861656543303", "Role ID for Asia")
-        oceania_role_id = lightbulb.integer("1481913878333100053", "Role ID for Oceania")
+        north_america_role_id = lightbulb.integer("north_america_role_id", "Role ID for North America")
+        south_america_role_id = lightbulb.integer("south_america_role_id", "Role ID for South America")
+        europe_role_id = lightbulb.integer("europe_role_id", "Role ID for Europe")
+        africa_role_id = lightbulb.integer("africa_role_id", "Role ID for Africa")
+        asia_role_id = lightbulb.integer("asia_role_id", "Role ID for Asia")
+        oceania_role_id = lightbulb.integer("oceania_role_id", "Role ID for Oceania")
 
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
@@ -255,7 +255,7 @@ def main() -> None:
 
             menu = (
                 special_endpoints.MessageActionRowBuilder()
-                .add_select_menu(custom_id)
+                .add_select_menu(hikari.ComponentType.STRING_SELECT_MENU, custom_id)
                 .set_placeholder("Make sure you select your region.")
                 .set_min_values(1)
                 .set_max_values(1)
