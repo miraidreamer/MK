@@ -29,18 +29,6 @@ def main() -> None:
     TICKET_PING_ROLE_ID = 1482666644349128745
     TICKET_NOTIFY_CHANNEL_ID = 1483375980054839297
 
-    MALE_ROLE_ID = 1481817961764491416
-    MALE_FORBIDDEN_PICK_ROLES: set[int] = {
-        1481913083801763901,
-        1481913412907831410,
-        1481913457359065180,
-        1481913488225079386,
-    }
-    MALE_FORBIDDEN_DM = (
-        "Males can only be subs in this femdom server, you may select the right role in "
-        "https://discord.com/channels/1481652883647762646/1481738496938082435"
-    )
-
     # Role "header" categories:
     # - key: header role id
     # - value: set of child role ids that belong to that header/category
@@ -61,6 +49,7 @@ def main() -> None:
 
     REGION_SELECT_CUSTOM_ID = "region_select_v2"
     ORIENTATION_SELECT_CUSTOM_ID = "orientation_select_v1"
+    POSITION_SELECT_CUSTOM_ID = "position_select_v1"
 
     # Hardcoded region role IDs (single-select; picking one removes the others).
     REGION_ROLE_IDS: dict[str, int] = {
@@ -78,6 +67,14 @@ def main() -> None:
         "asexual":     1481912363199238144,
         "other":       1481912666850197615,
     }
+    POSITION_ROLE_IDS: dict[str, int] = {
+        "dominant":    1481913083801763901,
+        "domlean":     1481913412907831410,
+        "switch":      1481913457359065180,
+        "sublean":     1481913488225079386,
+        "submissive":  1481913541899325510,
+    }
+    POSITION_RESTRICTED_ROLE_IDS: set[int] = {1481817961764491416, 1481818168891801802}
 
     ticket_notice_message_by_channel_id: dict[int, int] = {}
 
@@ -311,7 +308,37 @@ def main() -> None:
             )
 
             await bot.rest.create_message(ctx.channel_id, embed=orientation_embed, components=[orientation_menu])
-            
+            position_embed = hikari.Embed(
+                title="POSITION",
+                description=(
+                    "<a:Dominant:1482036391977291901> Dominant　　　　　　　　　　　　　　　　　　　　　"
+                    "<:DomLean:1482036433219879063> Dom-Lean "
+                   "<:Switch:1482036472713449542> Switch "
+                    "<:SubLean:1482038379200647300> Sub-Lean "
+                    "<:Sub:1482036591512785117> Submissive"
+                ),
+                color=0x861f42,
+            )
+
+            position_row = special_endpoints.MessageActionRowBuilder()
+            position_menu = (
+                position_row.add_text_menu(
+                    POSITION_SELECT_CUSTOM_ID,
+                    placeholder="Select your position.",
+                    min_values=1,
+                    max_values=1,
+                )
+                .add_option("Dominant", "dominant", emoji=hikari.Emoji.parse("<a:Dominant:1482036391977291901>"))
+                .add_option("Dom-Lean", "domlean", emoji=hikari.Emoji.parse("<:DomLean:1482036433219879063>"))
+                .add_option("Switch", "switch", emoji=hikari.Emoji.parse("<:Switch:1482036472713449542>"))
+                .add_option("Sub-Lean", "sublean", emoji=hikari.Emoji.parse("<:SubLean:1482038379200647300>"))
+                .add_option("Submissive", "submissive", emoji=hikari.Emoji.parse("<:Sub:1482036591512785117>"))
+                .parent
+            )
+
+            await bot.rest.create_message(ctx.channel_id, embed=position_embed, components=[position_menu])
+
+
     #TICKETS NOTIFICATIONS
     async def _on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
         channel = event.channel
@@ -412,39 +439,6 @@ def main() -> None:
             return
 
         role_ids_now = {int(r) for r in member.role_ids}
-        removed_any = False
-
-        if MALE_ROLE_ID in role_ids_now:
-            forbidden_now = role_ids_now & MALE_FORBIDDEN_PICK_ROLES
-            if forbidden_now:
-                logging.info(
-                    "Male member has forbidden roles: guild=%s user=%s roles=%s",
-                    int(event.guild_id),
-                    int(member.id),
-                    sorted(forbidden_now),
-                )
-
-                for role_id in forbidden_now:
-                    try:
-                        await bot.rest.remove_role_from_member(event.guild_id, member.id, role_id)
-                        role_ids_now.discard(int(role_id))
-                        removed_any = True
-                    except hikari.ForbiddenError:
-                        logging.exception(
-                            "Missing perms / role hierarchy prevents removal: guild=%s user=%s role=%s",
-                            int(event.guild_id),
-                            int(member.id),
-                            int(role_id),
-                        )
-                    except hikari.NotFoundError:
-                        pass
-
-        if removed_any:
-            try:
-                dm = await bot.rest.create_dm_channel(member.id)
-                await bot.rest.create_message(dm.id, MALE_FORBIDDEN_DM)
-            except hikari.ForbiddenError:
-                pass
 
         await _sync_role_headers(
             guild_id=event.guild_id,
@@ -501,6 +495,8 @@ def main() -> None:
             toggle_role_id = None
         elif interaction.custom_id == ORIENTATION_SELECT_CUSTOM_ID:
             toggle_role_id = None
+        elif interaction.custom_id == POSITION_SELECT_CUSTOM_ID:
+            toggle_role_id = None
         else:
             return
 
@@ -538,6 +534,32 @@ def main() -> None:
             current_roles = {int(r) for r in member.role_ids}
             orientation_roles = set(ORIENTATION_ROLE_IDS.values())
             for role_id in (current_roles & orientation_roles) - {target_role_id}:
+                try:
+                    await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            if target_role_id not in current_roles:
+                try:
+                    await bot.rest.add_role_to_member(guild_id, member.id, target_role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+            return
+        if interaction.custom_id == POSITION_SELECT_CUSTOM_ID:
+            current_roles = {int(r) for r in member.role_ids}
+            if selected != "submissive" and current_roles & POSITION_RESTRICTED_ROLE_IDS:
+                await interaction.create_initial_response(
+                    hikari.ResponseType.MESSAGE_CREATE,
+                    "This is a femdom server — males can only be Submissive.",
+                    flags=hikari.MessageFlag.EPHEMERAL,
+                )
+                return
+            target_role_id = POSITION_ROLE_IDS.get(selected)
+            if target_role_id is None:
+                await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+                return
+            position_roles = set(POSITION_ROLE_IDS.values())
+            for role_id in (current_roles & position_roles) - {target_role_id}:
                 try:
                     await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
                 except (hikari.ForbiddenError, hikari.NotFoundError):
