@@ -46,6 +46,7 @@ def main() -> None:
     ORIENTATION_SELECT_CUSTOM_ID = "orientation_select_v1"
     POSITION_SELECT_CUSTOM_ID = "position_select_v1"
     RELATIONSHIP_SELECT_CUSTOM_ID = "relationship_select_v1"
+    DOM_TITLES_SELECT_CUSTOM_ID = "dom_titles_select_v1"
 
     # Hardcoded region role IDs (single-select; picking one removes the others).
     REGION_ROLE_IDS: dict[str, int] = {
@@ -90,6 +91,27 @@ def main() -> None:
     PING_CHAT_REVIVE_CUSTOM_ID = "ping_chat_revive"
     PING_BUMP_REMINDER_CUSTOM_ID = "ping_bump_reminder"
     PING_NEWS_CUSTOM_ID = "ping_news"
+    DOM_TITLES_ROLE_IDS: dict[str, int] = {
+        "boss":         1482760892298039507,
+        "captain":      1483191635431919877,
+        "countess":     1482779189013909605,
+        "domina":       1482778996105154630,
+        "empress":      1482779481382064371,
+        "goddess":      1482760086916038696,
+        "lady":         1482760078313394207,
+        "miss":         1482760080993685535,
+        "mistress":     1482760830222205129,
+        "mommy":        1482760833674117170,
+        "princess":     1482760090015760496,
+        "queen":        1482760083929567495,
+        "ask_titles":   1482760983217705112,
+    }
+    DOM_TITLES_REQUIRED_ROLE_IDS: set[int] = {
+        1481913083801763901,  # Dominant
+        1481913412907831410,  # Dom-Lean
+        1481913457359065180,  # Switch
+        1481913488225079386,  # Sub-Lean
+    }
     ticket_notice_message_by_channel_id: dict[int, int] = {}
 
     async def _owner_only(ctx: lightbulb.Context) -> bool:
@@ -445,6 +467,59 @@ def main() -> None:
 
             await bot.rest.create_message(ctx.channel_id, embed=pings_embed, components=[pings_row])
     
+    @client.register()
+    class post_extra_roles(
+        lightbulb.SlashCommand,
+        name="post_extra_roles",
+        description="Post the extra role selector menus.",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            if not await _admin_only(ctx):
+                return
+            if ctx.channel_id is None:
+                await ctx.respond(
+                    "Couldn't determine what channel to send to.",
+                    flags=hikari.MessageFlag.EPHEMERAL,
+                )
+                return
+
+            dom_titles_embed = hikari.Embed(
+                title="DOMINANT TITLES",
+                description=(
+                    "You may select the roles that you'd like from the following list. "
+                    "(Requires a dominant or switch role)"
+                ),
+                color=0x861f42,
+            )
+
+            dom_titles_row = special_endpoints.MessageActionRowBuilder()
+            dom_titles_menu = (
+                dom_titles_row.add_text_menu(
+                    DOM_TITLES_SELECT_CUSTOM_ID,
+                    placeholder="Select your titles.",
+                    min_values=0,
+                    max_values=len(DOM_TITLES_ROLE_IDS),
+                )
+                .add_option("Boss", "boss")
+                .add_option("Captain", "captain")
+                .add_option("Countess", "countess")
+                .add_option("Domina", "domina")
+                .add_option("Empress", "empress")
+                .add_option("Goddess", "goddess")
+                .add_option("Lady", "lady")
+                .add_option("Miss", "miss")
+                .add_option("Mistress", "mistress")
+                .add_option("Mommy", "mommy")
+                .add_option("Princess", "princess")
+                .add_option("Queen", "queen")
+                .add_option("Ask for titles", "ask_titles")
+                .parent
+            )
+
+            await ctx.respond("Posted.", flags=hikari.MessageFlag.EPHEMERAL)
+            await bot.rest.create_message(ctx.channel_id, embed=dom_titles_embed, components=[dom_titles_menu])
     #TICKETS NOTIFICATIONS
     async def _on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
         channel = event.channel
@@ -615,6 +690,8 @@ def main() -> None:
             toggle_role_id = None
         elif interaction.custom_id == RELATIONSHIP_SELECT_CUSTOM_ID:
             toggle_role_id = None
+        elif interaction.custom_id == DOM_TITLES_SELECT_CUSTOM_ID:
+            toggle_role_id = None
         else:
             return
 
@@ -715,6 +792,35 @@ def main() -> None:
             relationship_roles = set(RELATIONSHIP_ROLE_IDS.values())
             target_role_ids = {RELATIONSHIP_ROLE_IDS[v] for v in selected_values if v in RELATIONSHIP_ROLE_IDS}
             for role_id in (current_roles & relationship_roles) - target_role_ids:
+                try:
+                    await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            for role_id in target_role_ids - current_roles:
+                try:
+                    await bot.rest.add_role_to_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+            return
+        if interaction.custom_id == DOM_TITLES_SELECT_CUSTOM_ID:
+            current_roles = {int(r) for r in member.role_ids}
+            dom_titles_roles = set(DOM_TITLES_ROLE_IDS.values())
+            if not (current_roles & DOM_TITLES_REQUIRED_ROLE_IDS):
+                for role_id in current_roles & dom_titles_roles:
+                    try:
+                        await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                    except (hikari.ForbiddenError, hikari.NotFoundError):
+                        pass
+                await interaction.create_initial_response(
+                    hikari.ResponseType.MESSAGE_CREATE,
+                    "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select titles.",
+                    flags=hikari.MessageFlag.EPHEMERAL,
+                )
+                return
+            selected_values = set(interaction.values or [])
+            target_role_ids = {DOM_TITLES_ROLE_IDS[v] for v in selected_values if v in DOM_TITLES_ROLE_IDS}
+            for role_id in (current_roles & dom_titles_roles) - target_role_ids:
                 try:
                     await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
                 except (hikari.ForbiddenError, hikari.NotFoundError):
