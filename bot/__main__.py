@@ -65,6 +65,8 @@ def main() -> None:
     RELATIONSHIP_SELECT_CUSTOM_ID = "relationship_select_v1"
     DOM_TITLES_SELECT_CUSTOM_ID = "dom_titles_select_v1"
     PET_NAMES_SELECT_CUSTOM_ID = "pet_names_select_v1"
+    KINKS_1_SELECT_CUSTOM_ID = "kinks_1_select_v1"
+    KINKS_2_SELECT_CUSTOM_ID = "kinks_2_select_v1"
     #Selections
     REGION_ROLE_IDS: dict[str, int] = {
         "na": 1481913772762464309,  # North America
@@ -141,6 +143,50 @@ def main() -> None:
         1481913457359065180,  # Switch
         1481913488225079386,  # Sub-Lean
         1481913541899325510,  # Submissive
+    }
+    KINKS_1_ROLE_IDS: dict[str, int] = {
+        "armpits":          1482762859372089360,
+        "biting":           1483091252906950809,
+        "blackmail":        1482762288816722001,
+        "blood_play":       1483809090185724074,
+        "body_worship":     1482762082536521881,
+        "body_writing":     1482762858247749642,
+        "bondage":          1482762079399055481,
+        "breath_play":      1482762310157340884,
+        "breeding":         1484171981879251015,
+        "chastity":         1482763092008898725,
+        "cnc":              1482762081727021238,
+        "corruption":       1484170708497207357,
+        "cuckolding":       1482762856272236624,
+        "degradation":      1482762073774752020,
+        "denial":           1482762305232965643,
+        "edging":           1482762304385978398,
+        "exhibitionism":    1482776027746013297,
+        "facesitting":      1482762297071108216,
+        "fear_play":        1483809221030969526,
+        "feet":             1482761318560829562,
+        "humiliation":      1482762081336951016,
+        "impact_play":      1482762306072088721,
+        "knife_play":       1482762303026757653,
+        "latex_leather":    1483091135759912993,
+        "overstimulation":  1482765384041103601,
+    }
+    KINKS_2_ROLE_IDS: dict[str, int] = {
+        "objectification":  1484171873733574787,
+        "oral":             1484171735463891197,
+        "pegging":          1482762306952761475,
+        "pet_play":         1482762075884486786,
+        "praise":           1482776463508771050,
+        "scratching":       1483091220275134687,
+        "sounding":         1483819001590059008,
+        "sph":              1482762857346109613,
+        "tease":            1482762303462965402,
+        "torture":          1484170914533867681,
+        "tpe":              1484171577804194014,
+        "voyeurism":        1482776733592588359,
+        "waterboarding":    1483809266480447578,
+        "watersports":      1482762860030464151,
+        "wax_play":         1483809153037369346,
     }
     PING_ROLE_IDS: dict[str, int] = {
         PING_CHAT_REVIVE_CUSTOM_ID: 1482874789831118848,
@@ -644,6 +690,90 @@ def main() -> None:
             )
 
             await bot.rest.create_message(ctx.channel_id, embed=interaction_style_embed, components=[interaction_style_row1, interaction_style_row2])
+            kinks_1_embed = hikari.Embed(
+                title="KINKS (1/2)",
+                description=(
+                    "You can choose all the kink roles you'd like from this dropdown. "
+                    "They are alphabetically ordered, if you don't find what you are looking for here, "
+                    "check the next panel, otherwise feel free to reach out to us in the suggestions channel!"
+                ),
+                color=0x861f42,
+            )
+
+            kinks_1_row = special_endpoints.MessageActionRowBuilder()
+            kinks_1_menu = (
+                kinks_1_row.add_text_menu(
+                    KINKS_1_SELECT_CUSTOM_ID,
+                    placeholder="Select your kinks (A–O).",
+                    min_values=0,
+                    max_values=len(KINKS_1_ROLE_IDS),
+                )
+                .add_option("Armpits", "armpits")
+                .add_option("Biting", "biting")
+                .add_option("Blackmail", "blackmail")
+                .add_option("Blood Play", "blood_play")
+                .add_option("Body Worship", "body_worship")
+                .add_option("Body Writing", "body_writing")
+                .add_option("Bondage", "bondage")
+                .add_option("Breath Play", "breath_play")
+                .add_option("Breeding", "breeding")
+                .add_option("Chastity", "chastity")
+                .add_option("CNC", "cnc")
+                .add_option("Corruption", "corruption")
+                .add_option("Cuckolding", "cuckolding")
+                .add_option("Degradation", "degradation")
+                .add_option("Denial", "denial")
+                .add_option("Edging", "edging")
+                .add_option("Exhibitionism", "exhibitionism")
+                .add_option("Facesitting", "facesitting")
+                .add_option("Fear Play", "fear_play")
+                .add_option("Feet", "feet")
+                .add_option("Humiliation", "humiliation")
+                .add_option("Impact Play", "impact_play")
+                .add_option("Knife Play", "knife_play")
+                .add_option("Latex/Leather", "latex_leather")
+                .add_option("Overstimulation", "overstimulation")
+                .parent
+            )
+
+            await bot.rest.create_message(ctx.channel_id, embed=kinks_1_embed, components=[kinks_1_menu])
+            kinks_2_embed = hikari.Embed(
+                title="KINKS (2/2)",
+                description=(
+                    "You can choose all the kink roles you'd like from this dropdown. "
+                    "They are alphabetically ordered, if you don't find what you are looking for here, "
+                    "feel free to reach out to us in the suggestions channel!"
+                ),
+                color=0x861f42,
+            )
+
+            kinks_2_row = special_endpoints.MessageActionRowBuilder()
+            kinks_2_menu = (
+                kinks_2_row.add_text_menu(
+                    KINKS_2_SELECT_CUSTOM_ID,
+                    placeholder="Select your kinks (O–W).",
+                    min_values=0,
+                    max_values=len(KINKS_2_ROLE_IDS),
+                )
+                .add_option("Objectification", "objectification")
+                .add_option("Oral", "oral")
+                .add_option("Pegging", "pegging")
+                .add_option("Pet Play", "pet_play")
+                .add_option("Praise", "praise")
+                .add_option("Scratching", "scratching")
+                .add_option("Sounding", "sounding")
+                .add_option("SPH", "sph")
+                .add_option("Tease", "tease")
+                .add_option("Torture (CBT/PT)", "torture")
+                .add_option("TPE", "tpe")
+                .add_option("Voyeurism", "voyeurism")
+                .add_option("Waterboarding", "waterboarding")
+                .add_option("Watersports", "watersports")
+                .add_option("Wax Play", "wax_play")
+                .parent
+            )
+
+            await bot.rest.create_message(ctx.channel_id, embed=kinks_2_embed, components=[kinks_2_menu])
     #TICKETS NOTIFICATIONS
     async def _on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
         channel = event.channel
@@ -782,6 +912,10 @@ def main() -> None:
             toggle_role_id = None
         elif interaction.custom_id == PET_NAMES_SELECT_CUSTOM_ID:
             toggle_role_id = None
+        elif interaction.custom_id == KINKS_1_SELECT_CUSTOM_ID:
+            toggle_role_id = None
+        elif interaction.custom_id == KINKS_2_SELECT_CUSTOM_ID:
+            toggle_role_id = None
         elif interaction.custom_id in INTERACTION_STYLE_ROLE_IDS:
             toggle_role_id = INTERACTION_STYLE_ROLE_IDS[interaction.custom_id]
         else:
@@ -847,7 +981,7 @@ def main() -> None:
 
         values = interaction.values or []
 
-        MULTI_SELECT_CUSTOM_IDS = {RELATIONSHIP_SELECT_CUSTOM_ID, DOM_TITLES_SELECT_CUSTOM_ID, PET_NAMES_SELECT_CUSTOM_ID}
+        MULTI_SELECT_CUSTOM_IDS = {RELATIONSHIP_SELECT_CUSTOM_ID, DOM_TITLES_SELECT_CUSTOM_ID, PET_NAMES_SELECT_CUSTOM_ID, KINKS_1_SELECT_CUSTOM_ID, KINKS_2_SELECT_CUSTOM_ID}
         if interaction.custom_id not in MULTI_SELECT_CUSTOM_IDS and not values:
             return
 
@@ -1043,6 +1177,40 @@ def main() -> None:
                             pass
                     break
 
+            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+            return
+        if interaction.custom_id == KINKS_1_SELECT_CUSTOM_ID:
+            selected_values = set(interaction.values or [])
+            current_roles = {int(r) for r in member.role_ids}
+            kinks_1_roles = set(KINKS_1_ROLE_IDS.values())
+            target_role_ids = {KINKS_1_ROLE_IDS[v] for v in selected_values if v in KINKS_1_ROLE_IDS}
+            for role_id in (current_roles & kinks_1_roles) - target_role_ids:
+                try:
+                    await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            for role_id in target_role_ids - current_roles:
+                try:
+                    await bot.rest.add_role_to_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+            return
+        if interaction.custom_id == KINKS_2_SELECT_CUSTOM_ID:
+            selected_values = set(interaction.values or [])
+            current_roles = {int(r) for r in member.role_ids}
+            kinks_2_roles = set(KINKS_2_ROLE_IDS.values())
+            target_role_ids = {KINKS_2_ROLE_IDS[v] for v in selected_values if v in KINKS_2_ROLE_IDS}
+            for role_id in (current_roles & kinks_2_roles) - target_role_ids:
+                try:
+                    await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            for role_id in target_role_ids - current_roles:
+                try:
+                    await bot.rest.add_role_to_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
             await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
             return
 
