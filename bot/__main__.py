@@ -613,18 +613,18 @@ def main() -> None:
 
             interaction_style_row1 = (
                 special_endpoints.MessageActionRowBuilder()
-                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_SADIST_CUSTOM_ID, emoji=hikari.Emoji.parse("⚜️"), label="Sadist")
-                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_ROUGH_DOMME_CUSTOM_ID, emoji=hikari.Emoji.parse("<:ae_break_the_subs:1483494430546591834>"), label="Rough Domme")
-                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_GENTLE_DOMME_CUSTOM_ID, emoji=hikari.Emoji.parse("<:ae_head_pats:1484158676943114290>"), label="Gentle Domme")
-                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_MASOCHIST_CUSTOM_ID, emoji=hikari.Emoji.parse("❤️‍🔥"), label="Masochist")
-                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_NO_BRATTING_CUSTOM_ID, emoji=hikari.Emoji.parse("🚫"), label="Don't Brat")
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_SADIST_CUSTOM_ID, emoji=hikari.Emoji.parse("⚜️")")
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_ROUGH_DOMME_CUSTOM_ID, emoji=hikari.Emoji.parse("<:ae_break_the_subs:1483494430546591834>"))
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_GENTLE_DOMME_CUSTOM_ID, emoji=hikari.Emoji.parse("<:ae_head_pats:1484158676943114290>"))
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_MASOCHIST_CUSTOM_ID, emoji=hikari.Emoji.parse("❤️‍🔥"))
+                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_NO_BRATTING_CUSTOM_ID, emoji=hikari.Emoji.parse("🚫"))
             )
             interaction_style_row2 = (
                 special_endpoints.MessageActionRowBuilder()
-                .add_interactive_button(hikari.ButtonStyle.SUCCESS, BTN_BULLY_ME_CUSTOM_ID, emoji=hikari.Emoji.parse("✅"), label="Bully Me")
-                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_DONT_BULLY_CUSTOM_ID, emoji=hikari.Emoji.parse("❌"), label="Don't Bully Me")
-                .add_interactive_button(hikari.ButtonStyle.SUCCESS, BTN_FLIRT_CUSTOM_ID, emoji=hikari.Emoji.parse("💚"), label="Flirt")
-                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_DONT_FLIRT_CUSTOM_ID, emoji=hikari.Emoji.parse("❤️"), label="Don't Flirt")
+                .add_interactive_button(hikari.ButtonStyle.SUCCESS, BTN_BULLY_ME_CUSTOM_ID, emoji=hikari.Emoji.parse("✅"))
+                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_DONT_BULLY_CUSTOM_ID, emoji=hikari.Emoji.parse("❌"))
+                .add_interactive_button(hikari.ButtonStyle.SUCCESS, BTN_FLIRT_CUSTOM_ID, emoji=hikari.Emoji.parse("💚"))
+                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_DONT_FLIRT_CUSTOM_ID, emoji=hikari.Emoji.parse("❤️"))
             )
 
             await bot.rest.create_message(ctx.channel_id, embed=interaction_style_embed, components=[interaction_style_row1, interaction_style_row2])
