@@ -285,7 +285,7 @@ def main() -> None:
             orientation_embed = hikari.Embed(
             title="ORIENTATION",
             description=(
-                "<:Straight:1482033959377440969> Straight　　　　　　　　　　　\n"
+                "<:Straight:1482033959377440969> Straight　　　　　　　　　　　　　　　　　　　　　\n"
                 "<:Lesbian:1482034028206096546> Lesbian \n"
                 "<:BiPan:1482034060854558800> Bi/Pan \n"
                 "<:Asexual:1482034955579166934> Asexual \n"
@@ -526,7 +526,10 @@ def main() -> None:
             return
 
         selected = values[0]
-
+        
+        guild_id = interaction.guild_id
+        if guild_id is None:
+            return
         if interaction.custom_id == ORIENTATION_SELECT_CUSTOM_ID:
             target_role_id = ORIENTATION_ROLE_IDS.get(selected)
             if target_role_id is None:
