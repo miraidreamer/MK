@@ -60,6 +60,7 @@ def main() -> None:
     }
 
     REGION_SELECT_CUSTOM_ID = "region_select_v2"
+    ORIENTATION_SELECT_CUSTOM_ID = "orientation_select_v1"
 
     # Hardcoded region role IDs (single-select; picking one removes the others).
     REGION_ROLE_IDS: dict[str, int] = {
@@ -69,6 +70,13 @@ def main() -> None:
         "af": 1481913841276157972,  # Africa
         "as": 1481913861656543303,  # Asia
         "oc": 1481913878333100053,  # Oceania
+    }
+    ORIENTATION_ROLE_IDS: dict[str, int] = {
+        "straight":    1481911068111536168,
+        "lesbian":     1481912149289861305,
+        "bipan":       1481912198153638020,
+        "asexual":     1481912363199238144,
+        "other":       1481912666850197615,
     }
 
     ticket_notice_message_by_channel_id: dict[int, int] = {}
@@ -264,17 +272,53 @@ def main() -> None:
                     hikari.ButtonStyle.SECONDARY,
                     "gender_dick",
                     emoji=hikari.Emoji.parse("🌯"),
-                    label="I have a dick",
                 )
                 .add_interactive_button(
                     hikari.ButtonStyle.SECONDARY,
                     "gender_pussy",
                     emoji=hikari.Emoji.parse("🌮"),
-                    label="I have a pussy",
                 )
             )
 
             await bot.rest.create_message(ctx.channel_id, embed=gender_embed, components=[gender_row])
+
+            orientation_embed = hikari.Embed(
+            title="ORIENTATION",
+            description=(
+                "<:Straight:1482033959377440969> Straight　　　　　　　　　　　"
+                "<:Lesbian:1482034028206096546> Lesbian "
+                "<:BiPan:1482034060854558800> Bi/Pan "
+                "<:Asexual:1482034955579166934> Asexual "
+                "<:Other:1482033993930113055> Other"
+            ),
+            color=0x861f42,
+        )
+
+        ORIENTATION_ROLE_IDS: dict[str, int] = {
+            "straight":    1481911068111536168,
+            "lesbian":     1481912149289861305,
+            "bipan":       1481912198153638020,
+            "asexual":     1481912363199238144,
+            "other":       1481912666850197615,
+        }
+
+        orientation_row = special_endpoints.MessageActionRowBuilder()
+        orientation_menu = (
+            orientation_row.add_text_menu(
+                ORIENTATION_SELECT_CUSTOM_ID,
+                placeholder="Select your orientation.",
+                min_values=1,
+                max_values=1,
+            )
+            .add_option("Straight", "straight", emoji=hikari.Emoji.parse("<:Straight:1482033959377440969>"))
+            .add_option("Lesbian", "lesbian", emoji=hikari.Emoji.parse("<:Lesbian:1482034028206096546>"))
+            .add_option("Bi/Pan", "bipan", emoji=hikari.Emoji.parse("<:BiPan:1482034060854558800>"))
+            .add_option("Asexual", "asexual", emoji=hikari.Emoji.parse("<:Asexual:1482034955579166934>"))
+            .add_option("Other", "other", emoji=hikari.Emoji.parse("<:Other:1482033993930113055>"))
+            .parent
+        )
+
+        await bot.rest.create_message(ctx.channel_id, embed=orientation_embed, components=[orientation_menu])
             
     #TICKETS NOTIFICATIONS
     async def _on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
@@ -463,6 +507,8 @@ def main() -> None:
             toggle_role_id = PUSSY_ROLE_ID
         elif interaction.custom_id == REGION_SELECT_CUSTOM_ID:
             toggle_role_id = None
+        elif interaction.custom_id == ORIENTATION_SELECT_CUSTOM_ID:
+            toggle_role_id = None
         else:
             return
 
@@ -488,6 +534,27 @@ def main() -> None:
             return
 
         selected = values[0]
+
+        if interaction.custom_id == ORIENTATION_SELECT_CUSTOM_ID:
+            target_role_id = ORIENTATION_ROLE_IDS.get(selected)
+            if target_role_id is None:
+                await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+                return
+            current_roles = {int(r) for r in member.role_ids}
+            orientation_roles = set(ORIENTATION_ROLE_IDS.values())
+            for role_id in (current_roles & orientation_roles) - {target_role_id}:
+                try:
+                    await bot.rest.remove_role_from_member(guild_id, member.id, role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            if target_role_id not in current_roles:
+                try:
+                    await bot.rest.add_role_to_member(guild_id, member.id, target_role_id)
+                except (hikari.ForbiddenError, hikari.NotFoundError):
+                    pass
+            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
+            return
+
         target_role_id = REGION_ROLE_IDS.get(selected)
         if target_role_id is None:
             await interaction.create_initial_response(
