@@ -280,7 +280,49 @@ def main() -> None:
         return True
 
     bot.subscribe(hikari.StartingEvent, client.start)
-    
+    @client.register()
+    class rules(
+        lightbulb.SlashCommand,
+        name = "rules",
+        description = "display server rules",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            if not await _owner_only(ctx):
+                return
+            rules = hikari.Embed(
+                description = "By joining, you agree to follow Discord's ToS as well as the following rules.\n　\n  **· · ─── 𓆩♡𓆪 GENERAL RULES 𓆩♡𓆪 ─── · ·**",
+                color = 0x861f42,
+            )
+            rules.add_field("▹ **1. Be respectful**", "　\nYou must respect all users, regardless of your liking towards them. Treat others the way you want to be treated.\n　")
+            rules.add_field("▹ **2. Inappropriate Language**", "　\nThe use of profanity is allowed. However, any ill-intended derogatory language towards any user (slurs, hate speech, etc.) is prohibited. Just use common sense.\n　")
+            rules.add_field("▹ **3. No spamming**","　\nDon't send a lot of small messages right after each other. Do not disrupt chat by spamming.\n　")
+            rules.add_field("▹ **4. Pornographic/adult/other NSFW material**","　\nThis is a community server meant to share in this kind of material. However, the sending or distributing of overly graphic content—especially if not in an appropriate channel—may be deemed as punishable by moderators. Examples include but are not limited to beastiality, animal cruelty, race play, incest, or loli content. \n　")
+            rules.add_field("▹ **5. Nudes**","　\nThe sharing or distributing of nudes within the server is not allowed. If you want to send someone nudes, do so privately. Any report of unsolicited nudes being sent will result in immediate removal of the sender.\n　")
+            rules.add_field("▹ **6. Malicious Persons & Minors**","　\nCatfishes, scammers, bots, or underage persons will be banned on sight or notice. Do not expect a warning.\n　")
+            rules.add_field("▹ **7. Findom/Advertisements**","　\nFindom and any kind of advertising of findom is not allowed. Advertisements of other servers within Pandæmonium are also strictly prohibited. Other forms of advertisement are more subjective. However, as a general rule, if what you are advertising/promoting is not relevant to the channel or subject of conversation, it is not allowed. \n　")
+            rules.add_field("▹ **8. No offensive names and profile pictures**","　\nYou will be asked to change your name or picture if moderators deem them inappropriate.\n　")
+            rules.add_field("▹ **9. Server Raiding**","　\nShould go without saying, raiding or mentions of raiding are not allowed.\n")
+            rules.add_field("▹ **10. Direct & Indirect Threats**","　\nThreats to other users of DDoS, Death, DoX, abuse, and other malicious threats are absolutely prohibited and disallowed.\n　")
+            rules.add_field("▹ **11. Proper use of Channels**","　\nWhile not heavily enforced, try to stick to using channels for their intended purpose, and their intended purpose only. If you are confused regarding what a channel is used for or how to use it, ask staff or another active member in the server. Keep heavy topics in <#1481790436120068199> and do not vent in other channels.\n　")
+            femdom = hikari.Embed(
+                description = "This is a FEMDOM server, which implies a hierarchical structure.\n　\n  **· · ─── 𓆩♡𓆪 FEMDOM RULES 𓆩♡𓆪 ─── · ·**",
+                color = 0x861f42,
+            )
+            femdom.add_field("▹ **1. ALL Females are above Males**","This rule applies to every female regardless of their preferred position. Males are not to disrespect or belittle any female in any way, shape, or form. Males are to obey females within reason.")
+            femdom.add_field("▹ **2. Male Dom (Mdom) Behavior**","Any form of male dom behavior—regardless of whether or not it is a joke—will result in immediate removal. Switch males are allowed, however any dominant behavior shown inside (or if unsolicited when conversing with members outside) the server will also result in removal.")
+            femdom.add_field("▹ **3. Positions/Preferences**","Dommes are to respect other dommes as equals unless the contrary is agreed upon prior. Respect people's roles and don't push boundaries beyond limits.")
+            femdom.add_field("▹ **4. Safe word**","While this is a Femdom server, please remember that hierarchical interactions are founded on consent. If you genuinely feel uncomfortable, or that someone is being unreasonable, you may use the following emote: 🔴  as a safe word. The command: /safeword can also be used to cancel any bot impairments. These should be used any times your boundaries are being crossed. __THESE ARE TO BE RESPECTED BY ALL MEMBERS ON NOTICE__. If safewords are not being respected, please get in contact with staff using ⁠<#1481743160735567993>. If immediate intervention is required, you may also ping staff directly.")
+            femdom.add_field("▹ **5. SSC & RACK**", "As a kink adjacent server, all dynamics and practices must be within the perimeters of **SSC** (Safe, Sanity and Consensual) and **RACK** (Risk Aware Consensual Kink). Engaging in activities disregarding their risks, or the safety, sanity and consent of all participating and non-participating individuals will not be tolerated and are strictly banned.")
+            mods = hikari.Embed(
+                description = "**The Admins and Mods will Mute/Kick/Ban per discretion based on all of the above rules and the severity of the infraction. If you feel mistreated DM an Admin and we will resolve the issue.**\n\n**Your presence in this server implies accepting these rules, including all further changes. These changes might be done at any time without notice, it is your responsibility to check for them.**",
+                color = 0x861f42
+            )
+            await ctx.client.app.rest.create_message(1481738459818234001, embed = rules)
+            await ctx.client.app.rest.create_message(1481738459818234001, embed = femdom)
+            await ctx.client.app.rest.create_message(1481738459818234001, embed = mods)
+            await ctx.client.app.rest.create_message(1481738459818234001, content = hikari.File("rulesbar.png"))
     @client.register()
     class give_verified(
         lightbulb.SlashCommand,
