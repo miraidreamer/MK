@@ -295,7 +295,7 @@ def main() -> None:
                 description = "By joining, you agree to follow Discord's ToS as well as the following rules.\n　\n  **· · ─── 𓆩♡𓆪 GENERAL RULES 𓆩♡𓆪 ─── · ·**",
                 color = 0x861f42,
             )
-            rules.add_field("▹ **1. Be respectful**", "　\nYou must respect all users, regardless of your liking towards them. Treat others the way you want to be treated.\n　")
+            rules.add_field("▹ **1. Be respectful**", "　\nYou must respect all users, regardless of your liking towards them. Treat others the way you want to be treated.Avoid political, religious, or other controversial topics that are likely to escalate into comfrontation.\n　")
             rules.add_field("▹ **2. Inappropriate Language**", "　\nThe use of profanity is allowed. However, any ill-intended derogatory language towards any user (slurs, hate speech, etc.) is prohibited. Just use common sense.\n　")
             rules.add_field("▹ **3. No spamming**","　\nDon't send a lot of small messages right after each other. Do not disrupt chat by spamming.\n　")
             rules.add_field("▹ **4. Pornographic/adult/other NSFW material**","　\nThis is a community server meant to share in this kind of material. However, the sending or distributing of overly graphic content—especially if not in an appropriate channel—may be deemed as punishable by moderators. Examples include but are not limited to beastiality, animal cruelty, race play, incest, or loli content. \n　")
