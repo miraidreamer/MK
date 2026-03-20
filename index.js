@@ -1,16 +1,24 @@
-const { spawn } = require("child_process");
+const { execSync, spawn } = require("child_process");
 
-const install = spawn("pip3", ["install", "-r", "requirements.txt"], { stdio: "inherit" });
+try {
+    console.log("Installing Python...");
+    execSync("apt-get update -y && apt-get install -y python3 python3-pip", { stdio: "inherit" });
+} catch (e) {
+    console.error("Failed to install Python:", e.message);
+    process.exit(1);
+}
 
-install.on("close", (code) => {
-    if (code !== 0) {
-        console.error(`pip install failed with code ${code}`);
-        process.exit(code);
-    }
+try {
+    console.log("Installing Python dependencies...");
+    execSync("pip3 install -r requirements.txt", { stdio: "inherit" });
+} catch (e) {
+    console.error("Failed to install dependencies:", e.message);
+    process.exit(1);
+}
 
-    const bot = spawn("python3", ["__main__.py"], { stdio: "inherit" });
+console.log("Starting bot...");
+const bot = spawn("python3", ["__main__.py"], { stdio: "inherit" });
 
-    bot.on("close", (code) => {
-        process.exit(code);
-    });
+bot.on("close", (code) => {
+    process.exit(code);
 });
