@@ -18,7 +18,7 @@ def main() -> None:
 
     logging.basicConfig(level=logging.INFO)
 
-    token = _get_env("DISCORD_TOKEN")
+    token = _get_env("BOT_TOKEN")
 
     bot = hikari.GatewayBot(
         token,
