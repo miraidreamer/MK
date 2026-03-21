@@ -782,11 +782,11 @@ def main() -> None:
             )
             interaction_style_row2 = (
                 special_endpoints.MessageActionRowBuilder()
-                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_NO_BRATTING_CUSTOM_ID, emoji=hikari.Emoji.parse("🚫"))
-                .add_interactive_button(hikari.ButtonStyle.SUCCESS, BTN_BULLY_ME_CUSTOM_ID, emoji=hikari.Emoji.parse("✅"))
-                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_DONT_BULLY_CUSTOM_ID, emoji=hikari.Emoji.parse("❌"))
-                .add_interactive_button(hikari.ButtonStyle.SUCCESS, BTN_FLIRT_CUSTOM_ID, emoji=hikari.Emoji.parse("💚"))
-                .add_interactive_button(hikari.ButtonStyle.DANGER, BTN_DONT_FLIRT_CUSTOM_ID, emoji=hikari.Emoji.parse("❤️"))
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_NO_BRATTING_CUSTOM_ID, emoji=hikari.Emoji.parse("🚫"))
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_BULLY_ME_CUSTOM_ID, emoji=hikari.Emoji.parse("✅"))
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_DONT_BULLY_CUSTOM_ID, emoji=hikari.Emoji.parse("❌"))
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_FLIRT_CUSTOM_ID, emoji=hikari.Emoji.parse("💚"))
+                .add_interactive_button(hikari.ButtonStyle.SECONDARY, BTN_DONT_FLIRT_CUSTOM_ID, emoji=hikari.Emoji.parse("❤️"))
             )
 
             await bot.rest.create_message(ctx.channel_id, embed=interaction_style_embed, components=[interaction_style_row1, interaction_style_row2])
