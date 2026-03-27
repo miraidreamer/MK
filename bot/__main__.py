@@ -647,7 +647,7 @@ def main() -> None:
             pings_embed = hikari.Embed(
                 title="PINGS",
                 description=(
-                    "🗨️ Chat revive ping 　　　　　　　　　　\n"
+                    "🗨️ Chat revive ping 　　　　　　　　\n"
                     "🔝 Bump reminder\n"
                     "🗞️ News ping\n"
                     "🎀 Events"
