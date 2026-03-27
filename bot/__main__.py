@@ -44,6 +44,7 @@ def main() -> None:
     #Pings
     PING_CHAT_REVIVE_CUSTOM_ID = "ping_chat_revive"
     PING_BUMP_REMINDER_CUSTOM_ID = "ping_bump_reminder"
+    PING_EVENTS_CUSTOM_ID = "ping_events"
     PING_NEWS_CUSTOM_ID = "ping_news"
     #Prefs
     BTN_SADIST_CUSTOM_ID = "btn_sadist"
@@ -221,6 +222,7 @@ def main() -> None:
     PING_ROLE_IDS: dict[str, int] = {
         PING_CHAT_REVIVE_CUSTOM_ID: 1482874789831118848,
         PING_BUMP_REMINDER_CUSTOM_ID: 1482874862677786685,
+        PING_EVENTS_CUSTOM_ID: 1486818848715046922,
         PING_NEWS_CUSTOM_ID: 1482874915840462900,
     }
     INTERACTION_STYLE_ROLE_IDS: dict[str, int] = {
@@ -647,7 +649,8 @@ def main() -> None:
                 description=(
                     "🗨️ Chat revive ping 　　　\n"
                     "🔝 Bump reminder\n"
-                    "🗞️ News ping"
+                    "🗞️ News ping\n"
+                    "🎀 Events"
                 ),
                 color=0x861f42,
             )
@@ -668,6 +671,10 @@ def main() -> None:
                     hikari.ButtonStyle.SECONDARY,
                     PING_NEWS_CUSTOM_ID,
                     emoji=hikari.Emoji.parse("🗞️"),
+                ).add_interactive_button(
+                    hikari.ButtonStyle.SECONDARY,
+                    PING_EVENTS_CUSTOM_ID,
+                    emoji=hikari.Emoji.parse("🎀"),
                 )
             )
 
