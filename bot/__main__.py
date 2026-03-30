@@ -1083,10 +1083,6 @@ def main() -> None:
             role_ids_now=role_ids_now,
         )
 
-    bot.subscribe(hikari.GuildChannelCreateEvent, _on_channel_create)
-    bot.subscribe(hikari.GuildChannelDeleteEvent, _on_channel_delete)
-    bot.subscribe(hikari.MemberUpdateEvent, _on_member_update)
-
     async def _on_interaction_create(event: hikari.InteractionCreateEvent) -> None:
         interaction = event.interaction
         if not isinstance(interaction, hikari.ComponentInteraction):
@@ -1509,7 +1505,10 @@ def main() -> None:
             except (hikari.ForbiddenError, hikari.NotFoundError):
                 pass
         await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
-
+    
+    bot.subscribe(hikari.GuildChannelCreateEvent, _on_channel_create)
+    bot.subscribe(hikari.GuildChannelDeleteEvent, _on_channel_delete)
+    bot.subscribe(hikari.MemberUpdateEvent, _on_member_update)
     bot.subscribe(hikari.InteractionCreateEvent, _on_interaction_create)
     bot.run()
 
