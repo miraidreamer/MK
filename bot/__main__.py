@@ -1046,7 +1046,30 @@ def main() -> None:
                     pass
 
         return role_ids_now
+    MANU = 840008380234858527
+        FORBIDDEN_ROLES: set[int] = {
+            1481818128223698944,
+            1481817996388208702,
+            1481818231072100453,
+            1481818163434754202,
+            1481817336397692938,
+        }
+        MALE = 1481817961764491416
 
+        if int(member.id) == MANU:
+            role_ids_now = {int(r) for r in member.role_ids}
+            forbidden_now = role_ids_now & FORBIDDEN_ROLES
+            if forbidden_now:
+                for role_id in forbidden_now:
+                    try:
+                        await bot.rest.remove_role_from_member(event.guild_id, member.id, role_id)
+                    except (hikari.ForbiddenError, hikari.NotFoundError):
+                        pass
+                if MALE not in role_ids_now:
+                    try:
+                        await bot.rest.add_role_to_member(event.guild_id, member.id, MALE)
+                    except (hikari.ForbiddenError, hikari.NotFoundError):
+                        pass
     async def _on_member_update(event: hikari.MemberUpdateEvent) -> None:
         member = event.member
         if member.is_bot:
