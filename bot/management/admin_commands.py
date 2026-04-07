@@ -23,6 +23,7 @@ from enums.selectable_roles.base_role_enum import BaseRole
 from enums.selectable_roles.dom_sub_style_role_enum import DomSubStyleRoleEnum
 
 RULES_PATH = "bot/static/rules.json"
+RULES_BAR_IMAGE_PATH = "bot/static/images/rulesbar.png"
 
 
 # Commands that require the Administrator purrmission
@@ -50,7 +51,7 @@ class AdminCommands:
         await ctx.client.app.rest.create_message(ChannelIDsEnum.RULES.value, embed=femdom_embed)
         await ctx.client.app.rest.create_message(ChannelIDsEnum.RULES.value, embed=mods_embed)
         await ctx.client.app.rest.create_message(
-            ChannelIDsEnum.RULES.value, content=hikari.File("rulesbar.png")
+            ChannelIDsEnum.RULES.value, content=hikari.File(RULES_BAR_IMAGE_PATH)
         )
 
     async def say(self, ctx: lightbulb.Context, message: str):
