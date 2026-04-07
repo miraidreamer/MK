@@ -142,12 +142,11 @@ class InteractionScript:
             )
             return
 
-        if active_enum.USE_BUTTONS and (
-            custom_id in [item.value for item in InteractionStyleRoleEnum]
-        ):
-            if custom_id in InteractionStyleRoleEnum.get_dom_styles() and not (
-                current_role_ids & PositionRoleEnum.get_dominant_role_ids()
-            ):
+        if active_enum in [InteractionStyleRoleEnum, DomSubStyleRoleEnum]:
+            if (
+                custom_id in InteractionStyleRoleEnum.get_dom_styles()
+                or custom_id in DomSubStyleRoleEnum.get_dom_styles()
+            ) and not (current_role_ids & PositionRoleEnum.get_dominant_role_ids()):
                 await interaction.create_initial_response(
                     hikari.ResponseType.MESSAGE_CREATE,
                     "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select this.",
@@ -155,12 +154,13 @@ class InteractionScript:
                 )
                 return
 
-            if custom_id in InteractionStyleRoleEnum.get_sub_styles() and not (
-                current_role_ids & PositionRoleEnum.get_submissive_role_ids()
-            ):
+            if (
+                custom_id in InteractionStyleRoleEnum.get_sub_styles()
+                or custom_id in InteractionStyleRoleEnum.get_sub_styles()
+            ) and not (current_role_ids & PositionRoleEnum.get_submissive_role_ids()):
                 await interaction.create_initial_response(
                     hikari.ResponseType.MESSAGE_CREATE,
-                    "You need a Sub-Lean or Submissive role to select this.",
+                    "You need a Dom-Lean, Switch, Sub-Lean or Submissive role to select this.",
                     flags=hikari.MessageFlag.EPHEMERAL,
                 )
                 return
