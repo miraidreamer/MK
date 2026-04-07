@@ -1,22 +1,15 @@
 import hikari
 from typing import Type
 from enums.selectable_roles.base_role_enum import BaseRoleEnum
-from enums.selectable_roles.region_role_enum import RegionRoleEnum
-from enums.selectable_roles.orientation_role_enum import OrientationRoleEnum
-from enums.selectable_roles.genital_role_enum import GenitalRoleEnum
-from enums.selectable_roles.position_role_enum import PositionRoleEnum
-from enums.selectable_roles.dm_status_role_enum import DmStatusRoleEnum
-from enums.selectable_roles.relationship_role_enum import RelationshipRoleEnum
-from enums.selectable_roles.ping_role_enum import PingRoleEnum
-from enums.selectable_roles.dom_title_enum import DomTitleEnum
-from enums.selectable_roles.pet_names_role_enum import PetNamesRoleEnum
-from enums.selectable_roles.kink_role_enum import KinkRoleEnum
-from enums.selectable_roles.interaction_style_role_enum import InteractionStyleRoleEnum
-from enums.selectable_roles.booster_color_enum import BoosterColorEnum
-from enums.selectable_roles.level_color_role_enum import LevelColorRoleEnum
 from enums.special_roles_enum import SpecialRolesEnum
 from enums.selectable_roles.dom_sub_style_role_enum import DomSubStyleRoleEnum
 import logging
+from enums.selectable_roles.position_role_enum import PositionRoleEnum
+from enums.selectable_roles.dom_title_enum import DomTitleEnum
+from enums.selectable_roles.pet_names_role_enum import PetNamesRoleEnum
+from enums.selectable_roles.interaction_style_role_enum import InteractionStyleRoleEnum
+from enums.selectable_roles.booster_color_enum import BoosterColorEnum
+from enums.selectable_roles.level_color_role_enum import LevelColorRoleEnum
 
 
 class InteractionScript:
@@ -24,23 +17,7 @@ class InteractionScript:
         self.bot = bot
         # Map Custom IDs to their corresponding Enum class
         self.registry: dict[str, Type[BaseRoleEnum]] = {
-            enum_cls.CUSTOM_ID: enum_cls
-            for enum_cls in [
-                RegionRoleEnum,
-                OrientationRoleEnum,
-                PositionRoleEnum,
-                DmStatusRoleEnum,
-                RelationshipRoleEnum,
-                DomTitleEnum,
-                PetNamesRoleEnum,
-                KinkRoleEnum,
-                DomSubStyleRoleEnum,
-                InteractionStyleRoleEnum,
-                BoosterColorEnum,
-                LevelColorRoleEnum,
-                GenitalRoleEnum,
-                PingRoleEnum,
-            ]
+            enum_cls.CUSTOM_ID: enum_cls for enum_cls in [BaseRoleEnum.__subclasses__()]
         }
 
     async def on_interaction_create(self, event: hikari.InteractionCreateEvent) -> None:
@@ -112,9 +89,7 @@ class InteractionScript:
         ):
             for role_id in current_roles & {item.value for item in DomTitleEnum}:
                 try:
-                    await self.bot.rest.remove_role_from_member(
-                        guild_id, member.id, role_id
-                    )
+                    await self.bot.rest.remove_role_from_member(guild_id, member.id, role_id)
                 except (hikari.ForbiddenError, hikari.NotFoundError):
                     logging.warning("Tried removing a role that is not applied")
             await interaction.create_initial_response(
@@ -130,9 +105,7 @@ class InteractionScript:
             current_roles = {int(r) for r in member.role_ids}
             for role_id in current_roles & {item.value for item in PetNamesRoleEnum}:
                 try:
-                    await self.bot.rest.remove_role_from_member(
-                        guild_id, member.id, role_id
-                    )
+                    await self.bot.rest.remove_role_from_member(guild_id, member.id, role_id)
                 except (hikari.ForbiddenError, hikari.NotFoundError):
                     logging.warning("Tried removing a role that is not applied")
             await interaction.create_initial_response(
@@ -174,18 +147,14 @@ class InteractionScript:
         if active_enum.USE_BUTTONS:
             role_id = next(iter(target_role_ids))
             if role_id in current_role_ids:
-                await self.bot.rest.remove_role_from_member(
-                    guild_id, member.id, role_id
-                )
+                await self.bot.rest.remove_role_from_member(guild_id, member.id, role_id)
             else:
                 await self.bot.rest.add_role_to_member(guild_id, member.id, role_id)
                 # Check for mutually exclusive roles
                 if hasattr(active_enum, "get_mutex_partner"):
                     partner_id = active_enum.get_mutex_partner(role_id)
                     if partner_id and partner_id in current_role_ids:
-                        await self.bot.rest.remove_role_from_member(
-                            guild_id, member.id, partner_id
-                        )
+                        await self.bot.rest.remove_role_from_member(guild_id, member.id, partner_id)
 
         else:
             roles_to_remove = (current_role_ids & category_role_ids) - target_role_ids
@@ -193,9 +162,7 @@ class InteractionScript:
 
             for role_id in roles_to_remove:
                 try:
-                    await self.bot.rest.remove_role_from_member(
-                        guild_id, member.id, role_id
-                    )
+                    await self.bot.rest.remove_role_from_member(guild_id, member.id, role_id)
                 except (hikari.ForbiddenError, hikari.NotFoundError):
                     logging.exception(
                         f"Exception in role selection when trying to remove role id: {role_id}"
@@ -210,8 +177,6 @@ class InteractionScript:
                     )
 
         try:
-            await interaction.create_initial_response(
-                hikari.ResponseType.DEFERRED_MESSAGE_UPDATE
-            )
+            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
         except hikari.NotFoundError:
             logging.warning("Something went wrong with role selection.")

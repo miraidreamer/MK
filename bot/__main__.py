@@ -14,6 +14,7 @@ def _get_env(name: str) -> str:
         raise RuntimeError(f"Missing required environment variable: {name}")
     return value
 
+
 class Bot:
     def __init__(self):
         load_dotenv()
@@ -35,16 +36,10 @@ class Bot:
     def run(self) -> None:
         self.bot.subscribe(hikari.StartingEvent, self.client.start)
 
-        self.bot.subscribe(
-            hikari.GuildChannelCreateEvent, self.manager.on_channel_create
-        )
-        self.bot.subscribe(
-            hikari.GuildChannelDeleteEvent, self.manager.on_channel_delete
-        )
+        self.bot.subscribe(hikari.GuildChannelCreateEvent, self.manager.on_channel_create)
+        self.bot.subscribe(hikari.GuildChannelDeleteEvent, self.manager.on_channel_delete)
         self.bot.subscribe(hikari.MemberUpdateEvent, self.manager.on_member_update)
-        self.bot.subscribe(
-            hikari.InteractionCreateEvent, self.interaction.on_interaction_create
-        )
+        self.bot.subscribe(hikari.InteractionCreateEvent, self.interaction.on_interaction_create)
 
         self.bot.run()
 
@@ -52,4 +47,3 @@ class Bot:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     Bot().run()
-
