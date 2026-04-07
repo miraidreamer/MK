@@ -42,5 +42,5 @@ class BaseRole:
         return "\n".join([f"{item.emoji + ' ' if item.emoji else ''}{item.label}" for item in cls])
 
     @classmethod
-    def get_mutex_partner(cls) -> int | None:
+    def get_mutex_partner(cls, role_id: int) -> int | None:
         return None

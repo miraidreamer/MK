@@ -10,6 +10,7 @@ from enums.selectable_roles.pet_names_role_enum import PetNamesRoleEnum
 from enums.selectable_roles.interaction_style_role_enum import InteractionStyleRoleEnum
 from enums.selectable_roles.booster_color_enum import BoosterColorEnum
 from enums.selectable_roles.level_color_role_enum import LevelColorRoleEnum
+from enums.gender_role_enum import GenderRoleEnum
 
 
 class InteractionScript:
@@ -32,7 +33,7 @@ class InteractionScript:
 
         custom_id = interaction.custom_id
 
-        # If it's a button, the value is the custom_id
+        # If it's a button, the value is the custom_id, a little confusing, this is why we use internal_id for button types and get_custom_id() for dropdown types
         selected_values = interaction.values if interaction.values else [custom_id]
 
         active_enum = self.registry.get(custom_id)
@@ -50,10 +51,10 @@ class InteractionScript:
 
         current_role_ids = {int(r) for r in member.role_ids}
 
-        # Handle Restrictions
+        # Handle Restrictions TODO move this somewhere else
         if (
-            custom_id in PositionRoleEnum.get_dominant_role_ids()
-            and SpecialRolesEnum.MALE.value in current_role_ids
+            custom_id in PositionRoleEnum.get_dominant_internal_ids()
+            and GenderRoleEnum.MALE.value in current_role_ids
         ):
             await interaction.create_initial_response(
                 hikari.ResponseType.MESSAGE_CREATE,
@@ -63,8 +64,7 @@ class InteractionScript:
             return
 
         if active_enum == BoosterColorEnum:
-            current_roles = {int(r) for r in member.role_ids}
-            if SpecialRolesEnum.BOOSTER.value not in current_roles:
+            if SpecialRolesEnum.BOOSTER.value not in current_role_ids:
                 await interaction.create_initial_response(
                     hikari.ResponseType.MESSAGE_CREATE,
                     "Only boosters can select a color from this menu.",
@@ -83,9 +83,9 @@ class InteractionScript:
                     return
 
         if active_enum == DomTitleEnum and not (
-            current_role_ids & PositionRoleEnum.get_dominant_role_ids()
+            current_role_ids & PositionRoleEnum.get_dominant_internal_ids()
         ):
-            for role_id in current_roles & {item.value for item in DomTitleEnum}:
+            for role_id in current_role_ids & {item.value for item in DomTitleEnum}:
                 try:
                     await self.bot.rest.remove_role_from_member(guild_id, member.id, role_id)
                 except (hikari.ForbiddenError, hikari.NotFoundError):
@@ -98,7 +98,7 @@ class InteractionScript:
             return
 
         if active_enum == PetNamesRoleEnum and not (
-            current_role_ids & PositionRoleEnum.get_submissive_role_ids()
+            current_role_ids & PositionRoleEnum.get_submissive_internal_ids()
         ):
             current_roles = {int(r) for r in member.role_ids}
             for role_id in current_roles & {item.value for item in PetNamesRoleEnum}:
@@ -117,7 +117,7 @@ class InteractionScript:
             if (
                 custom_id in InteractionStyleRoleEnum.get_dom_styles()
                 or custom_id in DomSubStyleRoleEnum.get_dom_styles()
-            ) and not (current_role_ids & PositionRoleEnum.get_dominant_role_ids()):
+            ) and not (current_role_ids & PositionRoleEnum.get_dominant_internal_ids()):
                 await interaction.create_initial_response(
                     hikari.ResponseType.MESSAGE_CREATE,
                     "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select this.",
@@ -128,7 +128,7 @@ class InteractionScript:
             if (
                 custom_id in InteractionStyleRoleEnum.get_sub_styles()
                 or custom_id in InteractionStyleRoleEnum.get_sub_styles()
-            ) and not (current_role_ids & PositionRoleEnum.get_submissive_role_ids()):
+            ) and not (current_role_ids & PositionRoleEnum.get_submissive_internal_ids()):
                 await interaction.create_initial_response(
                     hikari.ResponseType.MESSAGE_CREATE,
                     "You need a Dom-Lean, Switch, Sub-Lean or Submissive role to select this.",
@@ -149,8 +149,7 @@ class InteractionScript:
             else:
                 await self.bot.rest.add_role_to_member(guild_id, member.id, role_id)
                 # Check for mutually exclusive roles
-                if hasattr(active_enum, "get_mutex_partner"):
-                    partner_id = active_enum.get_mutex_partner(role_id)
+                if partner_id := active_enum.get_mutex_partner(role_id):
                     if partner_id and partner_id in current_role_ids:
                         await self.bot.rest.remove_role_from_member(guild_id, member.id, partner_id)
 

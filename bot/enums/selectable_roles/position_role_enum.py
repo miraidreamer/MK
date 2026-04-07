@@ -32,21 +32,21 @@ class PositionRoleEnum(BaseRole, Enum):
         )
 
     @staticmethod
-    def get_dominant_role_ids() -> set[int]:
+    def get_dominant_internal_ids() -> set[str]:
         return {
-            PositionRoleEnum.DOMINANT.value,
-            PositionRoleEnum.DOMLEAN.value,
-            PositionRoleEnum.SWITCH.value,
-            PositionRoleEnum.SUBLEAN.value,
+            PositionRoleEnum.DOMINANT.internal_id,
+            PositionRoleEnum.DOMLEAN.internal_id,
+            PositionRoleEnum.SWITCH.internal_id,
+            PositionRoleEnum.SUBLEAN.internal_id,
         }
 
     @staticmethod
-    def get_submissive_role_ids() -> set[int]:
+    def get_submissive_internal_ids() -> set[str]:
         return {
-            PositionRoleEnum.DOMLEAN.value,
-            PositionRoleEnum.SWITCH.value,
-            PositionRoleEnum.SUBLEAN.value,
-            PositionRoleEnum.SUBMISSIVE.value,
+            PositionRoleEnum.DOMLEAN.internal_id,
+            PositionRoleEnum.SWITCH.internal_id,
+            PositionRoleEnum.SUBLEAN.internal_id,
+            PositionRoleEnum.SUBMISSIVE.internal_id,
         }
 
 

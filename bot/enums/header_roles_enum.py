@@ -24,28 +24,30 @@ class HeaderRolesEnum(Enum):
     BOUNDARIES_AND_RELATIONSHIPS = 1483416803215675494
     KINKS = 1482760118994210977
 
-    # Mapping headers to the Enum classes that contain the "child" roles
-    _CATEGORY_MAP: dict["HeaderRolesEnum", list[BaseRole]] = {
-        INFORMATION: [
-            AgeRoleEnum,
-            GenderRoleEnum,
-            GenitalRoleEnum,
-            OrientationRoleEnum,
-            RegionRoleEnum,
-        ],
-        POSITION_AND_PREFERENCES: [
-            PositionRoleEnum,
-            DomTitleEnum,
-            PetNamesRoleEnum,
-            DomSubStyleRoleEnum,
-        ],
-        BOUNDARIES_AND_RELATIONSHIPS: [
-            DmStatusRoleEnum,
-            RelationshipRoleEnum,
-            InteractionStyleRoleEnum,
-        ],
-        KINKS: [KinkRoleEnumAN, KinkRoleEnumOW, PingRoleEnum, LevelRoleEnum],
-    }
+    # This is a class attribute, not an Enum member
+    @classmethod
+    def get_category_map(cls):
+        return {
+            cls.INFORMATION: [
+                AgeRoleEnum,
+                GenderRoleEnum,
+                GenitalRoleEnum,
+                OrientationRoleEnum,
+                RegionRoleEnum,
+            ],
+            cls.POSITION_AND_PREFERENCES: [
+                PositionRoleEnum,
+                DomTitleEnum,
+                PetNamesRoleEnum,
+                DomSubStyleRoleEnum,
+            ],
+            cls.BOUNDARIES_AND_RELATIONSHIPS: [
+                DmStatusRoleEnum,
+                RelationshipRoleEnum,
+                InteractionStyleRoleEnum,
+            ],
+            cls.KINKS: [KinkRoleEnumAN, KinkRoleEnumOW, PingRoleEnum, LevelRoleEnum],
+        }
 
     @classmethod
     def get_header_to_child_map(cls) -> dict[int, set[int]]:
@@ -54,11 +56,16 @@ class HeaderRolesEnum(Enum):
         """
         mapping: dict[int, set[int]] = {}
 
-        for header_enum, child_enum_list in cls._CATEGORY_MAP.value.items():
+        for header_member, child_enum_list in cls.get_category_map().items():
             child_ids = set()
-            for enum_cls in child_enum_list:
-                child_ids.update(member.value for member in enum_cls)
 
-            mapping[header_enum] = child_ids
+            for enum_cls in child_enum_list:
+                for member in enum_cls:
+                    if hasattr(member, "role_id"):
+                        child_ids.add(member.role_id)
+                    else:
+                        child_ids.add(member.value)
+
+            mapping[header_member.value] = child_ids
 
         return mapping
