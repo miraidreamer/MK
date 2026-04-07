@@ -1,10 +1,8 @@
-from .base_role_enum import BaseRoleEnum
+from .base_role_enum import BaseRole
+from enum import Enum
 
 
-class DomTitleEnum(BaseRoleEnum):
-    TITLE = "DOMINANT TITLES"
-    CUSTOM_ID = "dom_title_select"
-
+class DomTitleEnum(BaseRole, Enum):
     BOSS = ("Boss", "title_boss", 1482760892298039507)
     CAPTAIN = ("Captain", "title_captain", 1483191635431919877)
     COUNTESS = ("Countess", "title_countess", 1482779189013909605)
@@ -18,6 +16,18 @@ class DomTitleEnum(BaseRoleEnum):
     PRINCESS = ("Princess", "title_princess", 1482760090015760496)
     QUEEN = ("Queen", "title_queen", 1482760083929567495)
     ASK_TITLES = ("Ask for Titles", "title_ask", 1482760983217705112)
+
+    @classmethod
+    def get_title(cls) -> str:
+        return "DOMINANT TITLES"
+
+    @classmethod
+    def get_custom_id(cls) -> str:
+        return "dom_title_select"
+
+    @classmethod
+    def get_placeholder(self) -> str:
+        return "Select your titles."
 
     @classmethod
     def get_description(cls):

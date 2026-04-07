@@ -1,8 +1,8 @@
 import lightbulb
 import hikari
 
-from bot.management.mod_commands import ModCommands
-from bot.management.admin_commands import AdminCommands
+from management.mod_commands import ModCommands
+from management.admin_commands import AdminCommands
 
 
 class Commands:
@@ -68,4 +68,3 @@ class Commands:
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
             await AdminCommands(ctx.client.app).post_extra_roles_selector(ctx)
-            

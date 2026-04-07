@@ -1,10 +1,19 @@
-from .base_role_enum import BaseRoleEnum
+from .base_role_enum import BaseRole
+from enum import Enum
 
 
-class GenitalRoleEnum(BaseRoleEnum):
-    TITLE = "GENDER"
-    CUSTOM_ID = "gender_section"
-    USE_BUTTONS = True
+class GenitalRoleEnum(BaseRole, Enum):
+    MALE = ("I have a dick", "gender_dick", 1481824903513506096, "🌯")
+    FEMALE = ("I have a pussy", "gender_pussy", 1481825236843495535, "🌮")
 
-    MALE = ("I have a dick", "gender_dick", "🌯")
-    FEMALE = ("I have a pussy", "gender_pussy", "🌮")
+    @classmethod
+    def get_title(cls) -> str:
+        return "GENDER"
+
+    @classmethod
+    def get_custom_id(cls) -> str:
+        return "gender_section"
+
+    @classmethod
+    def is_button(self) -> bool:
+        return True

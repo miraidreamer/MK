@@ -1,24 +1,35 @@
-from .base_role_enum import BaseRoleEnum
+from .base_role_enum import BaseRole
+from enum import Enum
 
 
-class InteractionStyleRoleEnum(BaseRoleEnum):
-    TITLE = "INTERACTION STYLE"
-    CUSTOM_ID = "interaction_style_select"
-
-    NO_BRATTING = ("No Bratting", "style_no_brat", 1482761007821750413)
-    BULLY_ME = ("Bully Me", "style_bully", 1482761316149231836)
-    DONT_BULLY = ("Don't Bully", "style_no_bully", 1482761317399003248)
-    FLIRT = ("Flirt", "style_flirt", 1483435512399396936)
-    DONT_FLIRT = ("Don't Flirt", "style_no_flirt", 1483435579432632340)
+class InteractionStyleRoleEnum(BaseRole, Enum):
+    NO_BRATTING = ("No Bratting", "style_no_brat", 1482761007821750413, "🚫")
+    BULLY_ME = ("Bully Me", "style_bully", 1482761316149231836, "✅")
+    DONT_BULLY = ("Don't Bully", "style_no_bully", 1482761317399003248, "❌")
+    FLIRT = ("Flirt", "style_flirt", 1483435512399396936, "💚")
+    DONT_FLIRT = ("Don't Flirt", "style_no_flirt", 1483435579432632340, "❤️")
 
     @classmethod
-    def get_dom_styles(cls) -> set[int]:
-        cls.NO_BRATTING.value
+    def get_title(cls) -> str:
+        return "INTERACTION STYLE"
 
     @classmethod
-    def get_sub_styles(cls) -> set[int]:
-        cls.BULLY_ME.value
-        cls.DONT_BULLY.value
+    def get_custom_id(cls) -> str:
+        return "interaction_style_select"
+
+    @classmethod
+    def is_button(self) -> bool:
+        return True
+
+    @classmethod
+    def get_dom_styles(cls) -> set[str]:
+        return {
+            cls.NO_BRATTING.internal_id,
+        }
+
+    @classmethod
+    def get_sub_styles(cls) -> set[str]:
+        return {cls.BULLY_ME.internal_id, cls.DONT_BULLY.internal_id}
 
     @classmethod
     def get_mutex_partner(cls, role_id: int) -> int | None:
@@ -34,6 +45,4 @@ class InteractionStyleRoleEnum(BaseRoleEnum):
 
     @classmethod
     def get_description(cls):
-        return (
-            "🚫 Don't Brat\n✅ Bully Me\n❌ Don't Bully Me\n💚 Flirt\n❤️ Don't Flirt\n"
-        )
+        return "🚫 Don't Brat\n✅ Bully Me\n❌ Don't Bully Me\n💚 Flirt\n❤️ Don't Flirt\n"

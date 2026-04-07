@@ -1,6 +1,6 @@
 import hikari
 from typing import Type
-from enums.selectable_roles.base_role_enum import BaseRoleEnum
+from enums.selectable_roles.base_role_enum import BaseRole
 from enums.special_roles_enum import SpecialRolesEnum
 from enums.selectable_roles.dom_sub_style_role_enum import DomSubStyleRoleEnum
 import logging
@@ -16,8 +16,8 @@ class InteractionScript:
     def __init__(self, bot: hikari.GatewayBot):
         self.bot = bot
         # Map Custom IDs to their corresponding Enum class
-        self.registry: dict[str, Type[BaseRoleEnum]] = {
-            enum_cls.CUSTOM_ID: enum_cls for enum_cls in [BaseRoleEnum.__subclasses__()]
+        self.registry: dict[str, Type[BaseRole]] = {
+            enum_cls.get_custom_id(): enum_cls for enum_cls in BaseRole.__subclasses__()
         }
 
     async def on_interaction_create(self, event: hikari.InteractionCreateEvent) -> None:
@@ -72,17 +72,15 @@ class InteractionScript:
                 )
                 return
 
-        if (
-            active_enum == LevelColorRoleEnum
-            and LevelColorRoleEnum.get_required_role_id(LevelColorRoleEnum[custom_id])
-            not in current_role_ids
-        ):
-            await interaction.create_initial_response(
-                hikari.ResponseType.MESSAGE_CREATE,
-                "You don't have the required level to select this role.",
-                flags=hikari.MessageFlag.EPHEMERAL,
-            )
-            return
+        if active_enum == LevelColorRoleEnum:
+            for value in selected_values:
+                if LevelColorRoleEnum.get_required_role_id(value) not in current_role_ids:
+                    await interaction.create_initial_response(
+                        hikari.ResponseType.MESSAGE_CREATE,
+                        "You don't have the required level to select this role.",
+                        flags=hikari.MessageFlag.EPHEMERAL,
+                    )
+                    return
 
         if active_enum == DomTitleEnum and not (
             current_role_ids & PositionRoleEnum.get_dominant_role_ids()
@@ -144,7 +142,7 @@ class InteractionScript:
             item.role_id for item in active_enum if item.internal_id in selected_values
         }
 
-        if active_enum.USE_BUTTONS:
+        if active_enum.is_button():
             role_id = next(iter(target_role_ids))
             if role_id in current_role_ids:
                 await self.bot.rest.remove_role_from_member(guild_id, member.id, role_id)

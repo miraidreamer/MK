@@ -1,13 +1,1 @@
-from enums.selectable_roles.region_role_enum import RegionRoleEnum
-from enums.selectable_roles.orientation_role_enum import OrientationRoleEnum
-from enums.selectable_roles.genital_role_enum import GenitalRoleEnum
-from enums.selectable_roles.position_role_enum import PositionRoleEnum
-from enums.selectable_roles.dm_status_role_enum import DmStatusRoleEnum
-from enums.selectable_roles.relationship_role_enum import RelationshipRoleEnum
-from enums.selectable_roles.ping_role_enum import PingRoleEnum
-from enums.selectable_roles.dom_title_enum import DomTitleEnum
-from enums.selectable_roles.pet_names_role_enum import PetNamesRoleEnum
-from enums.selectable_roles.kink_role_enum import KinkRoleEnum
-from enums.selectable_roles.interaction_style_role_enum import InteractionStyleRoleEnum
-from enums.selectable_roles.booster_color_enum import BoosterColorEnum
-from enums.selectable_roles.level_color_role_enum import LevelColorRoleEnum
+

@@ -1,10 +1,8 @@
-from .base_role_enum import BaseRoleEnum
+from .base_role_enum import BaseRole
+from enum import Enum
 
 
-class BoosterColorEnum(BaseRoleEnum):
-    TITLE = "BOOSTER COLORS"
-    CUSTOM_ID = "booster_color_select"
-
+class BoosterColorEnum(BaseRole, Enum):
     EERIE_BLACK = ("Eerie Black", "clr_black", 1482729638068486174)
     CARMINE = ("Carmine", "clr_carmine", 1482729472946995273)
     LIGHT_CORAL = ("Light Coral", "clr_lcoral", 1482727679760531538)
@@ -17,6 +15,18 @@ class BoosterColorEnum(BaseRoleEnum):
     MEDIUMPURPLE = ("Medium Purple", "clr_mpurple", 1482728864370135220)
     MAUVE = ("Mauve", "clr_mauve", 1482730120220246127)
     BATTLESHIP = ("Battleship", "clr_battleship", 1483071015541276772)
+
+    @classmethod
+    def get_title(cls) -> str:
+        return "BOOSTER COLORS"
+
+    @classmethod
+    def get_custom_id(cls) -> str:
+        return "booster_color_select"
+
+    @classmethod
+    def get_placeholder(self) -> str:
+        return "Select your color."
 
     @classmethod
     def get_description(cls):
