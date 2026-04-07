@@ -3,7 +3,6 @@ import hikari
 
 from bot.management.mod_commands import ModCommands
 from bot.management.admin_commands import AdminCommands
-from management.role_commands import RoleCommands
 
 
 class Commands:
@@ -58,7 +57,7 @@ class Commands:
     ):
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
-            await RoleCommands(ctx.client.app).post_role_selector(ctx)
+            await AdminCommands(ctx.client.app).post_role_selector(ctx)
 
     class PostExtraRolesSelector(
         lightbulb.SlashCommand,
@@ -68,4 +67,4 @@ class Commands:
     ):
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
-            await RoleCommands(ctx.client.app).post_extra_roles_selector(ctx)
+            await AdminCommands(ctx.client.app).post_extra_roles_selector(ctx)

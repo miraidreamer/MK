@@ -1,104 +1,63 @@
 import hikari
-import lightbulb
+import hikari.impl.special_endpoints as special_endpoints
+import logging
+from enums.header_roles_enum import HeaderRolesEnum
+from enums.channel_ids_enum import ChannelIDsEnum
+from enums.special_roles_enum import SpecialRolesEnum
 
 
 class ManagementScripts:
-    def __init__(self, bot):
+    def __init__(self, bot: hikari.GatewayBot):
         self.bot = bot
+        self._header_mapping = HeaderRolesEnum.get_header_to_child_map()
+        self.ticket_notice_message_by_channel_id: dict[int, int] = {}
 
-    async def on_member_update(event: hikari.MemberUpdateEvent) -> None:
-        member = event.member
-        if member.is_bot:
+    async def on_member_update(self, event: hikari.MemberUpdateEvent) -> None:
+        if event.member.is_bot:
             return
-        MANU = 840008380234858527
-        FORBIDDEN_ROLES: set[int] = {
-            1481818128223698944,
-            1481817996388208702,
-            1481818231072100453,
-            1481818163434754202,
-            1481817336397692938,
-        }
-        MALE = 1481817961764491416
 
-        if int(member.id) == MANU:
-            role_ids_now = {int(r) for r in member.role_ids}
-            forbidden_now = role_ids_now & FORBIDDEN_ROLES
-            if forbidden_now:
-                for role_id in forbidden_now:
-                    try:
-                        await bot.rest.remove_role_from_member(
-                            event.guild_id, member.id, role_id
-                        )
-                    except (hikari.ForbiddenError, hikari.NotFoundError):
-                        pass
-                if MALE not in role_ids_now:
-                    try:
-                        await bot.rest.add_role_to_member(
-                            event.guild_id, member.id, MALE
-                        )
-                    except (hikari.ForbiddenError, hikari.NotFoundError):
-                        pass
-        role_ids_now = {int(r) for r in member.role_ids}
+        role_ids_now = set(event.member.role_ids)
 
-        await _sync_role_headers(
+        await self._sync_role_headers(
             guild_id=event.guild_id,
-            member_id=member.id,
+            member_id=event.member.id,
             role_ids_now=role_ids_now,
         )
 
-    # BAN MALES FROM DOM ROLES
     async def _sync_role_headers(
+        self,
         *,
         guild_id: hikari.Snowflake,
         member_id: hikari.Snowflake,
-        role_ids_now: set[int],
-    ) -> set[int]:
-        if not ROLE_HEADER_CATEGORIES:
-            return role_ids_now
-
-        for header_role_id, child_role_ids in ROLE_HEADER_CATEGORIES.items():
-            if not child_role_ids:
-                continue
-
-            has_any_child = bool(role_ids_now & child_role_ids)
-            has_header = header_role_id in role_ids_now
+        role_ids_now: set[hikari.Snowflake],
+    ) -> None:
+        """
+        Ensures header roles are added if a child exists, or removed if no children exist.
+        """
+        for header_id, child_ids in self._header_mapping.items():
+            has_any_child = any(cid in role_ids_now for cid in child_ids)
+            has_header = header_id in role_ids_now
 
             if has_any_child and not has_header:
                 try:
-                    await bot.rest.add_role_to_member(
-                        guild_id, member_id, header_role_id
-                    )
-                    role_ids_now.add(header_role_id)
+                    await self.bot.rest.add_role_to_member(guild_id, member_id, header_id)
+                    logging.info(f"Added header {header_id} to {member_id}")
                 except hikari.ForbiddenError:
-                    logging.exception(
-                        "Missing perms / role hierarchy prevents header add: guild=%s user=%s role=%s",
-                        int(guild_id),
-                        int(member_id),
-                        int(header_role_id),
-                    )
-                except hikari.NotFoundError:
-                    pass
-            elif (not has_any_child) and has_header:
-                try:
-                    await bot.rest.remove_role_from_member(
-                        guild_id, member_id, header_role_id
-                    )
-                    role_ids_now.discard(header_role_id)
-                except hikari.ForbiddenError:
-                    logging.exception(
-                        "Missing perms / role hierarchy prevents header removal: guild=%s user=%s role=%s",
-                        int(guild_id),
-                        int(member_id),
-                        int(header_role_id),
-                    )
+                    logging.warning(f"Failed to add header {header_id}: Bot lacks permissions.")
                 except hikari.NotFoundError:
                     pass
 
-        return role_ids_now
+            elif not has_any_child and has_header:
+                try:
+                    await self.bot.rest.remove_role_from_member(guild_id, member_id, header_id)
+                    logging.info(f"Removed header {header_id} from {member_id}")
+                except hikari.ForbiddenError:
+                    logging.warning(f"Failed to remove header {header_id}: Bot lacks permissions.")
+                except hikari.NotFoundError:
+                    pass
 
     # TICKETS NOTIFICATIONS
-    async def on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
-        ticket_notice_message_by_channel_id: dict[int, int] = {}
+    async def on_channel_create(self, event: hikari.GuildChannelCreateEvent) -> None:
 
         channel = event.channel
         name = getattr(channel, "name", "")
@@ -116,17 +75,19 @@ class ManagementScripts:
             url, label="Open ticket"
         )
 
-        msg = await bot.rest.create_message(
-            TICKET_NOTIFY_CHANNEL_ID,
-            content=f"<@&{TICKET_PING_ROLE_ID}>",
+        msg = await self.bot.rest.create_message(
+            ChannelIDsEnum.TICKET_NOTIFY.value,
+            content=f"<@&{SpecialRolesEnum.STAFF.value}>",
             embed=embed,
             components=[row],
-            role_mentions=[TICKET_PING_ROLE_ID],
+            role_mentions=[SpecialRolesEnum.STAFF.value],
         )
-        ticket_notice_message_by_channel_id[int(channel.id)] = int(msg.id)
+        self.ticket_notice_message_by_channel_id[int(channel.id)] = int(msg.id)
 
-    async def on_channel_delete(event: hikari.GuildChannelDeleteEvent) -> None:
-        msg_id = ticket_notice_message_by_channel_id.pop(int(event.channel_id), None)
+    async def on_channel_delete(self, event: hikari.GuildChannelDeleteEvent) -> None:
+        msg_id = self.ticket_notice_message_by_channel_id.pop(
+            int(event.channel_id), None
+        )
         if msg_id is None:
             return
 
@@ -134,14 +95,13 @@ class ManagementScripts:
         closed_embed = hikari.Embed(
             title="Ticket attended",
             description=(
-                f"Ticket channel deleted: `{old_name or 'unknown'}`\n"
-                "Status: **Closed**"
+                f"Ticket channel deleted: `{old_name or 'unknown'}`\nStatus: **Closed**"
             ),
             color=0x2ECC71,
         )
 
-        await bot.rest.edit_message(
-            TICKET_NOTIFY_CHANNEL_ID,
+        await self.bot.rest.edit_message(
+            ChannelIDsEnum.TICKET_NOTIFY.value,
             msg_id,
             embed=closed_embed,
             components=[],
