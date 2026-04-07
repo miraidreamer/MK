@@ -1,0 +1,82 @@
+{
+  "general_rules": {
+    "description": "By joining, you agree to follow Discord's ToS as well as the following rules.\n\u3000\n **· · ─── \ud835\udc06\ud835\udc04\ud835\udc0d\ud835\udc04\ud835\udc11\ud835\udc00\ud835\udc0b \ud835\udc11\ud835\udc14\ud835\udc0b\ud835\udc04\ud835\udc12 \ud835\udc06\ud835\udc04\ud835\udc0d\ud835\udc04\ud835\udc11\ud835\udc00\ud835\udc0b ─── · ·**",
+    "color": "861F42",
+    "fields": [
+      {
+        "name": "\u25b9 **1. Be respectful**",
+        "value": "\u3000\nYou must respect all users, regardless of your liking towards them. Treat others the way you want to be treated. Avoid political, religious, or other controversial topics that are likely to escalate into confrontation.\n\u3000"
+      },
+      {
+        "name": "\u25b9 **2. Inappropriate Language**",
+        "value": "\u3000\nThe use of profanity is allowed. However, any ill-intended derogatory language towards any user (slurs, hate speech, etc.) is prohibited. Just use common sense.\n\u3000"
+      },
+      {
+        "name": "\u25b9 **3. No spamming**",
+        "value": "\u3000\nDon't send a lot of small messages right after each other. Do not disrupt chat by spamming.\n\u3000"
+      },
+      {
+        "name": "\u25b9 **4. Pornographic/adult/other NSFW material**",
+        "value": "\u3000\nThis is a community server meant to share in this kind of material. However, the sending or distributing of overly graphic content\u2014especially if not in an appropriate channel\u2014may be deemed as punishable by moderators. Examples include but are not limited to beastiality, animal cruelty, race play, incest, or loli content. \n\u3000"
+      },
+      {
+        "name": "\u25b9 **5. Nudes**",
+        "value": "\u3000\nThe sharing or distributing of nudes within the server is not allowed. If you want to send someone nudes, do so privately. Any report of unsolicited nudes being sent will result in immediate removal of the sender.\n\u3000"
+      },
+      {
+        "name": "\u25b9 **6. Malicious Persons & Minors**",
+        "value": "\u3000\nCatfishes, scammers, bots, or underage persons will be banned on sight or notice. Do not expect a warning.\n\u3000"
+      },
+      {
+        "name": "\u25b9 **7. Findom/Advertisements**",
+        "value": "\u3000\nFindom and any kind of advertising of findom is not allowed. Advertisements of other servers within Pand\u00e6monium are also strictly prohibited. Other forms of advertisement are more subjective. However, as a general rule, if what you are advertising/promoting is not relevant to the channel or subject of conversation, it is not allowed. \n\u3000"
+      },
+      {
+        "name": "\u25b9 **8. No offensive names and profile pictures**",
+        "value": "\u3000\nYou will be asked to change your name or picture if moderators deem them inappropriate.\n\u3000"
+      },
+      {
+        "name": "\u25b9 **9. Server Raiding**",
+        "value": "\u3000\nShould go without saying, raiding or mentions of raiding are not allowed.\n"
+      },
+      {
+        "name": "\u25b9 **10. Direct & Indirect Threats**",
+        "value": "\u3000\nThreats to other users of DDoS, Death, DoX, abuse, and other malicious threats are absolutely prohibited and disallowed.\n\u3000"
+      },
+      {
+        "name": "\u25b9 **11. Proper use of Channels**",
+        "value": "\u3000\nWhile not heavily enforced, try to stick to using channels for their intended purpose, and their intended purpose only. If you are confused regarding what a channel is used for or how to use it, ask staff or another active member in the server. Keep heavy topics in <#1481790436120068199> and do not vent in other channels.\n\u3000"
+      }
+    ]
+  },
+  "femdom_rules": {
+    "description": "This is a FEMDOM server, which implies a hierarchical structure.\n\u3000\n **· · ─── \ud835\udc06\ud835\udc04\ud835\udc0d\ud835\udc04\ud835\udc11\ud835\udc00\ud835\udc0b \ud835\udc11\ud835\udc14\ud835\udc0b\ud835\udc04\ud835\udc12 \ud835\udc06\ud835\udc04\ud835\udc0d\ud835\udc04\ud835\udc11\ud835\udc00\ud835\udc0b ─── · ·**",
+    "color": "861F42",
+    "fields": [
+      {
+        "name": "\u25b9 **1. ALL Females are above Males**",
+        "value": "This rule applies to every female regardless of their preferred position. Males are not to disrespect or belittle any female in any way, shape, or form. Males are to obey females within reason."
+      },
+      {
+        "name": "\u25b9 **2. Male Dom (Mdom) Behavior**",
+        "value": "Any form of male dom behavior\u2014regardless of whether or not it is a joke\u2014will result in immediate removal. Switch males are allowed, however any dominant behavior shown inside (or if unsolicited when conversing with members outside) the server will also result in removal."
+      },
+      {
+        "name": "\u25b9 **3. Positions/Preferences**",
+        "value": "Dommes are to respect other dommes as equals unless the contrary is agreed upon prior. Respect people's roles and don't push boundaries beyond limits."
+      },
+      {
+        "name": "\u25b9 **4. Safe word**",
+        "value": "While this is a Femdom server, please remember that hierarchical interactions are founded on consent. If you genuinely feel uncomfortable, or that someone is being unreasonable, you may use the following emote: \ud83d\udd34  as a safe word. The command: /safeword can also be used to cancel any bot impairments. These should be used any times your boundaries are being crossed. __THESE ARE TO BE RESPECTED BY ALL MEMBERS ON NOTICE__. If safewords are not being respected, please get in contact with staff using \u2060<#1481743160735567993>. If immediate intervention is required, you may also ping staff directly."
+      },
+      {
+        "name": "\u25b9 **5. SSC & RACK**",
+        "value": "As a kink adjacent server, all dynamics and practices must be within the perimeters of **SSC** (Safe, Sanity and Consensual) and **RACK** (Risk Aware Consensual Kink). Engaging in activities disregarding their risks, or the safety, sanity and consent of all participating and non-participating individuals will not be tolerated and are strictly banned."
+      }
+    ]
+  },
+  "mods_disclaimer": {
+    "description": "**The Admins and Mods will Mute/Kick/Ban per discretion based on all of the above rules and the severity of the infraction. If you feel mistreated DM an Admin and we will resolve the issue.**\n\n**Your presence in this server implies accepting these rules, including all further changes. These changes might be done at any time without notice, it is your responsibility to check for them.**",
+    "color": "861F42"
+  }
+}

@@ -1,0 +1,7 @@
+from enum import Enum
+
+
+class SpecialRolesEnum(Enum):
+    OWNER = 705106144183582731
+    STAFF = 1482666644349128745
+    BOOSTER_ROLE = 1481797220411117710
