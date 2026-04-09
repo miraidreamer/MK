@@ -21,6 +21,7 @@ class InteractionStyleRoleEnum(BaseRole, Enum):
     def is_button(self) -> bool:
         return True
 
+    #RESTRICTION HELPER METHODS
     @classmethod
     def get_dom_styles(cls) -> set[str]:
         return {
@@ -43,6 +44,3 @@ class InteractionStyleRoleEnum(BaseRole, Enum):
         reverse_map = {v: k for k, v in mutex_pairs.items()}
         return reverse_map.get(role_id)
 
-    @classmethod
-    def get_description(cls):
-        return "🚫 Don't Brat\n✅ Bully Me\n❌ Don't Bully Me\n💚 Flirt\n❤️ Don't Flirt\n"

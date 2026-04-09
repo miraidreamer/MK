@@ -21,12 +21,3 @@ class OrientationRoleEnum(BaseRole, Enum):
     def get_placeholder(self) -> str:
         return "Select your orientation."
 
-    @classmethod
-    def get_description(cls) -> str:
-        return (
-            "<:Straight:1482033959377440969> Straight　　　　　　　　　　　　　　　　　　　　　\n"
-            "<:Lesbian:1482034028206096546> Lesbian \n"
-            "<:BiPan:1482034060854558800> Bi/Pan \n"
-            "<:Asexual:1482034955579166934> Asexual \n"
-            "<:Other:1482033993930113055> Other"
-        )

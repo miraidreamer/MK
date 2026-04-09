@@ -21,12 +21,3 @@ class DmStatusRoleEnum(BaseRole, Enum):
     def is_button(self) -> bool:
         return True
 
-    @classmethod
-    def get_description(cls) -> str:
-        return (
-            "🔓 Open　　　　　　　　　　　　　　　　　　　　　　\n"
-            "☑️ Open for verified\n"
-            "❔ Ask me\n"
-            "❓ Ask my owner\n"
-            "🔒 Closed"
-        )

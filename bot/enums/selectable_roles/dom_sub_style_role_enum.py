@@ -46,6 +46,7 @@ class DomSubStyleRoleEnum(BaseRole, Enum):
     def is_button(self) -> bool:
         return True
 
+    # RESTRICTION HELPER METHODS
     @classmethod
     def get_dom_styles(cls) -> set[str]:
         return {
@@ -58,12 +59,3 @@ class DomSubStyleRoleEnum(BaseRole, Enum):
     def get_sub_styles(cls) -> set[str]:
         return {cls.MASOCHIST.internal_id}
 
-    @classmethod
-    def get_description(cls):
-        return (
-            "⚜️ Sadistic　　　　　　　　　　　　　　　　\n"
-            "<:ae_break_the_subs:1483494430546591834> Rough Domme\n"
-            "<:ae_head_pats:1484158676943114290> Gentle Domme\n"
-            "❤️‍🔥 Masochist\n"
-            "<:ae_innocent:1483063573906198649> Innocent\n"
-        )

@@ -20,6 +20,3 @@ class PingRoleEnum(BaseRole, Enum):
     def is_button(self):
         return True
 
-    @classmethod
-    def get_description(cls):
-        return "🗨️ Chat revive ping 　　　　　　　　\n🔝 Bump reminder\n🗞️ News ping\n🎀 Events"
