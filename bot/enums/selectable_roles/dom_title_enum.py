@@ -1,4 +1,5 @@
 from .base_role_enum import BaseRole
+from enums.selectable_roles.position_role_enum import PositionRoleEnum
 
 
 class DomTitleEnum(BaseRole):
@@ -31,3 +32,9 @@ class DomTitleEnum(BaseRole):
     @classmethod
     def get_description(cls):
         return "You may select the roles that you'd like from the following list. \n (Requires a dominant or switch role)"
+
+    @classmethod
+    def check_permission(cls, current_role_ids, custom_id):
+        if not (current_role_ids & PositionRoleEnum.get_dominant_internal_ids()):
+            return "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select titles."
+        return None

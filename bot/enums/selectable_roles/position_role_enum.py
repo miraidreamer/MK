@@ -1,4 +1,5 @@
 from .base_role_enum import BaseRole
+from enums.gender_role_enum import GenderRoleEnum
 
 
 class PositionRoleEnum(BaseRole):
@@ -47,6 +48,15 @@ class PositionRoleEnum(BaseRole):
             PositionRoleEnum.SUBLEAN.internal_id,
             PositionRoleEnum.SUBMISSIVE.internal_id,
         }
+
+    @classmethod
+    def check_permission(cls, current_role_ids, custom_id):
+        if (
+            custom_id in PositionRoleEnum.get_dominant_internal_ids()
+            and GenderRoleEnum.MALE.value in current_role_ids
+        ):
+            return "This is a femdom server — males can only be Submissive"
+        return None
 
 
 # Restrict position roles for Male userss

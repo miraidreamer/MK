@@ -1,4 +1,5 @@
 from .base_role_enum import BaseRole
+from enums.selectable_roles.position_role_enum import PositionRoleEnum
 
 
 class PetNamesRoleEnum(BaseRole):
@@ -26,3 +27,9 @@ class PetNamesRoleEnum(BaseRole):
     @classmethod
     def get_description(cls):
         return "You can select all the pet names you like being called.\n (Requires a switch or submissive role)"
+
+    @classmethod
+    def check_permission(cls, current_role_ids, custom_id):
+        if not (current_role_ids & PositionRoleEnum.get_submissive_internal_ids()):
+            return "You need a Switch, Sub-Lean, or Submissive role to select pet names."
+        return None

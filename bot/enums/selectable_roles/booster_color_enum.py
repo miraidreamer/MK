@@ -1,4 +1,5 @@
 from .base_role_enum import BaseRole
+from enums.special_roles_enum import SpecialRolesEnum
 
 
 class BoosterColorEnum(BaseRole):
@@ -43,3 +44,9 @@ class BoosterColorEnum(BaseRole):
             "<@&1482730120220246127>\n"
             "<@&1483071015541276772>"
         )
+
+    @classmethod
+    def check_permission(cls, current_role_ids: set[int], custom_id: str) -> str | None:
+        if SpecialRolesEnum.BOOSTER.value not in current_role_ids:
+            return "Only boosters can select a color from this menu."
+        return None
