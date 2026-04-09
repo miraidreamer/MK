@@ -1,9 +1,10 @@
-import os
 import logging
+import os
+
 import hikari
 import lightbulb
-from dotenv import load_dotenv
 from commands import Commands
+from dotenv import load_dotenv
 from scripts.interaction_script import InteractionScript
 from scripts.management_scripts import ManagementScripts
 

@@ -1,5 +1,6 @@
-from .base_role_enum import BaseRole
 from enums.selectable_roles.position_role_enum import PositionRoleEnum
+
+from .base_role_enum import BaseRole
 
 
 class DomSubStyleRoleEnum(BaseRole):

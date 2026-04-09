@@ -1,5 +1,6 @@
-from .base_role_enum import BaseRole
 from enums.level_role_enum import LevelRoleEnum
+
+from .base_role_enum import BaseRole
 
 
 class LevelColorRoleEnum(BaseRole):

@@ -1,8 +1,8 @@
-import hikari
-from typing import Type
-from enums.selectable_roles.base_role_enum import BaseRole
 import logging
+from typing import Type
 
+import hikari
+from enums.selectable_roles.base_role_enum import BaseRole
 
 
 class InteractionScript:

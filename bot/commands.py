@@ -1,8 +1,7 @@
-import lightbulb
 import hikari
-
-from management.mod_commands import ModCommands
+import lightbulb
 from management.admin_commands import AdminCommands
+from management.mod_commands import ModCommands
 
 
 class Commands:

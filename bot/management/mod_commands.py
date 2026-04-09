@@ -18,9 +18,7 @@ class ModCommands:
                 guild_id, self.target.id, SpecialRolesEnum.VERIFIED.value
             )
         except hikari.NotFoundError:
-            await ctx.respond(
-                "User or role not found.", flags=hikari.MessageFlag.EPHEMERAL
-            )
+            await ctx.respond("User or role not found.", flags=hikari.MessageFlag.EPHEMERAL)
         finally:
             await ctx.respond(
                 f"Successfully verified <@{self.target.id}>.",

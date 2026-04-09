@@ -1,5 +1,6 @@
-from .base_role_enum import BaseRole
 from enums.special_roles_enum import SpecialRolesEnum
+
+from .base_role_enum import BaseRole
 
 
 class BoosterColorEnum(BaseRole):

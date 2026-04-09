@@ -1,5 +1,6 @@
-from .base_role_enum import BaseRole
 from enums.gender_role_enum import GenderRoleEnum
+
+from .base_role_enum import BaseRole
 
 
 class PositionRoleEnum(BaseRole):
@@ -20,16 +21,6 @@ class PositionRoleEnum(BaseRole):
     @classmethod
     def is_button(self) -> bool:
         return True
-
-    @classmethod
-    def get_description(cls):
-        return (
-            "<a:Dominant:1482036391977291901> Dominant　　　　　　　　　　　　　　　　　　　　　\n"
-            "<:DomLean:1482036433219879063> Dom-Lean \n"
-            "<:Switch:1482036472713449542> Switch \n"
-            "<:SubLean:1482038379200647300> Sub-Lean \n"
-            "<:Sub:1482036591512785117> Submissive"
-        )
 
     @staticmethod
     def get_dominant_internal_ids() -> set[str]:
