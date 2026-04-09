@@ -1,8 +1,7 @@
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class BoosterColorEnum(BaseRole, Enum):
+class BoosterColorEnum(BaseRole):
     EERIE_BLACK = ("Eerie Black", "clr_black", 1482729638068486174)
     CARMINE = ("Carmine", "clr_carmine", 1482729472946995273)
     LIGHT_CORAL = ("Light Coral", "clr_lcoral", 1482727679760531538)

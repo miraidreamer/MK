@@ -1,4 +1,7 @@
-class BaseRole:
+from enum import Enum
+
+
+class BaseRole(Enum):
     @property
     def label(self) -> str:
         return self.value[0]

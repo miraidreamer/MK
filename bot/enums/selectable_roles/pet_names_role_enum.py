@@ -1,8 +1,7 @@
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class PetNamesRoleEnum(BaseRole, Enum):
+class PetNamesRoleEnum(BaseRole):
     BRAT = ("Brat", "brat", 1482761314760790176)
     DOLL = ("Doll", "doll", 1483415011517792378)
     GOOD_BOY_GIRL = ("Good Boy/Girl", "good_bg", 1483415293442265099)

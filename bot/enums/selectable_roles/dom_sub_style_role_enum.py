@@ -1,8 +1,7 @@
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class DomSubStyleRoleEnum(BaseRole, Enum):
+class DomSubStyleRoleEnum(BaseRole):
     SADIST = (
         "Sadist",
         "style_sadist",
@@ -58,4 +57,3 @@ class DomSubStyleRoleEnum(BaseRole, Enum):
     @classmethod
     def get_sub_styles(cls) -> set[str]:
         return {cls.MASOCHIST.internal_id}
-

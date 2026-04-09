@@ -1,8 +1,7 @@
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class GenitalRoleEnum(BaseRole, Enum):
+class GenitalRoleEnum(BaseRole):
     MALE = ("I have a dick", "gender_dick", 1481824903513506096, "🌯")
     FEMALE = ("I have a pussy", "gender_pussy", 1481825236843495535, "🌮")
 

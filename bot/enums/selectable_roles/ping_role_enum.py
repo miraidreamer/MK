@@ -1,8 +1,7 @@
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class PingRoleEnum(BaseRole, Enum):
+class PingRoleEnum(BaseRole):
     CHAT_REVIVE = ("Chat Revive", "ping_revive", 1482874789831118848, "🗨️")
     BUMP_REMINDER = ("Bump Reminder", "ping_bump", 1482874862677786685, "🔝")
     EVENTS = ("Events", "ping_events", 1486818848715046922, "🗞️")
@@ -19,4 +18,3 @@ class PingRoleEnum(BaseRole, Enum):
     @classmethod
     def is_button(self):
         return True
-

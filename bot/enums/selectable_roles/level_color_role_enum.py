@@ -1,9 +1,8 @@
 from .base_role_enum import BaseRole
 from enums.level_role_enum import LevelRoleEnum
-from enum import Enum
 
 
-class LevelColorRoleEnum(BaseRole, Enum):
+class LevelColorRoleEnum(BaseRole):
     LEVEL_100 = ("Level 100", "lvl_100", 1481718271513198643)
     LEVEL_75 = ("Level 75", "lvl_75", 1481718240353976442)
     LEVEL_50 = ("Level 50", "lvl_50", 1481718189736984608)
@@ -24,7 +23,7 @@ class LevelColorRoleEnum(BaseRole, Enum):
 
     @classmethod
     def get_required_role_id(cls, value: str) -> int:
-        requirement_map: dict["LevelColorRoleEnum", Enum] = {
+        requirement_map: dict["LevelColorRoleEnum"] = {
             cls.LEVEL_100.internal_id: LevelRoleEnum.LEVEL_100,
             cls.LEVEL_75.internal_id: LevelRoleEnum.LEVEL_75,
             cls.LEVEL_50.internal_id: LevelRoleEnum.LEVEL_50,

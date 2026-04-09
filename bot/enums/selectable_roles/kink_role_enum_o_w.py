@@ -1,8 +1,7 @@
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class KinkRoleEnumOW(BaseRole, Enum):
+class KinkRoleEnumOW(BaseRole):
     OBJECTIFICATION = ("Objectification", "kink_obj", 1484171873733574787)
     ORAL = ("Oral", "kink_oral", 1484171735463891197)
     OVERSTIMULATION = ("Overstimulation", "kink_overstim", 1482765384041103601)

@@ -1,8 +1,7 @@
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class RegionRoleEnum(BaseRole, Enum):
+class RegionRoleEnum(BaseRole):
     NORTH_AMERICA = (
         "North America",
         "na",

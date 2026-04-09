@@ -1,8 +1,7 @@
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class DomTitleEnum(BaseRole, Enum):
+class DomTitleEnum(BaseRole):
     BOSS = ("Boss", "title_boss", 1482760892298039507)
     CAPTAIN = ("Captain", "title_captain", 1483191635431919877)
     COUNTESS = ("Countess", "title_countess", 1482779189013909605)

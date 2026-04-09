@@ -1,8 +1,7 @@
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class InteractionStyleRoleEnum(BaseRole, Enum):
+class InteractionStyleRoleEnum(BaseRole):
     NO_BRATTING = ("No Bratting", "style_no_brat", 1482761007821750413, "🚫")
     BULLY_ME = ("Bully Me", "style_bully", 1482761316149231836, "✅")
     DONT_BULLY = ("Don't Bully", "style_no_bully", 1482761317399003248, "❌")
@@ -21,7 +20,7 @@ class InteractionStyleRoleEnum(BaseRole, Enum):
     def is_button(self) -> bool:
         return True
 
-    #RESTRICTION HELPER METHODS
+    # RESTRICTION HELPER METHODS
     @classmethod
     def get_dom_styles(cls) -> set[str]:
         return {
@@ -43,4 +42,3 @@ class InteractionStyleRoleEnum(BaseRole, Enum):
 
         reverse_map = {v: k for k, v in mutex_pairs.items()}
         return reverse_map.get(role_id)
-
