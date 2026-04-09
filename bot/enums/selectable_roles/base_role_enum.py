@@ -29,10 +29,6 @@ class BaseRole(Enum):
         return NotImplementedError
 
     @classmethod
-    def get_color(cls) -> int:
-        return 0x861F42
-
-    @classmethod
     def get_placeholder(self) -> str:
         return "Select an option..."
 

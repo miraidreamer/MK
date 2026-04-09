@@ -106,7 +106,7 @@ class AdminCommands:
             embed = hikari.Embed(
                 title=category.get_title(),
                 description=category.get_description(),
-                color=category.get_color(),
+                color=0x861F42,
             )
 
             row = special_endpoints.MessageActionRowBuilder()

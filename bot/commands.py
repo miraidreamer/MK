@@ -14,16 +14,7 @@ class Commands:
             self.PostExtraRolesSelector,
         }
 
-    class Rules(
-        lightbulb.SlashCommand,
-        name="rules",
-        description="display server rules",
-        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
-    ):
-        @lightbulb.invoke
-        async def invoke(self, ctx: lightbulb.Context) -> None:
-            await AdminCommands(ctx.client.app).startup(ctx)
-
+    # MOD COMMANDS
     class GiveVerified(
         lightbulb.SlashCommand,
         name="give_verified",
@@ -35,6 +26,17 @@ class Commands:
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
             await ModCommands(ctx.client.app).give_verified(ctx)
+
+    # ADMIN COMMANDS
+    class Rules(
+        lightbulb.SlashCommand,
+        name="rules",
+        description="display server rules",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            await AdminCommands(ctx.client.app).startup(ctx)
 
     class Say(
         lightbulb.SlashCommand,

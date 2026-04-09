@@ -19,7 +19,6 @@ class InteractionScript:
         if not isinstance(interaction, hikari.ComponentInteraction):
             return
 
-        message_handler = self._MessangeHandler(interaction)
         guild_id = interaction.guild_id
         member = interaction.member
         if not guild_id or not member:
@@ -46,7 +45,11 @@ class InteractionScript:
         current_role_ids = {int(r) for r in member.role_ids}
 
         if message := active_enum.check_permission(current_role_ids):
-            message_handler.send_message(message)
+            await self.interaction.create_initial_response(
+                hikari.ResponseType.MESSAGE_CREATE,
+                message,
+                flags=hikari.MessageFlag.EPHEMERAL,
+            )
 
         category_role_ids = {item.role_id for item in active_enum}
         target_role_ids = {
@@ -88,15 +91,4 @@ class InteractionScript:
             await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
         except hikari.NotFoundError:
             logging.warning("Something went wrong with role selection.")
-
-    class _MessangeHandler:
-        def __init__(self, interaction):
-            self.interaction = interaction
-            pass
-
-        async def send_message(self, message: str) -> None:
-            await self.interaction.create_initial_response(
-                hikari.ResponseType.MESSAGE_CREATE,
-                message,
-                flags=hikari.MessageFlag.EPHEMERAL,
-            )
+            
