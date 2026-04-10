@@ -17,12 +17,17 @@ class ManagementScripts:
         if event.member.is_bot:
             return
 
-        role_ids_now = set(event.member.role_ids)
+        if event.old_member is not None:
+            old_ids = set(event.old_member.role_ids)
+            new_ids = set(event.member.role_ids)
+            changed = old_ids.symmetric_difference(new_ids)
+            if changed and changed.issubset(self._header_mapping.keys()):
+                return
 
         await self._sync_role_headers(
             guild_id=event.guild_id,
             member_id=event.member.id,
-            role_ids_now=role_ids_now,
+            role_ids_now=set(event.member.role_ids),
         )
 
     async def _sync_role_headers(

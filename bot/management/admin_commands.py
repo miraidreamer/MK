@@ -21,16 +21,14 @@ from enums.selectable_roles.position_role_enum import PositionRoleEnum
 from enums.selectable_roles.region_role_enum import RegionRoleEnum
 from enums.selectable_roles.relationship_role_enum import RelationshipRoleEnum
 from hikari import undefined
+from management.base_commands import BaseCommands
 
 RULES_PATH = "bot/static/rules.json"
 RULES_BAR_IMAGE_PATH = "bot/static/images/rulesbar.png"
 
 
 # Commands that require the Administrator purrmission
-class AdminCommands:
-    def __init__(self, bot: hikari.GatewayBot):
-        self.bot = bot
-
+class AdminCommands(BaseCommands):
     async def startup(self, ctx: lightbulb.Context):
         with open(RULES_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -55,21 +53,11 @@ class AdminCommands:
         )
 
     async def say(self, ctx: lightbulb.Context, message: str):
-        if ctx.channel_id is None:
-            await ctx.respond(
-                "Couldn't determine what channel to send to.",
-                flags=hikari.MessageFlag.EPHEMERAL,
-            )
-            return
-
         # Ephemeral ack hides the invoker; the real message is sent as a normal bot message.
-        await ctx.respond("Sent.", flags=hikari.MessageFlag.EPHEMERAL)
+        await self.respond(ctx, "Sent.")
         await ctx.client.app.rest.create_message(ctx.channel_id, message)
 
     async def post_role_selector(self, ctx: lightbulb.Context):
-        if ctx.channel_id is None:
-            return await ctx.respond("Channel not found.", flags=hikari.MessageFlag.EPHEMERAL)
-
         categories = [
             RegionRoleEnum,
             GenitalRoleEnum,
@@ -83,9 +71,6 @@ class AdminCommands:
         await self._create_selectors(ctx, categories)
 
     async def post_extra_roles_selector(self, ctx: lightbulb.Context):
-        if ctx.channel_id is None:
-            return await ctx.respond("Channel not found.", flags=hikari.MessageFlag.EPHEMERAL)
-
         categories = [
             DomTitleEnum,
             PetNamesRoleEnum,
@@ -141,7 +126,4 @@ class AdminCommands:
                     )
             await self.bot.rest.create_message(ctx.channel_id, embed=embed, components=[row])
 
-        await ctx.respond(
-            "✅ All role selectors have been updated.",
-            flags=hikari.MessageFlag.EPHEMERAL,
-        )
+        await self.respond(ctx, "✅ All role selectors have been updated.")

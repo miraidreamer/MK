@@ -2,17 +2,35 @@ import hikari
 import lightbulb
 from management.admin_commands import AdminCommands
 from management.mod_commands import ModCommands
+from management.user_commands import UserCommands
 
 
 class Commands:
     def get_commands(self) -> set[lightbulb.SlashCommand]:
         return {
+            self.EditRole,
             self.Rules,
             self.GiveVerified,
+            self.BindRole,
             self.Say,
             self.PostRoleSelector,
             self.PostExtraRolesSelector,
         }
+
+    # USER COMMANDS
+    class EditRole(
+        lightbulb.SlashCommand,
+        name="edit_role",
+        description="Edit your bound role's name and/or color.",
+    ):
+        role_name = lightbulb.string("name", "New name for your role (e.g. CoolCat).", default=None)
+        first_color = lightbulb.string("color", "Hex color code (e.g. #FF5733). Required for gradients.", default=None)
+        second_color = lightbulb.string("color2", "Second hex color for a gradient (e.g. #3399FF). Requires color.", default=None)
+
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            await UserCommands(ctx.client.app).edit_role(ctx, self.role_name, self.first_color, self.second_color)
+
 
     # MOD COMMANDS
     class GiveVerified(
@@ -26,6 +44,19 @@ class Commands:
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
             await ModCommands(ctx.client.app).give_verified(ctx)
+
+    class BindRole(
+        lightbulb.SlashCommand,
+        name="bind_role",
+        description="Bind a custom role to a user.",
+        default_member_permissions=hikari.Permissions.MANAGE_ROLES,
+    ):
+        target = lightbulb.user("user", "The user to bind the role to.")
+        role = lightbulb.role("role", "The custom role to bind.")
+
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            await ModCommands(ctx.client.app).bind_role(ctx, self.target, self.role)
 
     # ADMIN COMMANDS
     class Rules(
