@@ -10,6 +10,7 @@ class Commands:
         return {
             self.EditRole,
             self.Rules,
+            self.Info,
             self.GiveVerified,
             self.BindRole,
             self.Say,
@@ -24,19 +25,26 @@ class Commands:
         description="Edit your bound role's name and/or color.",
     ):
         role_name = lightbulb.string("name", "New name for your role (e.g. CoolCat).", default=None)
-        first_color = lightbulb.string("color", "Hex color code (e.g. #FF5733). Required for gradients.", default=None)
-        second_color = lightbulb.string("color2", "Second hex color for a gradient (e.g. #3399FF). Requires color.", default=None)
+        first_color = lightbulb.string(
+            "color", "Hex color code (e.g. #FF5733). Required for gradients.", default=None
+        )
+        second_color = lightbulb.string(
+            "color2",
+            "Second hex color for a gradient (e.g. #3399FF). Requires color.",
+            default=None,
+        )
 
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
-            await UserCommands(ctx.client.app).edit_role(ctx, self.role_name, self.first_color, self.second_color)
-
+            await UserCommands(ctx.client.app).edit_role(
+                ctx, self.role_name, self.first_color, self.second_color
+            )
 
     # MOD COMMANDS
     class Info(
         lightbulb.SlashCommand,
-        name="rules",
-        description="display server rules",
+        name="info",
+        description="display server info",
         default_member_permissions=hikari.Permissions.ADMINISTRATOR,
     ):
         @lightbulb.invoke
