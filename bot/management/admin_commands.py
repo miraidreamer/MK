@@ -60,7 +60,12 @@ class AdminCommands(BaseCommands):
 
         def create_embed(section_key):
             section = data[section_key]
-            embed = hikari.Embed(title = section["title"], description=section["description"], color=0x861F42)
+            embed = hikari.Embed(
+                title=section["title"],
+                description=section["description"],
+                color=0x861F42,
+                url=section.get("image"),
+            )
 
             for field in section.get("fields", []):
                 embed.add_field(name=field["name"], value=field["value"])
