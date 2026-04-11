@@ -25,6 +25,16 @@ class Commands:
         async def invoke(self, ctx: lightbulb.Context) -> None:
             await AdminCommands(ctx.client.app).startup(ctx)
 
+    class Info(
+        lightbulb.SlashCommand,
+        name="rules",
+        description="display server rules",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            await AdminCommands(ctx.client.app).info(ctx)
+
     class GiveVerified(
         lightbulb.SlashCommand,
         name="give_verified",

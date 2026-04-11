@@ -1,0 +1,23 @@
+{
+    "staff_contact": {
+        "title" : "Staff Contact:",
+        "description": "In Pandæmonium we are committed to offering a close moderation team, if you require any assistance you can feel free to ping staff members when needed. However, if you require something to be discussed more thoroughly or privately you should use <#1487840829178384577> for rporting users, or <#1481743160735567993> for any other assistance of the staff team.",
+        "color": "861F42"
+    },
+    "verification": {
+        "title" : "Verification:",
+        "description": "While the server is exclusively available for users over the age of 18, we understand that not everyone is keen of providing personal information to a server. Thus, all personal pictures with suggestive content must be kept to verified channels only, and don't forget that direct nudity is not allowed as stated in <#1481738459818234001>. If you wish to verify your age with our team you may head over to <#1481743187096637675> and follow the instructions. Doing so will grant access to the channels in the [Verified] category, as well as confirming your age for the rest of the server.",
+        "color": "861F42",
+        "image": "https://media.discordapp.net/attachments/1481698958341308499/1482770619115507882/I9t1Gok.png?ex=69dbc1c0&is=69da7040&hm=c5b6fea9535f0e77c75aa2b539ccccaeb749c8f834fa670bd445d57ff9a6dd0b&=&format=webp&quality=lossless&width=254&height=253"
+    },
+    "leveling_system": {
+        "title" : "Leveling System:",
+        "description": "Perks and colors can be unlocked by being active in the server. You can check your level at any time in <#1481786030603374684> using the /level command (<@645343657075146772>).\nFor information about color roles, head over to <#1482291245958037644>.\n\n- At level 5 you will unlock the permission to use  <#1481738312816398366>. Try to make sure to converse with people and make yourself comfortable in the server before requesting to DM anyone. We guarantee your experience will be much better this way.\n- At level 25 you will get access to <#1481706516217336040>. This channel can be used to make your own custom voice chats by joining it. You can also manage your created channel at any moment using <#1481706517617971370>.",
+        "color": "861F42"
+    },
+    "boosting_perks": {
+        "title" : "Boosting Perks:",
+        "description": "We want to keep Pandæmonium as a common space that is enjoyable and accessible to everyone. However, if you wish to support the server to help us grow and provide more customization, cosmetics, emotes and stickers, you can do so by boosting. If you enjoy the space and and are able to do so, you'll get access to some perks as token of gratitude:\n\nBoosting 1 time will grant you access to a wider selection of colors from <#1482291245958037644>. This will also allow you to create your own voice channel without needing to reach level 25.\n\nBoosting 2 times or more will allow you to request a custom role that only you will have, via <#1481743160735567993>. You will be able to choose the name, emote and color, as well as change it at any given time.",
+        "color": "861F42"
+    }
+}

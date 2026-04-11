@@ -25,6 +25,8 @@ from enums.selectable_roles.dom_sub_style_role_enum import DomSubStyleRoleEnum
 RULES_PATH = "bot/static/rules.json"
 RULES_BAR_IMAGE_PATH = "bot/static/images/rulesbar.png"
 
+INFO_PATH = "bot/static/info.json"
+
 
 # Commands that require the Administrator purrmission
 class AdminCommands:
@@ -53,6 +55,28 @@ class AdminCommands:
         await ctx.client.app.rest.create_message(
             ChannelIDsEnum.RULES.value, content=hikari.File(RULES_BAR_IMAGE_PATH)
         )
+
+    async def info(self, ctx: lightbulb.Context):
+        with open(INFO_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        def create_embed(section_key):
+            section = data[section_key]
+            embed = hikari.Embed(title = section["title"], description=section["description"], color=0x861F42)
+
+            for field in section.get("fields", []):
+                embed.add_field(name=field["name"], value=field["value"])
+            return embed
+
+        staff_contact = create_embed("staff_contact")
+        verification = create_embed("verification")
+        leveling_system = create_embed("leveling_system")
+        boosting_perks = create_embed("boosting_perks")
+
+        await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=staff_contact)
+        await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=verification)
+        await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=leveling_system)
+        await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=boosting_perks)
 
     async def say(self, ctx: lightbulb.Context, message: str):
         if ctx.channel_id is None:
