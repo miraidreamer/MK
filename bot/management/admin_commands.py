@@ -64,11 +64,12 @@ class AdminCommands(BaseCommands):
                 title=section["title"],
                 description=section["description"],
                 color=0x861F42,
-                url=section.get("image"),
             )
 
             for field in section.get("fields", []):
                 embed.add_field(name=field["name"], value=field["value"])
+                if image := section.get("image"):
+                    embed.set_image(image)
             return embed
 
         staff_contact = create_embed("staff_contact")
