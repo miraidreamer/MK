@@ -1,26 +1,27 @@
+import json
+
 import hikari
 import hikari.impl.special_endpoints as special_endpoints
 import lightbulb
 from enums.channel_ids_enum import ChannelIDsEnum
-import json
-from hikari import undefined
-
-from enums.selectable_roles.region_role_enum import RegionRoleEnum
-from enums.selectable_roles.orientation_role_enum import OrientationRoleEnum
-from enums.selectable_roles.genital_role_enum import GenitalRoleEnum
-from enums.selectable_roles.position_role_enum import PositionRoleEnum
+from enums.selectable_roles.base_role_enum import BaseRole
+from enums.selectable_roles.booster_color_enum import BoosterColorEnum
 from enums.selectable_roles.dm_status_role_enum import DmStatusRoleEnum
-from enums.selectable_roles.relationship_role_enum import RelationshipRoleEnum
-from enums.selectable_roles.ping_role_enum import PingRoleEnum
+from enums.selectable_roles.dom_sub_style_role_enum import DomSubStyleRoleEnum
 from enums.selectable_roles.dom_title_enum import DomTitleEnum
-from enums.selectable_roles.pet_names_role_enum import PetNamesRoleEnum
+from enums.selectable_roles.genital_role_enum import GenitalRoleEnum
+from enums.selectable_roles.interaction_style_role_enum import InteractionStyleRoleEnum
 from enums.selectable_roles.kink_role_enum_a_n import KinkRoleEnumAN
 from enums.selectable_roles.kink_role_enum_o_w import KinkRoleEnumOW
-from enums.selectable_roles.interaction_style_role_enum import InteractionStyleRoleEnum
-from enums.selectable_roles.booster_color_enum import BoosterColorEnum
 from enums.selectable_roles.level_color_role_enum import LevelColorRoleEnum
-from enums.selectable_roles.base_role_enum import BaseRole
-from enums.selectable_roles.dom_sub_style_role_enum import DomSubStyleRoleEnum
+from enums.selectable_roles.orientation_role_enum import OrientationRoleEnum
+from enums.selectable_roles.pet_names_role_enum import PetNamesRoleEnum
+from enums.selectable_roles.ping_role_enum import PingRoleEnum
+from enums.selectable_roles.position_role_enum import PositionRoleEnum
+from enums.selectable_roles.region_role_enum import RegionRoleEnum
+from enums.selectable_roles.relationship_role_enum import RelationshipRoleEnum
+from hikari import undefined
+from management.base_commands import BaseCommands
 
 RULES_PATH = "bot/static/rules.json"
 RULES_BAR_IMAGE_PATH = "bot/static/images/rulesbar.png"
@@ -29,10 +30,7 @@ INFO_PATH = "bot/static/info.json"
 
 
 # Commands that require the Administrator purrmission
-class AdminCommands:
-    def __init__(self, bot: hikari.GatewayBot):
-        self.bot = bot
-
+class AdminCommands(BaseCommands):
     async def startup(self, ctx: lightbulb.Context):
         with open(RULES_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -79,21 +77,11 @@ class AdminCommands:
         await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=boosting_perks)
 
     async def say(self, ctx: lightbulb.Context, message: str):
-        if ctx.channel_id is None:
-            await ctx.respond(
-                "Couldn't determine what channel to send to.",
-                flags=hikari.MessageFlag.EPHEMERAL,
-            )
-            return
-
         # Ephemeral ack hides the invoker; the real message is sent as a normal bot message.
-        await ctx.respond("Sent.", flags=hikari.MessageFlag.EPHEMERAL)
+        await self.respond(ctx, "Sent.")
         await ctx.client.app.rest.create_message(ctx.channel_id, message)
 
     async def post_role_selector(self, ctx: lightbulb.Context):
-        if ctx.channel_id is None:
-            return await ctx.respond("Channel not found.", flags=hikari.MessageFlag.EPHEMERAL)
-
         categories = [
             RegionRoleEnum,
             GenitalRoleEnum,
@@ -107,9 +95,6 @@ class AdminCommands:
         await self._create_selectors(ctx, categories)
 
     async def post_extra_roles_selector(self, ctx: lightbulb.Context):
-        if ctx.channel_id is None:
-            return await ctx.respond("Channel not found.", flags=hikari.MessageFlag.EPHEMERAL)
-
         categories = [
             DomTitleEnum,
             PetNamesRoleEnum,
@@ -130,7 +115,7 @@ class AdminCommands:
             embed = hikari.Embed(
                 title=category.get_title(),
                 description=category.get_description(),
-                color=category.get_color(),
+                color=0x861F42,
             )
 
             row = special_endpoints.MessageActionRowBuilder()
@@ -165,7 +150,4 @@ class AdminCommands:
                     )
             await self.bot.rest.create_message(ctx.channel_id, embed=embed, components=[row])
 
-        await ctx.respond(
-            "✅ All role selectors have been updated.",
-            flags=hikari.MessageFlag.EPHEMERAL,
-        )
+        await self.respond(ctx, "✅ All role selectors have been updated.")

@@ -1,8 +1,7 @@
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class KinkRoleEnumAN(BaseRole, Enum):
+class KinkRoleEnumAN(BaseRole):
     ARMPITS = ("Armpits", "kink_armpits", 1482762859372089360)
     BITING = ("Biting", "kink_biting", 1483091252906950809)
     BLACKMAIL = ("Blackmail", "kink_blackmail", 1482762288816722001)

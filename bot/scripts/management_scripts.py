@@ -1,8 +1,9 @@
+import logging
+
 import hikari
 import hikari.impl.special_endpoints as special_endpoints
-import logging
-from enums.header_roles_enum import HeaderRolesEnum
 from enums.channel_ids_enum import ChannelIDsEnum
+from enums.header_roles_enum import HeaderRolesEnum
 from enums.special_roles_enum import SpecialRolesEnum
 
 
@@ -16,12 +17,17 @@ class ManagementScripts:
         if event.member.is_bot:
             return
 
-        role_ids_now = set(event.member.role_ids)
+        if event.old_member is not None:
+            old_ids = set(event.old_member.role_ids)
+            new_ids = set(event.member.role_ids)
+            changed = old_ids.symmetric_difference(new_ids)
+            if changed and changed.issubset(self._header_mapping.keys()):
+                return
 
         await self._sync_role_headers(
             guild_id=event.guild_id,
             member_id=event.member.id,
-            role_ids_now=role_ids_now,
+            role_ids_now=set(event.member.role_ids),
         )
 
     async def _sync_role_headers(
@@ -71,9 +77,7 @@ class ManagementScripts:
         )
 
         url = f"https://discord.com/channels/{event.guild_id}/{channel.id}"
-        row = special_endpoints.MessageActionRowBuilder().add_link_button(
-            url, label="Open ticket"
-        )
+        row = special_endpoints.MessageActionRowBuilder().add_link_button(url, label="Open ticket")
 
         msg = await self.bot.rest.create_message(
             ChannelIDsEnum.TICKET_NOTIFY.value,
@@ -85,18 +89,14 @@ class ManagementScripts:
         self.ticket_notice_message_by_channel_id[int(channel.id)] = int(msg.id)
 
     async def on_channel_delete(self, event: hikari.GuildChannelDeleteEvent) -> None:
-        msg_id = self.ticket_notice_message_by_channel_id.pop(
-            int(event.channel_id), None
-        )
+        msg_id = self.ticket_notice_message_by_channel_id.pop(int(event.channel_id), None)
         if msg_id is None:
             return
 
         old_name = getattr(getattr(event, "channel", None), "name", None)
         closed_embed = hikari.Embed(
             title="Ticket attended",
-            description=(
-                f"Ticket channel deleted: `{old_name or 'unknown'}`\nStatus: **Closed**"
-            ),
+            description=(f"Ticket channel deleted: `{old_name or 'unknown'}`\nStatus: **Closed**"),
             color=0x2ECC71,
         )
 

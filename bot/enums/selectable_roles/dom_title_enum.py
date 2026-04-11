@@ -1,8 +1,9 @@
+from enums.selectable_roles.position_role_enum import PositionRoleEnum
+
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class DomTitleEnum(BaseRole, Enum):
+class DomTitleEnum(BaseRole):
     BOSS = ("Boss", "title_boss", 1482760892298039507)
     CAPTAIN = ("Captain", "title_captain", 1483191635431919877)
     COUNTESS = ("Countess", "title_countess", 1482779189013909605)
@@ -32,3 +33,9 @@ class DomTitleEnum(BaseRole, Enum):
     @classmethod
     def get_description(cls):
         return "You may select the roles that you'd like from the following list. \n (Requires a dominant or switch role)"
+
+    @classmethod
+    def check_permission(cls, current_role_ids, custom_id):
+        if not (current_role_ids & PositionRoleEnum.get_dominant_internal_ids()):
+            return "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select titles."
+        return None

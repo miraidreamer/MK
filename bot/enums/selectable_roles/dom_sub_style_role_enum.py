@@ -1,8 +1,9 @@
+from enums.selectable_roles.position_role_enum import PositionRoleEnum
+
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class DomSubStyleRoleEnum(BaseRole, Enum):
+class DomSubStyleRoleEnum(BaseRole):
     SADIST = (
         "Sadist",
         "style_sadist",
@@ -46,6 +47,7 @@ class DomSubStyleRoleEnum(BaseRole, Enum):
     def is_button(self) -> bool:
         return True
 
+    # RESTRICTION HELPER METHODS
     @classmethod
     def get_dom_styles(cls) -> set[str]:
         return {
@@ -59,11 +61,15 @@ class DomSubStyleRoleEnum(BaseRole, Enum):
         return {cls.MASOCHIST.internal_id}
 
     @classmethod
-    def get_description(cls):
-        return (
-            "⚜️ Sadistic　　　　　　　　　　　　　　　　\n"
-            "<:ae_break_the_subs:1483494430546591834> Rough Domme\n"
-            "<:ae_head_pats:1484158676943114290> Gentle Domme\n"
-            "❤️‍🔥 Masochist\n"
-            "<:ae_innocent:1483063573906198649> Innocent\n"
-        )
+    def check_permission(cls, current_role_ids, custom_id):
+        if (
+            custom_id in cls.get_dom_styles()
+            and not current_role_ids & PositionRoleEnum.get_dominant_internal_ids()
+        ):
+            return "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select this."
+        if (
+            custom_id in cls.get_sub_styles()
+            and not current_role_ids & PositionRoleEnum.get_submissive_internal_ids()
+        ):
+            return "You need a Dom-Lean, Switch, Sub-Lean or Submissive role to select this."
+        return None

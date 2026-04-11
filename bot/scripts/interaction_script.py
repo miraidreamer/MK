@@ -1,16 +1,8 @@
-import hikari
-from typing import Type
-from enums.selectable_roles.base_role_enum import BaseRole
-from enums.special_roles_enum import SpecialRolesEnum
-from enums.selectable_roles.dom_sub_style_role_enum import DomSubStyleRoleEnum
 import logging
-from enums.selectable_roles.position_role_enum import PositionRoleEnum
-from enums.selectable_roles.dom_title_enum import DomTitleEnum
-from enums.selectable_roles.pet_names_role_enum import PetNamesRoleEnum
-from enums.selectable_roles.interaction_style_role_enum import InteractionStyleRoleEnum
-from enums.selectable_roles.booster_color_enum import BoosterColorEnum
-from enums.selectable_roles.level_color_role_enum import LevelColorRoleEnum
-from enums.gender_role_enum import GenderRoleEnum
+from typing import Type
+
+import hikari
+from enums.selectable_roles.base_role_enum import BaseRole
 
 
 class InteractionScript:
@@ -23,6 +15,7 @@ class InteractionScript:
 
     async def on_interaction_create(self, event: hikari.InteractionCreateEvent) -> None:
         interaction = event.interaction
+
         if not isinstance(interaction, hikari.ComponentInteraction):
             return
 
@@ -51,93 +44,14 @@ class InteractionScript:
 
         current_role_ids = {int(r) for r in member.role_ids}
 
-        # Handle Restrictions TODO move this somewhere else
-        if (
-            custom_id in PositionRoleEnum.get_dominant_internal_ids()
-            and GenderRoleEnum.MALE.value in current_role_ids
-        ):
-            await interaction.create_initial_response(
+        if message := active_enum.check_permission(current_role_ids):
+            await self.interaction.create_initial_response(
                 hikari.ResponseType.MESSAGE_CREATE,
-                "This is a femdom server — males can only be Submissive.",
+                message,
                 flags=hikari.MessageFlag.EPHEMERAL,
             )
-            return
-
-        if active_enum == BoosterColorEnum:
-            if SpecialRolesEnum.BOOSTER.value not in current_role_ids:
-                await interaction.create_initial_response(
-                    hikari.ResponseType.MESSAGE_CREATE,
-                    "Only boosters can select a color from this menu.",
-                    flags=hikari.MessageFlag.EPHEMERAL,
-                )
-                return
-
-        if active_enum == LevelColorRoleEnum:
-            for value in selected_values:
-                if LevelColorRoleEnum.get_required_role_id(value) not in current_role_ids:
-                    await interaction.create_initial_response(
-                        hikari.ResponseType.MESSAGE_CREATE,
-                        "You don't have the required level to select this role.",
-                        flags=hikari.MessageFlag.EPHEMERAL,
-                    )
-                    return
-
-        if active_enum == DomTitleEnum and not (
-            current_role_ids & PositionRoleEnum.get_dominant_internal_ids()
-        ):
-            for role_id in current_role_ids & {item.value for item in DomTitleEnum}:
-                try:
-                    await self.bot.rest.remove_role_from_member(guild_id, member.id, role_id)
-                except (hikari.ForbiddenError, hikari.NotFoundError):
-                    logging.warning("Tried removing a role that is not applied")
-            await interaction.create_initial_response(
-                hikari.ResponseType.MESSAGE_CREATE,
-                "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select titles.",
-                flags=hikari.MessageFlag.EPHEMERAL,
-            )
-            return
-
-        if active_enum == PetNamesRoleEnum and not (
-            current_role_ids & PositionRoleEnum.get_submissive_internal_ids()
-        ):
-            current_roles = {int(r) for r in member.role_ids}
-            for role_id in current_roles & {item.value for item in PetNamesRoleEnum}:
-                try:
-                    await self.bot.rest.remove_role_from_member(guild_id, member.id, role_id)
-                except (hikari.ForbiddenError, hikari.NotFoundError):
-                    logging.warning("Tried removing a role that is not applied")
-            await interaction.create_initial_response(
-                hikari.ResponseType.MESSAGE_CREATE,
-                "You need a Switch, Sub-Lean, or Submissive role to select pet names.",
-                flags=hikari.MessageFlag.EPHEMERAL,
-            )
-            return
-
-        if active_enum in [InteractionStyleRoleEnum, DomSubStyleRoleEnum]:
-            if (
-                custom_id in InteractionStyleRoleEnum.get_dom_styles()
-                or custom_id in DomSubStyleRoleEnum.get_dom_styles()
-            ) and not (current_role_ids & PositionRoleEnum.get_dominant_internal_ids()):
-                await interaction.create_initial_response(
-                    hikari.ResponseType.MESSAGE_CREATE,
-                    "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select this.",
-                    flags=hikari.MessageFlag.EPHEMERAL,
-                )
-                return
-
-            if (
-                custom_id in InteractionStyleRoleEnum.get_sub_styles()
-                or custom_id in InteractionStyleRoleEnum.get_sub_styles()
-            ) and not (current_role_ids & PositionRoleEnum.get_submissive_internal_ids()):
-                await interaction.create_initial_response(
-                    hikari.ResponseType.MESSAGE_CREATE,
-                    "You need a Dom-Lean, Switch, Sub-Lean or Submissive role to select this.",
-                    flags=hikari.MessageFlag.EPHEMERAL,
-                )
-                return
 
         category_role_ids = {item.role_id for item in active_enum}
-
         target_role_ids = {
             item.role_id for item in active_enum if item.internal_id in selected_values
         }
@@ -177,3 +91,4 @@ class InteractionScript:
             await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
         except hikari.NotFoundError:
             logging.warning("Something went wrong with role selection.")
+            

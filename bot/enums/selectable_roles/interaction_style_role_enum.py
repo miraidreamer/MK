@@ -1,8 +1,9 @@
+from enums.selectable_roles.position_role_enum import PositionRoleEnum
+
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class InteractionStyleRoleEnum(BaseRole, Enum):
+class InteractionStyleRoleEnum(BaseRole):
     NO_BRATTING = ("No Bratting", "style_no_brat", 1482761007821750413, "🚫")
     BULLY_ME = ("Bully Me", "style_bully", 1482761316149231836, "✅")
     DONT_BULLY = ("Don't Bully", "style_no_bully", 1482761317399003248, "❌")
@@ -21,6 +22,7 @@ class InteractionStyleRoleEnum(BaseRole, Enum):
     def is_button(self) -> bool:
         return True
 
+    # RESTRICTION HELPER METHODS
     @classmethod
     def get_dom_styles(cls) -> set[str]:
         return {
@@ -44,5 +46,15 @@ class InteractionStyleRoleEnum(BaseRole, Enum):
         return reverse_map.get(role_id)
 
     @classmethod
-    def get_description(cls):
-        return "🚫 Don't Brat\n✅ Bully Me\n❌ Don't Bully Me\n💚 Flirt\n❤️ Don't Flirt\n"
+    def check_permission(cls, current_role_ids, custom_id):
+        if (
+            custom_id in cls.get_dom_styles()
+            and not current_role_ids & PositionRoleEnum.get_dominant_internal_ids()
+        ):
+            return "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select this."
+        if (
+            custom_id in cls.get_sub_styles()
+            and not current_role_ids & PositionRoleEnum.get_submissive_internal_ids()
+        ):
+            return "You need a Dom-Lean, Switch, Sub-Lean or Submissive role to select this."
+        return None

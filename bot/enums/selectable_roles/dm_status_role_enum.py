@@ -1,8 +1,7 @@
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class DmStatusRoleEnum(BaseRole, Enum):
+class DmStatusRoleEnum(BaseRole):
     OPEN = ("Open", "dm_open", 1481913980304756936, "🔓")
     OPEN_VERIFIED = ("Open for verified", "dm_verified", 1481915358054187080, "☑️")
     ASK_ME = ("Ask me", "dm_ask", 1481914089587478599, "❔")
@@ -20,13 +19,3 @@ class DmStatusRoleEnum(BaseRole, Enum):
     @classmethod
     def is_button(self) -> bool:
         return True
-
-    @classmethod
-    def get_description(cls) -> str:
-        return (
-            "🔓 Open　　　　　　　　　　　　　　　　　　　　　　\n"
-            "☑️ Open for verified\n"
-            "❔ Ask me\n"
-            "❓ Ask my owner\n"
-            "🔒 Closed"
-        )

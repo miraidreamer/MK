@@ -1,8 +1,7 @@
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class OrientationRoleEnum(BaseRole, Enum):
+class OrientationRoleEnum(BaseRole):
     STRAIGHT = ("Straight", "straight", 1481911068111536168, "<:Straight:1482033959377440969>")
     LESBIAN = ("Lesbian", "lesbian", 1481912149289861305, "<:Lesbian:1482034028206096546>")
     BIPAN = ("Bi/Pan", "bipan", 1481912198153638020, "<:BiPan:1482034060854558800>")
@@ -20,13 +19,3 @@ class OrientationRoleEnum(BaseRole, Enum):
     @classmethod
     def get_placeholder(self) -> str:
         return "Select your orientation."
-
-    @classmethod
-    def get_description(cls) -> str:
-        return (
-            "<:Straight:1482033959377440969> Straight　　　　　　　　　　　　　　　　　　　　　\n"
-            "<:Lesbian:1482034028206096546> Lesbian \n"
-            "<:BiPan:1482034060854558800> Bi/Pan \n"
-            "<:Asexual:1482034955579166934> Asexual \n"
-            "<:Other:1482033993930113055> Other"
-        )

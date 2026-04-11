@@ -1,8 +1,9 @@
+from enums.gender_role_enum import GenderRoleEnum
+
 from .base_role_enum import BaseRole
-from enum import Enum
 
 
-class PositionRoleEnum(BaseRole, Enum):
+class PositionRoleEnum(BaseRole):
     DOMINANT = ("Dominant", "pos_dom", 1481913083801763901, "<a:Dominant:1482036391977291901>")
     DOMLEAN = ("Dom-lean", "pos_domlean", 1481913412907831410, "<:DomLean:1482036433219879063>")
     SWITCH = ("Switch", "pos_switch", 1481913457359065180, "<:Switch:1482036472713449542>")
@@ -21,16 +22,6 @@ class PositionRoleEnum(BaseRole, Enum):
     def is_button(self) -> bool:
         return True
 
-    @classmethod
-    def get_description(cls):
-        return (
-            "<a:Dominant:1482036391977291901> Dominant　　　　　　　　　　　　　　　　　　　　　\n"
-            "<:DomLean:1482036433219879063> Dom-Lean \n"
-            "<:Switch:1482036472713449542> Switch \n"
-            "<:SubLean:1482038379200647300> Sub-Lean \n"
-            "<:Sub:1482036591512785117> Submissive"
-        )
-
     @staticmethod
     def get_dominant_internal_ids() -> set[str]:
         return {
@@ -48,6 +39,15 @@ class PositionRoleEnum(BaseRole, Enum):
             PositionRoleEnum.SUBLEAN.internal_id,
             PositionRoleEnum.SUBMISSIVE.internal_id,
         }
+
+    @classmethod
+    def check_permission(cls, current_role_ids, custom_id):
+        if (
+            custom_id in PositionRoleEnum.get_dominant_internal_ids()
+            and GenderRoleEnum.MALE.value in current_role_ids
+        ):
+            return "This is a femdom server — males can only be Submissive"
+        return None
 
 
 # Restrict position roles for Male userss

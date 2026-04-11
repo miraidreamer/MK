@@ -1,9 +1,9 @@
-from .base_role_enum import BaseRole
 from enums.level_role_enum import LevelRoleEnum
-from enum import Enum
+
+from .base_role_enum import BaseRole
 
 
-class LevelColorRoleEnum(BaseRole, Enum):
+class LevelColorRoleEnum(BaseRole):
     LEVEL_100 = ("Level 100", "lvl_100", 1481718271513198643)
     LEVEL_75 = ("Level 75", "lvl_75", 1481718240353976442)
     LEVEL_50 = ("Level 50", "lvl_50", 1481718189736984608)
@@ -23,15 +23,15 @@ class LevelColorRoleEnum(BaseRole, Enum):
         return "Select your level role."
 
     @classmethod
-    def get_required_role_id(cls, value: str) -> int:
-        requirement_map: dict["LevelColorRoleEnum", Enum] = {
+    def get_required_role_id(cls, custom_id: str) -> int:
+        requirement_map: dict["LevelColorRoleEnum"] = {
             cls.LEVEL_100.internal_id: LevelRoleEnum.LEVEL_100,
             cls.LEVEL_75.internal_id: LevelRoleEnum.LEVEL_75,
             cls.LEVEL_50.internal_id: LevelRoleEnum.LEVEL_50,
             cls.LEVEL_30.internal_id: LevelRoleEnum.LEVEL_30,
             cls.LEVEL_10.internal_id: LevelRoleEnum.LEVEL_10,
         }
-        return requirement_map.get(value).value
+        return requirement_map.get(custom_id).value
 
     @classmethod
     def get_description(cls):
@@ -42,3 +42,9 @@ class LevelColorRoleEnum(BaseRole, Enum):
             "<@&1482725894702502050>\n"
             "<@&1482725106210963537>"
         )
+
+    @classmethod
+    def check_permission(cls, current_role_ids, custom_id):
+        if LevelColorRoleEnum.get_required_role_id(custom_id) not in current_role_ids:
+            return "You don't have the required level to select this role."
+        return None

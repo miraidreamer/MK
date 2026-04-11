@@ -1,4 +1,7 @@
-class BaseRole:
+from enum import Enum
+
+
+class BaseRole(Enum):
     @property
     def label(self) -> str:
         return self.value[0]
@@ -26,10 +29,6 @@ class BaseRole:
         return NotImplementedError
 
     @classmethod
-    def get_color(cls) -> int:
-        return 0x861F42
-
-    @classmethod
     def get_placeholder(self) -> str:
         return "Select an option..."
 
@@ -43,4 +42,9 @@ class BaseRole:
 
     @classmethod
     def get_mutex_partner(cls, role_id: int) -> int | None:
+        return None
+
+    @classmethod
+    async def check_permission(cls, current_role_ids: set[int], custom_id: str) -> str | None:
+        """@Returns error string if permission check fails, None if permission check passes"""
         return None

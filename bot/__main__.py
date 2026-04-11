@@ -1,12 +1,14 @@
-import os
 import logging
+import os
+
 import hikari
 import lightbulb
-from dotenv import load_dotenv
 from commands import Commands
+from dotenv import load_dotenv
 from scripts.interaction_script import InteractionScript
 from scripts.management_scripts import ManagementScripts
 
+PANDAEMONIUM_GUILD_ID = 1481652883647762646
 
 def _get_env(name: str) -> str:
     value = os.getenv(name)
@@ -25,7 +27,7 @@ class Bot:
             intents=hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.GUILD_MEMBERS,
         )
 
-        self.client = lightbulb.client_from_app(self.bot)
+        self.client = lightbulb.client_from_app(self.bot, default_enabled_guilds=[PANDAEMONIUM_GUILD_ID])
 
         self.manager = ManagementScripts(self.bot)
         self.interaction = InteractionScript(self.bot)
