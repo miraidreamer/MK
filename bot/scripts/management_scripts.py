@@ -12,6 +12,9 @@ class ManagementScripts:
         self.bot = bot
         self._header_mapping = HeaderRolesEnum.get_header_to_child_map()
         self.ticket_notice_message_by_channel_id: dict[int, int] = {}
+        # Tracks (member_id, header_role_id) pairs for REST calls currently in flight,
+        # preventing duplicate add/remove attempts from stale events arriving concurrently.
+        self._pending_header_ops: set[tuple[hikari.Snowflake, hikari.Snowflake]] = set()
 
     async def on_member_update(self, event: hikari.MemberUpdateEvent) -> None:
         if event.member.is_bot:
@@ -45,22 +48,33 @@ class ManagementScripts:
             has_header = header_id in role_ids_now
 
             if has_any_child and not has_header:
-                try:
-                    await self.bot.rest.add_role_to_member(guild_id, member_id, header_id)
-                    logging.info(f"Added header {header_id} to {member_id}")
-                except hikari.ForbiddenError:
-                    logging.warning(f"Failed to add header {header_id}: Bot lacks permissions.")
-                except hikari.NotFoundError:
-                    pass
-
+                await self._toggle_header_role(add=True, guild_id=guild_id, member_id=member_id, header_id=header_id)
             elif not has_any_child and has_header:
-                try:
-                    await self.bot.rest.remove_role_from_member(guild_id, member_id, header_id)
-                    logging.info(f"Removed header {header_id} from {member_id}")
-                except hikari.ForbiddenError:
-                    logging.warning(f"Failed to remove header {header_id}: Bot lacks permissions.")
-                except hikari.NotFoundError:
-                    pass
+                await self._toggle_header_role(add=False, guild_id=guild_id, member_id=member_id, header_id=header_id)
+
+    async def _toggle_header_role(
+        self,
+        *,
+        add: bool,
+        guild_id: hikari.Snowflake,
+        member_id: hikari.Snowflake,
+        header_id: int,
+    ) -> None:
+        op_key = (member_id, header_id)
+        if op_key in self._pending_header_ops:
+            return
+        self._pending_header_ops.add(op_key)
+        try:
+            if add:
+                await self.bot.rest.add_role_to_member(guild_id, member_id, header_id)
+                logging.info(f"Added header {header_id} to {member_id}")
+            else:
+                await self.bot.rest.remove_role_from_member(guild_id, member_id, header_id)
+                logging.info(f"Removed header {header_id} from {member_id}")
+        except hikari.ForbiddenError:
+            logging.warning(f"Failed to toggle header {header_id}: Bot lacks permissions.")
+        finally:
+            self._pending_header_ops.discard(op_key)
 
     # TICKETS NOTIFICATIONS
     async def on_channel_create(self, event: hikari.GuildChannelCreateEvent) -> None:

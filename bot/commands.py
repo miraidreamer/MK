@@ -41,16 +41,6 @@ class Commands:
             )
 
     # MOD COMMANDS
-    class Info(
-        lightbulb.SlashCommand,
-        name="info",
-        description="display server info",
-        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
-    ):
-        @lightbulb.invoke
-        async def invoke(self, ctx: lightbulb.Context) -> None:
-            await AdminCommands(ctx.client.app).info(ctx)
-
     class GiveVerified(
         lightbulb.SlashCommand,
         name="give_verified",
@@ -85,7 +75,18 @@ class Commands:
     ):
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
-            await AdminCommands(ctx.client.app).startup(ctx)
+            await AdminCommands(ctx.client.app).rules(ctx)
+
+    class Info(
+        lightbulb.SlashCommand,
+        name="info",
+        description="display server info",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            print("Starting invoke")
+            await AdminCommands(ctx.client.app).info(ctx)
 
     class Say(
         lightbulb.SlashCommand,

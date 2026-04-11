@@ -44,8 +44,8 @@ class InteractionScript:
 
         current_role_ids = {int(r) for r in member.role_ids}
 
-        if message := active_enum.check_permission(current_role_ids):
-            await self.interaction.create_initial_response(
+        if message := active_enum.check_permission(current_role_ids, custom_id):
+            await interaction.create_initial_response(
                 hikari.ResponseType.MESSAGE_CREATE,
                 message,
                 flags=hikari.MessageFlag.EPHEMERAL,
@@ -91,4 +91,3 @@ class InteractionScript:
             await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
         except hikari.NotFoundError:
             logging.warning("Something went wrong with role selection.")
-            

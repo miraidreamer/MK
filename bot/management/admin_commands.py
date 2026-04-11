@@ -31,25 +31,14 @@ INFO_PATH = "bot/static/info.json"
 
 # Commands that require the Administrator purrmission
 class AdminCommands(BaseCommands):
-    async def startup(self, ctx: lightbulb.Context):
+    async def rules(self, ctx: lightbulb.Context):
         with open(RULES_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        def create_embed(section_key):
-            section = data[section_key]
-            embed = hikari.Embed(description=section["description"], color=0x861F42)
+        sections = {"general_rules", "femdom_rules", "mods_disclaimer"}
 
-            for field in section.get("fields", []):
-                embed.add_field(name=field["name"], value=field["value"])
-            return embed
-
-        rules_embed = create_embed("general_rules")
-        femdom_embed = create_embed("femdom_rules")
-        mods_embed = create_embed("mods_disclaimer")
-
-        await ctx.client.app.rest.create_message(ChannelIDsEnum.RULES.value, embed=rules_embed)
-        await ctx.client.app.rest.create_message(ChannelIDsEnum.RULES.value, embed=femdom_embed)
-        await ctx.client.app.rest.create_message(ChannelIDsEnum.RULES.value, embed=mods_embed)
+        for embed in self._create_embeds(data, sections):
+            await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=embed)
         await ctx.client.app.rest.create_message(
             ChannelIDsEnum.RULES.value, content=hikari.File(RULES_BAR_IMAGE_PATH)
         )
@@ -58,32 +47,30 @@ class AdminCommands(BaseCommands):
         with open(INFO_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        def create_embed(section_key):
-            section = data[section_key]
+        sections = {"staff_contact", "verification", "leveling_system", "boosting_perks"}
+        for embed in self._create_embeds(data, sections):
+            await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=embed)
+
+    def _create_embeds(self, data: dict, section_keys: set[str]) -> set[hikari.Embed]:
+        embeds = set()
+        for key in section_keys:
+            section = data[key]
             embed = hikari.Embed(
-                title=section["title"],
-                description=section["description"],
+                title=section.get("title"),
+                description=section.get("description"),
                 color=0x861F42,
             )
 
             for field in section.get("fields", []):
                 embed.add_field(name=field["name"], value=field["value"])
-                if image := section.get("image"):
-                    embed.set_image(image)
-            return embed
+            if image := section.get("image"):
+                embed.set_image(image)
 
-        staff_contact = create_embed("staff_contact")
-        verification = create_embed("verification")
-        leveling_system = create_embed("leveling_system")
-        boosting_perks = create_embed("boosting_perks")
+            embeds.add(embed)
 
-        await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=staff_contact)
-        await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=verification)
-        await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=leveling_system)
-        await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=boosting_perks)
+        return embeds
 
     async def say(self, ctx: lightbulb.Context, message: str):
-        # Ephemeral ack hides the invoker; the real message is sent as a normal bot message.
         await self.respond(ctx, "Sent.")
         await ctx.client.app.rest.create_message(ctx.channel_id, message)
 
