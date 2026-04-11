@@ -1,0 +1,19 @@
+{
+  "verification_instructions": {
+    "title": "**· · ── 𓆩♡𓆪 INSTRUCTIONS 𓆩♡𓆪 ── · ·**",
+    "description": "You may verify through one of the methods instructed below, you may use a national ID, passport or driver's license as identification. Other methods won't be accepted.",
+    "color": "861F42",
+    "fields": [
+      {
+        "name": "\u25b9 **IMAGE VERIFICATION**",
+        "value": "\u3000\nYou will need to take two pictures:\n\n\u25b9 Picture of your ID that clearly displays your DoB and your picture, the rest of your information may be blurred or crossed out.\n\u25b9 Selfie holding the ID showing your date of birth and picture and a piece of paper with the server's name, current date, and your discord username written on it.\n\u3000"
+      },
+      {
+        "name": "\u25b9 **VIDEO VERIFICATION**",
+        "value": "\u3000\nAlternatively you can request a member of the staff team to verify you in a non recorded videocall where you'll have to simply hold your ID and show it closer to the cam as required to read the date of birth.\n\u3000"
+      }
+    ],
+    "image": "https://media.discordapp.net/attachments/1481698958341308499/1482699250767888454/CHNgpQW.png?ex=69db7f48&is=69da2dc8&hm=81c8f3e2248019a98ca831bfdb39670b81cf7587afea787bc787e01924a46eda&=&format=webp&quality=lossless",
+    "footer": "All information/pictures provided for the verifiation process will be completely eliminated after the process."
+  }
+}

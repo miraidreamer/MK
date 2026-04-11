@@ -27,23 +27,24 @@ RULES_PATH = "bot/static/rules.json"
 RULES_BAR_IMAGE_PATH = "bot/static/images/rulesbar.png"
 
 INFO_PATH = "bot/static/info.json"
+VERIFICATION_PATH = "bot/static/verification.json"
 
 
 # Commands that require the Administrator purrmission
 class AdminCommands(BaseCommands):
-    async def rules(self, ctx: lightbulb.Context):
+    async def post_rules(self, ctx: lightbulb.Context):
         with open(RULES_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         sections = {"general_rules", "femdom_rules", "mods_disclaimer"}
 
         for embed in self._create_embeds(data, sections):
-            await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=embed)
+            await ctx.client.app.rest.create_message(ChannelIDsEnum.RULES.value, embed=embed)
         await ctx.client.app.rest.create_message(
             ChannelIDsEnum.RULES.value, content=hikari.File(RULES_BAR_IMAGE_PATH)
         )
 
-    async def info(self, ctx: lightbulb.Context):
+    async def post_info(self, ctx: lightbulb.Context):
         with open(INFO_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
 
@@ -51,8 +52,16 @@ class AdminCommands(BaseCommands):
         for embed in self._create_embeds(data, sections):
             await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=embed)
 
+    async def post_verification_info(self, ctx: lightbulb.Context):
+        with open(VERIFICATION_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        sections = {"verification_instructions"}
+        for embed in self._create_embeds(data, sections):
+            await ctx.client.app.rest.create_message(ChannelIDsEnum.VERIFICATION.value, embed=embed)
+
     def _create_embeds(self, data: dict, section_keys: set[str]) -> set[hikari.Embed]:
-        embeds = set()
+        embeds = []
         for key in section_keys:
             section = data[key]
             embed = hikari.Embed(
@@ -65,8 +74,10 @@ class AdminCommands(BaseCommands):
                 embed.add_field(name=field["name"], value=field["value"])
             if image := section.get("image"):
                 embed.set_image(image)
+            if footer := section.get("footer"):
+                embed.set_footer(text=footer)
 
-            embeds.add(embed)
+            embeds.append(embed)
 
         return embeds
 

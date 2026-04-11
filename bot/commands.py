@@ -11,6 +11,7 @@ class Commands:
             self.EditRole,
             self.Rules,
             self.Info,
+            self.Verification,
             self.GiveVerified,
             self.BindRole,
             self.Say,
@@ -69,24 +70,34 @@ class Commands:
     # ADMIN COMMANDS
     class Rules(
         lightbulb.SlashCommand,
-        name="rules",
+        name="post_rules",
         description="display server rules",
         default_member_permissions=hikari.Permissions.ADMINISTRATOR,
     ):
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
-            await AdminCommands(ctx.client.app).rules(ctx)
+            await AdminCommands(ctx.client.app).post_rules(ctx)
 
     class Info(
         lightbulb.SlashCommand,
-        name="info",
+        name="post_info",
         description="display server info",
         default_member_permissions=hikari.Permissions.ADMINISTRATOR,
     ):
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
             print("Starting invoke")
-            await AdminCommands(ctx.client.app).info(ctx)
+            await AdminCommands(ctx.client.app).post_info(ctx)
+
+    class Verification(
+        lightbulb.SlashCommand,
+        name="post_verification_info",
+        description="Post the verification instructions embed.",
+        default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            await AdminCommands(ctx.client.app).post_verification_info(ctx)
 
     class Say(
         lightbulb.SlashCommand,
