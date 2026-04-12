@@ -14,6 +14,8 @@ class UserCommands(BaseCommands):
         second_color: str | None,
     ) -> None:
         if role_name is None and first_color is None:
+            if any(value in role_name for value in ["Owner", "Administrator", "Staff", "Co-Owner"]):
+                await self.respond(ctx, "Role name can not be a moderator role.")
             await self.respond(ctx, "Provide at least a name or a color to update.")
             return
 

@@ -23,6 +23,7 @@ class HeaderRolesEnum(Enum):
     POSITION_AND_PREFERENCES = 1483416593198485634
     BOUNDARIES_AND_RELATIONSHIPS = 1483416803215675494
     KINKS = 1482760118994210977
+    MISC = 1483418773338980435
 
     # This is a class attribute, not an Enum member
     @classmethod
@@ -46,7 +47,8 @@ class HeaderRolesEnum(Enum):
                 RelationshipRoleEnum,
                 InteractionStyleRoleEnum,
             ],
-            cls.KINKS: [KinkRoleEnumAN, KinkRoleEnumOW, PingRoleEnum, LevelRoleEnum],
+            cls.KINKS: [KinkRoleEnumAN, KinkRoleEnumOW],
+            cls.MISC: [PingRoleEnum, LevelRoleEnum],
         }
 
     @classmethod
