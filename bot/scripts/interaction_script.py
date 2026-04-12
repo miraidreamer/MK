@@ -79,7 +79,7 @@ class InteractionScript:
                         await self.bot.rest.remove_role_from_member(guild_id, member.id, partner_id)
 
         else:
-            roles_to_remove = (current_role_ids & category_role_ids) - target_role_ids
+            roles_to_remove = current_role_ids & category_role_ids & target_role_ids
             roles_to_add = target_role_ids - current_role_ids
 
             for role_id in roles_to_remove:
