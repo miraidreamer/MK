@@ -43,7 +43,7 @@ class InteractionScript:
             logging.warning(f"Interaction with an undefined object: {custom_id}.")
             return
 
-        current_role_ids = {int(r) for r in member.role_ids}
+        current_role_ids = {int(role) for role in member.role_ids}
 
         if SpecialRolesEnum.FROZEN.value in current_role_ids:
             await interaction.create_initial_response(
@@ -52,6 +52,8 @@ class InteractionScript:
                 flags=hikari.MessageFlag.EPHEMERAL,
             )
 
+        # For non button one role selectors we have to grab the role internal id here
+        custom_id = next(iter(selected_values)) if len(selected_values) == 1 else custom_id
         if message := active_enum.check_permission(current_role_ids, custom_id):
             await interaction.create_initial_response(
                 hikari.ResponseType.MESSAGE_CREATE,
