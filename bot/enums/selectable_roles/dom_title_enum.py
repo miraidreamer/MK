@@ -36,6 +36,10 @@ class DomTitleEnum(BaseRole):
 
     @classmethod
     def check_permission(cls, current_role_ids, custom_id):
-        if not (current_role_ids & PositionRoleEnum.get_dominant_internal_ids()):
+        if not (current_role_ids & PositionRoleEnum.get_dominant_role_ids()):
             return "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select titles."
         return None
+
+    @classmethod
+    def is_multi_select(self):
+        return True

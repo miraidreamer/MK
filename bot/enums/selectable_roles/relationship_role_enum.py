@@ -21,3 +21,7 @@ class RelationshipRoleEnum(BaseRole):
     @classmethod
     def get_placeholder(self) -> str:
         return "Select your status."
+
+    @classmethod
+    def is_multi_select(self):
+        return True

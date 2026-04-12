@@ -35,6 +35,10 @@ class BaseRole(Enum):
     @classmethod
     def is_button(self) -> bool:
         return False
+    
+    @classmethod
+    def is_multi_select(self) -> bool:
+        return False
 
     @classmethod
     def get_description(cls) -> str:

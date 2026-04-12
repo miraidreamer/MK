@@ -143,9 +143,11 @@ class AdminCommands(BaseCommands):
                     )
 
             else:
-                menu = row.add_text_menu(
-                    category.get_custom_id(), placeholder=category.get_placeholder()
-                )
+                menu_kwargs = {"placeholder": category.get_placeholder()}
+                if category.is_multi_select():
+                    menu_kwargs["min_values"] = 0
+                    menu_kwargs["max_values"] = len(list(category))
+                menu = row.add_text_menu(category.get_custom_id(), **menu_kwargs)
                 for item in category:
                     menu.add_option(
                         item.label,

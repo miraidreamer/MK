@@ -36,3 +36,7 @@ class KinkRoleEnumOW(BaseRole):
         return """You can choose all the kink roles you'd like from this dropdown. 
                 They are alphabetically ordered, if you don't find what you are looking for here, 
                 feel free to reach out to us in the suggestions channel!"""
+
+    @classmethod
+    def is_multi_select(self):
+        return True

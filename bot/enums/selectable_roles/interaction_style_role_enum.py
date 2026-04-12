@@ -49,12 +49,12 @@ class InteractionStyleRoleEnum(BaseRole):
     def check_permission(cls, current_role_ids, custom_id):
         if (
             custom_id in cls.get_dom_styles()
-            and not current_role_ids & PositionRoleEnum.get_dominant_internal_ids()
+            and not current_role_ids & PositionRoleEnum.get_dominant_role_ids()
         ):
             return "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select this."
         if (
             custom_id in cls.get_sub_styles()
-            and not current_role_ids & PositionRoleEnum.get_submissive_internal_ids()
+            and not current_role_ids & PositionRoleEnum.get_submissive_role_ids()
         ):
             return "You need a Dom-Lean, Switch, Sub-Lean or Submissive role to select this."
         return None
