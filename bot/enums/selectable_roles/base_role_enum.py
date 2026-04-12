@@ -45,6 +45,6 @@ class BaseRole(Enum):
         return None
 
     @classmethod
-    async def check_permission(cls, current_role_ids: set[int], custom_id: str) -> str | None:
+    def check_permission(cls, current_role_ids: set[int], custom_id: str) -> str | None:
         """@Returns error string if permission check fails, None if permission check passes"""
         return None
