@@ -14,6 +14,7 @@ class Commands:
             self.Verification,
             self.GiveVerified,
             self.BindRole,
+            self.FreezeRoles,
             self.Say,
             self.PostRoleSelector,
             self.PostExtraRolesSelector,
@@ -52,7 +53,7 @@ class Commands:
 
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
-            await ModCommands(ctx.client.app).give_verified(ctx)
+            await ModCommands(ctx.client.app).give_verified(ctx, self.target)
 
     class BindRole(
         lightbulb.SlashCommand,
@@ -66,6 +67,21 @@ class Commands:
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
             await ModCommands(ctx.client.app).bind_role(ctx, self.target, self.role)
+
+    class FreezeRoles(
+        lightbulb.SlashCommand,
+        name="freeze_roles",
+        description="Restrict user from changing roles.",
+        default_member_permissions=hikari.Permissions.MANAGE_ROLES,
+    ):
+        target = lightbulb.user("user", "The user to freeze roles of.")
+        timer = lightbulb.string(
+            "timer", "The amount of time to freeze the roles for.(2 minutes | 1 hour)"
+        )
+
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            await ModCommands(ctx.client.app).freeze_roles(ctx, self.target, self.timer)
 
     # ADMIN COMMANDS
     class Rules(

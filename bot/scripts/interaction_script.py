@@ -3,6 +3,7 @@ from typing import Type
 
 import hikari
 from enums.selectable_roles.base_role_enum import BaseRole
+from enums.special_roles_enum import SpecialRolesEnum
 
 
 class InteractionScript:
@@ -43,6 +44,13 @@ class InteractionScript:
             return
 
         current_role_ids = {int(r) for r in member.role_ids}
+
+        if SpecialRolesEnum.FROZEN.value in current_role_ids:
+            await interaction.create_initial_response(
+                hikari.ResponseType.MESSAGE_CREATE,
+                "Your roles are currently frozen and can not be changed.",
+                flags=hikari.MessageFlag.EPHEMERAL,
+            )
 
         if message := active_enum.check_permission(current_role_ids, custom_id):
             await interaction.create_initial_response(
