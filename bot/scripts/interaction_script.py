@@ -58,6 +58,7 @@ class InteractionScript:
                 message,
                 flags=hikari.MessageFlag.EPHEMERAL,
             )
+            return
 
         category_role_ids = {item.role_id for item in active_enum}
         target_role_ids = {
