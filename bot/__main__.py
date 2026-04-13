@@ -10,6 +10,15 @@ from scripts.management_scripts import ManagementScripts
 
 PANDAEMONIUM_GUILD_ID = 1481652883647762646
 
+logger = logging.getLogger(__name__)
+
+
+@lightbulb.hook(lightbulb.ExecutionSteps.PRE_INVOKE)
+async def log_invocation(pl: lightbulb.ExecutionPipeline, ctx: lightbulb.Context) -> None:
+    inputs = {opt.name: opt.value for opt in ctx.options} if ctx.options else {}
+    logger.info("/%s invoked by %s (id: %d) | inputs: %s", ctx.command_data.name, ctx.user.username, ctx.user.id, inputs)
+
+
 def _get_env(name: str) -> str:
     value = os.getenv(name)
     if not value:
@@ -27,7 +36,9 @@ class Bot:
             intents=hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.GUILD_MEMBERS,
         )
 
-        self.client = lightbulb.client_from_app(self.bot, default_enabled_guilds=[PANDAEMONIUM_GUILD_ID])
+        self.client = lightbulb.client_from_app(
+            self.bot, default_enabled_guilds=[PANDAEMONIUM_GUILD_ID], hooks=[log_invocation]
+        )
 
         self.manager = ManagementScripts(self.bot)
         self.interaction = InteractionScript(self.bot)

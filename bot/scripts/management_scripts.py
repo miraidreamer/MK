@@ -6,6 +6,8 @@ from enums.channel_ids_enum import ChannelIDsEnum
 from enums.header_roles_enum import HeaderRolesEnum
 from enums.special_roles_enum import SpecialRolesEnum
 
+logger = logging.getLogger(__name__)
+
 
 class ManagementScripts:
     def __init__(self, bot: hikari.GatewayBot):
@@ -48,9 +50,13 @@ class ManagementScripts:
             has_header = header_id in role_ids_now
 
             if has_any_child and not has_header:
-                await self._toggle_header_role(add=True, guild_id=guild_id, member_id=member_id, header_id=header_id)
+                await self._toggle_header_role(
+                    add=True, guild_id=guild_id, member_id=member_id, header_id=header_id
+                )
             elif not has_any_child and has_header:
-                await self._toggle_header_role(add=False, guild_id=guild_id, member_id=member_id, header_id=header_id)
+                await self._toggle_header_role(
+                    add=False, guild_id=guild_id, member_id=member_id, header_id=header_id
+                )
 
     async def _toggle_header_role(
         self,
@@ -67,12 +73,14 @@ class ManagementScripts:
         try:
             if add:
                 await self.bot.rest.add_role_to_member(guild_id, member_id, header_id)
-                logging.info(f"Added header {header_id} to {member_id}")
+                logger.info("Added header role {header_id} to member {member_id}")
             else:
                 await self.bot.rest.remove_role_from_member(guild_id, member_id, header_id)
-                logging.info(f"Removed header {header_id} from {member_id}")
+                logger.info("Removed header role {header_id} from member {member_id}")
         except hikari.ForbiddenError:
-            logging.warning(f"Failed to toggle header {header_id}: Bot lacks permissions.")
+            logger.warning(
+                "Failed to toggle header role {header_id} for member {member_id}: bot lacks permissions."
+            )
         finally:
             self._pending_header_ops.discard(op_key)
 

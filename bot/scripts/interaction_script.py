@@ -5,6 +5,8 @@ import hikari
 from enums.selectable_roles.base_role_enum import BaseRole
 from enums.special_roles_enum import SpecialRolesEnum
 
+logger = logging.getLogger(__name__)
+
 
 class InteractionScript:
     def __init__(self, bot: hikari.GatewayBot):
@@ -40,8 +42,16 @@ class InteractionScript:
                     break
 
         if not active_enum:
-            logging.warning(f"Interaction with an undefined object: {custom_id}.")
+            logger.warning(f"Interaction with an undefined object: {custom_id}. By user {member.username} | {member.id}.")
             return
+        
+        logger.info(
+            "Role interaction by %s (id: %d) | enum: %s | selected role ids: %s",
+            member.username,
+            member.id,
+            active_enum.__name__,
+            selected_values,
+        )
 
         current_role_ids = {int(role) for role in member.role_ids}
 
@@ -86,7 +96,7 @@ class InteractionScript:
                 try:
                     await self.bot.rest.remove_role_from_member(guild_id, member.id, role_id)
                 except (hikari.ForbiddenError, hikari.NotFoundError):
-                    logging.exception(
+                    logger.exception(
                         f"Exception in role selection when trying to remove role id: {role_id}"
                     )
 
@@ -94,11 +104,11 @@ class InteractionScript:
                 try:
                     await self.bot.rest.add_role_to_member(guild_id, member.id, role_id)
                 except (hikari.ForbiddenError, hikari.NotFoundError):
-                    logging.exception(
+                    logger.exception(
                         f"Exception in role selection when trying to add role id: {role_id}"
                     )
 
         try:
             await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
         except hikari.NotFoundError:
-            logging.warning("Something went wrong with role selection.")
+            logger.warning("Something went wrong with role selection.")
