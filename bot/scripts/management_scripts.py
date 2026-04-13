@@ -73,13 +73,15 @@ class ManagementScripts:
         try:
             if add:
                 await self.bot.rest.add_role_to_member(guild_id, member_id, header_id)
-                logger.info("Added header role {header_id} to member {member_id}")
+                logger.info("Added header role %d to member %d", header_id, member_id)
             else:
                 await self.bot.rest.remove_role_from_member(guild_id, member_id, header_id)
-                logger.info("Removed header role {header_id} from member {member_id}")
+                logger.info("Removed header role %d from member %d", header_id, member_id)
         except hikari.ForbiddenError:
             logger.warning(
-                "Failed to toggle header role {header_id} for member {member_id}: bot lacks permissions."
+                "Failed to toggle header role %d for member %d: bot lacks permissions.",
+                header_id,
+                member_id,
             )
         finally:
             self._pending_header_ops.discard(op_key)

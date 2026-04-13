@@ -44,8 +44,8 @@ class PositionRoleEnum(BaseRole):
     def check_permission(cls, current_role_ids, custom_id):
         if (
             custom_id in PositionRoleEnum.get_dominant_role_ids()
-            and GenderRoleEnum.MALE.value in current_role_ids
-        ):
+            or PositionRoleEnum.SUBMISSIVE.role_id in current_role_ids
+        ) and GenderRoleEnum.MALE.value in current_role_ids:
             return "This is a femdom server — males can only be Submissive"
         return None
 
