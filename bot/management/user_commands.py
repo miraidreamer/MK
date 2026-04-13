@@ -17,10 +17,11 @@ class UserCommands(BaseCommands):
             await self.respond(ctx, "Provide at least a name or a color to update.")
             return
 
-        if any(
+        if role_name and any(
             value in role_name.lower() for value in ["owner", "administrator", "staff", "co-owner"]
         ):
             await self.respond(ctx, "Role name can not be a moderator role.")
+            return
 
         if second_color is not None and first_color is None:
             await self.respond(

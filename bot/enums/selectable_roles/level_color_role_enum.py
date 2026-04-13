@@ -4,11 +4,11 @@ from .base_role_enum import BaseRole
 
 
 class LevelColorRoleEnum(BaseRole):
-    LEVEL_100 = ("Level 100", "lvl_100", 1481718271513198643)
-    LEVEL_75 = ("Level 75", "lvl_75", 1481718240353976442)
-    LEVEL_50 = ("Level 50", "lvl_50", 1481718189736984608)
-    LEVEL_30 = ("Level 30", "lvl_30", 1481718161673031681)
-    LEVEL_10 = ("Level 10", "lvl_10", 1481718118551388423)
+    LEVEL_100 = ("Level 100", "lvl_100", 1482726503677431808)
+    LEVEL_75 = ("Level 75", "lvl_75", 1482726497134575656)
+    LEVEL_50 = ("Level 50", "lvl_50", 1482726137938444480)
+    LEVEL_30 = ("Level 30", "lvl_30", 1482725894702502050)
+    LEVEL_10 = ("Level 10", "lvl_10", 1482725106210963537)
 
     @classmethod
     def get_title(cls) -> str:
@@ -44,7 +44,10 @@ class LevelColorRoleEnum(BaseRole):
         )
 
     @classmethod
-    def check_permission(cls, current_role_ids, custom_id):
-        if LevelColorRoleEnum.get_required_role_id(custom_id) not in current_role_ids:
+    def check_permission(cls, current_role_ids, custom_id) -> str | None:
+        if (
+            custom_id in [item.internal_id for item in cls]
+            and LevelColorRoleEnum.get_required_role_id(custom_id) not in current_role_ids
+        ):
             return "You don't have the required level to select this role."
         return None
