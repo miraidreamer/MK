@@ -61,6 +61,7 @@ class InteractionScript:
                 "Your roles are currently frozen and can not be changed.",
                 flags=hikari.MessageFlag.EPHEMERAL,
             )
+            return
 
         # For non button one role selectors we have to grab the role internal id here
         custom_id = next(iter(selected_values)) if len(selected_values) == 1 else custom_id
@@ -76,6 +77,8 @@ class InteractionScript:
         target_role_ids = {
             item.role_id for item in active_enum if item.internal_id in selected_values
         }
+
+        await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
 
         if active_enum.is_button():
             role_id = next(iter(target_role_ids))
@@ -108,7 +111,3 @@ class InteractionScript:
                         f"Exception in role selection when trying to add role id: {role_id}"
                     )
 
-        try:
-            await interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_UPDATE)
-        except hikari.NotFoundError:
-            logger.warning("Something went wrong with role selection.")
