@@ -42,9 +42,11 @@ class InteractionScript:
                     break
 
         if not active_enum:
-            logger.warning(f"Interaction with an undefined object: {custom_id}. By user {member.username} | {member.id}.")
+            logger.warning(
+                f"Interaction with an undefined object: {custom_id}. By user {member.username} | {member.id}."
+            )
             return
-        
+
         logger.info(
             "Role interaction by %s (id: %d) | enum: %s | selected role ids: %s",
             member.username,
@@ -110,4 +112,3 @@ class InteractionScript:
                     logger.exception(
                         f"Exception in role selection when trying to add role id: {role_id}"
                     )
-

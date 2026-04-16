@@ -25,27 +25,35 @@
       },
       {
         "name": "\u25b9 **6. Malicious Persons & Minors**",
-        "value": "\u3000\nCatfishes, scammers, bots, or underage persons will be banned on sight or notice. Do not expect a warning.\n\u3000"
+        "value": "\u3000\nCatfishes, scammers, bots, trolls or underage persons will be banned on sight or notice. Do not expect a warning.\n\u3000"
       },
       {
-        "name": "\u25b9 **7. Findom/Advertisements**",
+        "name": "\u25b9 **7. Unsolicited DMs & harassment**",
+        "value": "\u3000\nSending unsolicited DMs to members with any of the ask to dm roles or continuously harassing other members is strictly forbidden.\n\u3000"
+      },
+      {
+        "name": "\u25b9 **8. Findom/Advertisements**",
         "value": "\u3000\nFindom and any kind of advertising of findom is not allowed. Advertisements of other servers within Pand\u00e6monium are also strictly prohibited. Other forms of advertisement are more subjective. However, as a general rule, if what you are advertising/promoting is not relevant to the channel or subject of conversation, it is not allowed. \n\u3000"
       },
       {
-        "name": "\u25b9 **8. No offensive names and profile pictures**",
+        "name": "\u25b9 **9. No offensive names and profile pictures**",
         "value": "\u3000\nYou will be asked to change your name or picture if moderators deem them inappropriate.\n\u3000"
       },
       {
-        "name": "\u25b9 **9. Server Raiding**",
+        "name": "\u25b9 **10. Server Raiding**",
         "value": "\u3000\nShould go without saying, raiding or mentions of raiding are not allowed.\n"
       },
       {
-        "name": "\u25b9 **10. Direct & Indirect Threats**",
+        "name": "\u25b9 **11. Direct & Indirect Threats**",
         "value": "\u3000\nThreats to other users of DDoS, Death, DoX, abuse, and other malicious threats are absolutely prohibited and disallowed.\n\u3000"
       },
       {
-        "name": "\u25b9 **11. Proper use of Channels**",
+        "name": "\u25b9 **12. Proper use of Channels**",
         "value": "\u3000\nWhile not heavily enforced, try to stick to using channels for their intended purpose, and their intended purpose only. If you are confused regarding what a channel is used for or how to use it, ask staff or another active member in the server. Keep heavy topics in <#1481790436120068199> and do not vent in other channels.\n\u3000"
+      },
+      {
+        "name": "\u25b9 **13. Disruptive behaviour & moderation**",
+        "value": "\u3000\nWhile jokes/gifs are allowed, excesive use and constant derailement of conversations leads to a worse experience for all users. And in a general sense continuing to engage in disruptive behaviour for extended periods of time or after being informed by a moderator to stop will result in a mute.\n"
       }
     ]
   },

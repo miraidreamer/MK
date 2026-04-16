@@ -36,8 +36,8 @@ class InteractionStyleRoleEnum(BaseRole):
     @classmethod
     def get_mutex_partner(cls, role_id: int) -> int | None:
         mutex_pairs = {
-            cls.BULLY_ME.value: cls.DONT_BULLY.value,
-            cls.FLIRT.value: cls.DONT_FLIRT.value,
+            cls.BULLY_ME.role_id: cls.DONT_BULLY.role_id,
+            cls.FLIRT.role_id: cls.DONT_FLIRT.role_id,
         }
         if role_id in mutex_pairs:
             return mutex_pairs[role_id]
