@@ -47,6 +47,10 @@ class BoosterColorEnum(BaseRole):
         )
 
     @classmethod
+    def is_enum_mutex(cls) -> bool:
+        return True
+
+    @classmethod
     def check_permission(cls, current_role_ids: set[int], custom_id: str) -> str | None:
         if SpecialRolesEnum.BOOSTER.value not in current_role_ids:
             return "Only boosters can select a color from this menu."

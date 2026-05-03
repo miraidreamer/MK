@@ -22,6 +22,10 @@ class PositionRoleEnum(BaseRole):
     def is_button(self) -> bool:
         return True
 
+    @classmethod
+    def is_enum_mutex(cls) -> bool:
+        return True
+
     @staticmethod
     def get_dominant_role_ids() -> set[str]:
         return {

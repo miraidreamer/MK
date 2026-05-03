@@ -35,6 +35,11 @@ class BaseRole(Enum):
     @classmethod
     def is_button(self) -> bool:
         return False
+
+    @classmethod
+    def is_enum_mutex(cls) -> bool:
+        """When True, selecting any role in this enum removes all other roles in the enum."""
+        return False
     
     @classmethod
     def is_multi_select(self) -> bool:

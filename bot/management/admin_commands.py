@@ -36,7 +36,7 @@ class AdminCommands(BaseCommands):
         with open(RULES_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        sections = {"general_rules", "femdom_rules", "mods_disclaimer"}
+        sections = ["general_rules", "femdom_rules", "mods_disclaimer"]
 
         for embed in self._create_embeds(data, sections):
             await ctx.client.app.rest.create_message(ChannelIDsEnum.RULES.value, embed=embed)
@@ -48,7 +48,7 @@ class AdminCommands(BaseCommands):
         with open(INFO_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        sections = {"staff_contact", "verification", "leveling_system", "boosting_perks"}
+        sections = ["staff_contact", "verification", "leveling_system", "boosting_perks"]
         for embed in self._create_embeds(data, sections):
             await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=embed)
 
@@ -56,11 +56,11 @@ class AdminCommands(BaseCommands):
         with open(VERIFICATION_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        sections = {"verification_instructions"}
+        sections = ["verification_instructions"]
         for embed in self._create_embeds(data, sections):
             await ctx.client.app.rest.create_message(ChannelIDsEnum.VERIFICATION.value, embed=embed)
 
-    def _create_embeds(self, data: dict, section_keys: set[str]) -> set[hikari.Embed]:
+    def _create_embeds(self, data: dict, section_keys: list[str]) -> list[hikari.Embed]:
         embeds = []
         for key in section_keys:
             section = data[key]

@@ -16,7 +16,13 @@ logger = logging.getLogger(__name__)
 @lightbulb.hook(lightbulb.ExecutionSteps.PRE_INVOKE)
 async def log_invocation(pl: lightbulb.ExecutionPipeline, ctx: lightbulb.Context) -> None:
     inputs = {opt.name: opt.value for opt in ctx.options} if ctx.options else {}
-    logger.info("/%s invoked by %s (id: %d) | inputs: %s", ctx.command_data.name, ctx.user.username, ctx.user.id, inputs)
+    logger.info(
+        "/%s invoked by %s (id: %d) | inputs: %s",
+        ctx.command_data.name,
+        ctx.user.username,
+        ctx.user.id,
+        inputs,
+    )
 
 
 def _get_env(name: str) -> str:
@@ -40,7 +46,7 @@ class Bot:
             self.bot, default_enabled_guilds=[PANDAEMONIUM_GUILD_ID], hooks=[log_invocation]
         )
 
-        self.manager = ManagementScripts(self.bot)
+        self.manager = ManagementScripts(self.bot, PANDAEMONIUM_GUILD_ID)
         self.interaction = InteractionScript(self.bot)
 
         for command in Commands().get_commands():
@@ -48,6 +54,7 @@ class Bot:
 
     def run(self) -> None:
         self.bot.subscribe(hikari.StartingEvent, self.client.start)
+        self.bot.subscribe(hikari.StartedEvent, self._on_started)
 
         self.bot.subscribe(hikari.GuildChannelCreateEvent, self.manager.on_channel_create)
         self.bot.subscribe(hikari.GuildChannelDeleteEvent, self.manager.on_channel_delete)
@@ -55,6 +62,9 @@ class Bot:
         self.bot.subscribe(hikari.InteractionCreateEvent, self.interaction.on_interaction_create)
 
         self.bot.run()
+
+    async def _on_started(self, _: hikari.StartedEvent) -> None:
+        self.manager.start_daily_purge_task()
 
 
 if __name__ == "__main__":
