@@ -65,9 +65,6 @@ class Bot:
 
     async def _on_started(self, _: hikari.StartedEvent) -> None:
         self.manager.start_daily_purge_task()
-        await self.bot.rest.add_role_to_member(
-            PANDAEMONIUM_GUILD_ID, 1025433703842852864, 1489264849593569391
-        )
 
 
 if __name__ == "__main__":
