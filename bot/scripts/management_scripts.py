@@ -128,7 +128,11 @@ class ManagementScripts:
 
                 for role_id in role_ids:
                     role = role_map.get(role_id)
-                    if role and BOUND_ROLE_MARKER in role.name:
+                    if (
+                        role
+                        and BOUND_ROLE_MARKER in role.name
+                        and role.id != SpecialRolesEnum.ADMIN.value
+                    ):
                         await self.bot.rest.remove_role_from_member(
                             self.guild_id, member.id, role_id
                         )
