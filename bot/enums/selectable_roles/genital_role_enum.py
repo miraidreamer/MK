@@ -7,11 +7,11 @@ class GenitalRoleEnum(BaseRole):
 
     @classmethod
     def get_title(cls) -> str:
-        return "GENDER"
+        return "GENITALIA"
 
     @classmethod
     def get_custom_id(cls) -> str:
-        return "gender_section"
+        return "genitalia_section"
 
     @classmethod
     def is_button(self) -> bool:

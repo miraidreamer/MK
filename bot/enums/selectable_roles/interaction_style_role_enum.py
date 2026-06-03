@@ -36,8 +36,8 @@ class InteractionStyleRoleEnum(BaseRole):
     @classmethod
     def get_mutex_partner(cls, role_id: int) -> int | None:
         mutex_pairs = {
-            cls.BULLY_ME.value: cls.DONT_BULLY.value,
-            cls.FLIRT.value: cls.DONT_FLIRT.value,
+            cls.BULLY_ME.role_id: cls.DONT_BULLY.role_id,
+            cls.FLIRT.role_id: cls.DONT_FLIRT.role_id,
         }
         if role_id in mutex_pairs:
             return mutex_pairs[role_id]
@@ -49,12 +49,12 @@ class InteractionStyleRoleEnum(BaseRole):
     def check_permission(cls, current_role_ids, custom_id):
         if (
             custom_id in cls.get_dom_styles()
-            and not current_role_ids & PositionRoleEnum.get_dominant_internal_ids()
+            and not current_role_ids & PositionRoleEnum.get_dominant_role_ids()
         ):
             return "You need a Dominant, Dom-Lean, Switch, or Sub-Lean role to select this."
         if (
             custom_id in cls.get_sub_styles()
-            and not current_role_ids & PositionRoleEnum.get_submissive_internal_ids()
+            and not current_role_ids & PositionRoleEnum.get_submissive_role_ids()
         ):
             return "You need a Dom-Lean, Switch, Sub-Lean or Submissive role to select this."
         return None

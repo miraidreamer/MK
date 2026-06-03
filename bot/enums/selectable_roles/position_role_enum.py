@@ -22,30 +22,34 @@ class PositionRoleEnum(BaseRole):
     def is_button(self) -> bool:
         return True
 
+    @classmethod
+    def is_enum_mutex(cls) -> bool:
+        return True
+
     @staticmethod
-    def get_dominant_internal_ids() -> set[str]:
+    def get_dominant_role_ids() -> set[str]:
         return {
-            PositionRoleEnum.DOMINANT.internal_id,
-            PositionRoleEnum.DOMLEAN.internal_id,
-            PositionRoleEnum.SWITCH.internal_id,
-            PositionRoleEnum.SUBLEAN.internal_id,
+            PositionRoleEnum.DOMINANT.role_id,
+            PositionRoleEnum.DOMLEAN.role_id,
+            PositionRoleEnum.SWITCH.role_id,
+            PositionRoleEnum.SUBLEAN.role_id,
         }
 
     @staticmethod
-    def get_submissive_internal_ids() -> set[str]:
+    def get_submissive_role_ids() -> set[str]:
         return {
-            PositionRoleEnum.DOMLEAN.internal_id,
-            PositionRoleEnum.SWITCH.internal_id,
-            PositionRoleEnum.SUBLEAN.internal_id,
-            PositionRoleEnum.SUBMISSIVE.internal_id,
+            PositionRoleEnum.DOMLEAN.role_id,
+            PositionRoleEnum.SWITCH.role_id,
+            PositionRoleEnum.SUBLEAN.role_id,
+            PositionRoleEnum.SUBMISSIVE.role_id,
         }
 
     @classmethod
     def check_permission(cls, current_role_ids, custom_id):
         if (
-            custom_id in PositionRoleEnum.get_dominant_internal_ids()
-            and GenderRoleEnum.MALE.value in current_role_ids
-        ):
+            custom_id in PositionRoleEnum.get_dominant_role_ids()
+            or PositionRoleEnum.SUBMISSIVE.role_id in current_role_ids
+        ) and GenderRoleEnum.MALE.value in current_role_ids:
             return "This is a femdom server — males can only be Submissive"
         return None
 

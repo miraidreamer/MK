@@ -1,17 +1,25 @@
+import asyncio
+import datetime
 import logging
 
 import hikari
 import hikari.impl.special_endpoints as special_endpoints
 from enums.channel_ids_enum import ChannelIDsEnum
 from enums.header_roles_enum import HeaderRolesEnum
+from enums.selectable_roles.booster_color_enum import BoosterColorEnum
 from enums.special_roles_enum import SpecialRolesEnum
+from management.user_commands import BOUND_ROLE_MARKER
+
+logger = logging.getLogger(__name__)
 
 
 class ManagementScripts:
-    def __init__(self, bot: hikari.GatewayBot):
+    def __init__(self, bot: hikari.GatewayBot, guild_id: int):
         self.bot = bot
+        self.guild_id = guild_id
         self._header_mapping = HeaderRolesEnum.get_header_to_child_map()
         self.ticket_notice_message_by_channel_id: dict[int, int] = {}
+        self._booster_color_ids: set[int] = {m.role_id for m in BoosterColorEnum}
         # Tracks (member_id, header_role_id) pairs for REST calls currently in flight,
         # preventing duplicate add/remove attempts from stale events arriving concurrently.
         self._pending_header_ops: set[tuple[hikari.Snowflake, hikari.Snowflake]] = set()
@@ -48,9 +56,13 @@ class ManagementScripts:
             has_header = header_id in role_ids_now
 
             if has_any_child and not has_header:
-                await self._toggle_header_role(add=True, guild_id=guild_id, member_id=member_id, header_id=header_id)
+                await self._toggle_header_role(
+                    add=True, guild_id=guild_id, member_id=member_id, header_id=header_id
+                )
             elif not has_any_child and has_header:
-                await self._toggle_header_role(add=False, guild_id=guild_id, member_id=member_id, header_id=header_id)
+                await self._toggle_header_role(
+                    add=False, guild_id=guild_id, member_id=member_id, header_id=header_id
+                )
 
     async def _toggle_header_role(
         self,
@@ -67,14 +79,68 @@ class ManagementScripts:
         try:
             if add:
                 await self.bot.rest.add_role_to_member(guild_id, member_id, header_id)
-                logging.info(f"Added header {header_id} to {member_id}")
+                logger.info("Added header role %d to member %d", header_id, member_id)
             else:
                 await self.bot.rest.remove_role_from_member(guild_id, member_id, header_id)
-                logging.info(f"Removed header {header_id} from {member_id}")
+                logger.info("Removed header role %d from member %d", header_id, member_id)
         except hikari.ForbiddenError:
-            logging.warning(f"Failed to toggle header {header_id}: Bot lacks permissions.")
+            logger.warning(
+                "Failed to toggle header role %d for member %d: bot lacks permissions.",
+                header_id,
+                member_id,
+            )
         finally:
             self._pending_header_ops.discard(op_key)
+
+    # BOOSTER PERK PURGE
+
+    def start_daily_purge_task(self) -> None:
+        asyncio.create_task(self._purge_loop())
+
+    async def _purge_loop(self) -> None:
+        while True:
+            now = datetime.datetime.now()
+            next_midnight = (now + datetime.timedelta(days=1)).replace(
+                hour=0, minute=0, second=0, microsecond=0
+            )
+            await asyncio.sleep((next_midnight - now).total_seconds())
+            await self._purge_booster_perks()
+
+    async def _purge_booster_perks(self) -> None:
+        """Remove booster color and bound roles from members who are no longer boosting."""
+        logger.info("Running booster perk purge.")
+        try:
+            all_roles = await self.bot.rest.fetch_roles(self.guild_id)
+            role_map = {role.id: role for role in all_roles}
+
+            async for member in self.bot.rest.fetch_members(self.guild_id):
+                if member.is_bot:
+                    continue
+                role_ids = set(member.role_ids)
+                if SpecialRolesEnum.BOOSTER.value in role_ids:
+                    continue
+
+                for role_id in role_ids & self._booster_color_ids:
+                    await self.bot.rest.remove_role_from_member(self.guild_id, member.id, role_id)
+                    logger.info(
+                        "Removed booster color role %d from non-booster %d.", role_id, member.id
+                    )
+
+                for role_id in role_ids:
+                    role = role_map.get(role_id)
+                    if (
+                        role
+                        and BOUND_ROLE_MARKER in role.name
+                        and role.id != SpecialRolesEnum.ADMIN.value
+                    ):
+                        await self.bot.rest.remove_role_from_member(
+                            self.guild_id, member.id, role_id
+                        )
+                        logger.info(
+                            "Removed bound role %d from non-booster %d.", role_id, member.id
+                        )
+        except Exception:
+            logger.exception("Error during booster perk purge.")
 
     # TICKETS NOTIFICATIONS
     async def on_channel_create(self, event: hikari.GuildChannelCreateEvent) -> None:

@@ -36,7 +36,7 @@ class AdminCommands(BaseCommands):
         with open(RULES_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        sections = {"general_rules", "femdom_rules", "mods_disclaimer"}
+        sections = ["general_rules", "femdom_rules", "mods_disclaimer"]
 
         for embed in self._create_embeds(data, sections):
             await ctx.client.app.rest.create_message(ChannelIDsEnum.RULES.value, embed=embed)
@@ -48,7 +48,7 @@ class AdminCommands(BaseCommands):
         with open(INFO_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        sections = {"staff_contact", "verification", "leveling_system", "boosting_perks"}
+        sections = ["staff_contact", "verification", "leveling_system", "boosting_perks"]
         for embed in self._create_embeds(data, sections):
             await ctx.client.app.rest.create_message(ChannelIDsEnum.INFO.value, embed=embed)
 
@@ -56,11 +56,11 @@ class AdminCommands(BaseCommands):
         with open(VERIFICATION_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        sections = {"verification_instructions"}
+        sections = ["verification_instructions"]
         for embed in self._create_embeds(data, sections):
             await ctx.client.app.rest.create_message(ChannelIDsEnum.VERIFICATION.value, embed=embed)
 
-    def _create_embeds(self, data: dict, section_keys: set[str]) -> set[hikari.Embed]:
+    def _create_embeds(self, data: dict, section_keys: list[str]) -> list[hikari.Embed]:
         embeds = []
         for key in section_keys:
             section = data[key]
@@ -143,9 +143,11 @@ class AdminCommands(BaseCommands):
                     )
 
             else:
-                menu = row.add_text_menu(
-                    category.get_custom_id(), placeholder=category.get_placeholder()
-                )
+                menu_kwargs = {"placeholder": category.get_placeholder()}
+                if category.is_multi_select():
+                    menu_kwargs["min_values"] = 0
+                    menu_kwargs["max_values"] = len(list(category))
+                menu = row.add_text_menu(category.get_custom_id(), **menu_kwargs)
                 for item in category:
                     menu.add_option(
                         item.label,

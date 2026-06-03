@@ -31,6 +31,10 @@ class PetNamesRoleEnum(BaseRole):
 
     @classmethod
     def check_permission(cls, current_role_ids, custom_id):
-        if not (current_role_ids & PositionRoleEnum.get_submissive_internal_ids()):
+        if not (current_role_ids & PositionRoleEnum.get_submissive_role_ids()):
             return "You need a Switch, Sub-Lean, or Submissive role to select pet names."
         return None
+
+    @classmethod
+    def is_multi_select(self):
+        return True

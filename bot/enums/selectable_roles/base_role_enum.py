@@ -37,6 +37,15 @@ class BaseRole(Enum):
         return False
 
     @classmethod
+    def is_enum_mutex(cls) -> bool:
+        """When True, selecting any role in this enum removes all other roles in the enum."""
+        return False
+    
+    @classmethod
+    def is_multi_select(self) -> bool:
+        return False
+
+    @classmethod
     def get_description(cls) -> str:
         return "\n".join([f"{item.emoji + ' ' if item.emoji else ''}{item.label}" for item in cls])
 
@@ -45,6 +54,6 @@ class BaseRole(Enum):
         return None
 
     @classmethod
-    async def check_permission(cls, current_role_ids: set[int], custom_id: str) -> str | None:
+    def check_permission(cls, current_role_ids: set[int], custom_id: str) -> str | None:
         """@Returns error string if permission check fails, None if permission check passes"""
         return None
