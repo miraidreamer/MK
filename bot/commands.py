@@ -18,6 +18,7 @@ class Commands:
             self.Say,
             self.PostRoleSelector,
             self.PostExtraRolesSelector,
+            self.VideoVerify,
         }
 
     # USER COMMANDS
@@ -47,6 +48,18 @@ class Commands:
         lightbulb.SlashCommand,
         name="give_verified",
         description="Give the verified role to a user.",
+        default_member_permissions=hikari.Permissions.MANAGE_ROLES,
+    ):
+        target = lightbulb.user("user", "The user to verify.")
+
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            await ModCommands(ctx.client.app).give_verified(ctx, self.target)
+
+    class VideoVerify(
+        lightbulb.SlashCommand,
+        name="gvideo_verify",
+        description="Give the verifying role to a user.",
         default_member_permissions=hikari.Permissions.MANAGE_ROLES,
     ):
         target = lightbulb.user("user", "The user to verify.")
