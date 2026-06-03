@@ -21,6 +21,15 @@ class Commands:
         }
 
     # USER COMMANDS
+    class VideoVerify(
+        lightbulb.SlashCommand,
+        name="video_verify",
+        description="Use this command if you wish to do a videocall for age verification",
+    ):
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            await UserCommands(ctx.client.app).video_verify(ctx)
+
     class EditRole(
         lightbulb.SlashCommand,
         name="edit_role",

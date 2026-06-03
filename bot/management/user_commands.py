@@ -1,4 +1,3 @@
-import hikari
 import hikari.impl.rest as hikari_rest
 import lightbulb
 from enums.special_roles_enum import SpecialRolesEnum
