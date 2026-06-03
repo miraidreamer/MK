@@ -58,7 +58,7 @@ class Commands:
 
     class VideoVerify(
         lightbulb.SlashCommand,
-        name="gvideo_verify",
+        name="video_verify",
         description="Give the verifying role to a user.",
         default_member_permissions=hikari.Permissions.MANAGE_ROLES,
     ):
@@ -66,7 +66,7 @@ class Commands:
 
         @lightbulb.invoke
         async def invoke(self, ctx: lightbulb.Context) -> None:
-            await ModCommands(ctx.client.app).give_verified(ctx, self.target)
+            await ModCommands(ctx.client.app).video_verify(ctx, self.target)
 
     class BindRole(
         lightbulb.SlashCommand,
