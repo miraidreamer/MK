@@ -21,15 +21,6 @@ class Commands:
         }
 
     # USER COMMANDS
-    class VideoVerify(
-        lightbulb.SlashCommand,
-        name="video_verify",
-        description="Use this command if you wish to do a videocall for age verification",
-    ):
-        @lightbulb.invoke
-        async def invoke(self, ctx: lightbulb.Context) -> None:
-            await UserCommands(ctx.client.app).video_verify(ctx)
-
     class EditRole(
         lightbulb.SlashCommand,
         name="edit_role",
@@ -56,6 +47,18 @@ class Commands:
         lightbulb.SlashCommand,
         name="give_verified",
         description="Give the verified role to a user.",
+        default_member_permissions=hikari.Permissions.MANAGE_ROLES,
+    ):
+        target = lightbulb.user("user", "The user to verify.")
+
+        @lightbulb.invoke
+        async def invoke(self, ctx: lightbulb.Context) -> None:
+            await ModCommands(ctx.client.app).give_verified(ctx, self.target)
+
+    class VideoVerify(
+        lightbulb.SlashCommand,
+        name="video_verify",
+        description="Add user to the verifying voice chat",
         default_member_permissions=hikari.Permissions.MANAGE_ROLES,
     ):
         target = lightbulb.user("user", "The user to verify.")

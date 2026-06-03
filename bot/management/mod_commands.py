@@ -12,6 +12,9 @@ from management.user_commands import BOUND_ROLE_MARKER
 
 # Commands that require the meownage roles purrmission
 class ModCommands(BaseCommands):
+    async def video_verify(self, ctx: lightbulb.Context, target: hikari.User):
+        self._add_role(ctx, target.id, SpecialRolesEnum.VERIFYING)
+
     async def give_verified(self, ctx: lightbulb.Context, target: hikari.User):
         self._add_role(ctx, target.id, SpecialRolesEnum.VERIFIED)
         self._remove_role(ctx, target.id, SpecialRolesEnum.VERIFYING)
