@@ -1,11 +1,16 @@
+import hikari
 import hikari.impl.rest as hikari_rest
 import lightbulb
+from enums.special_roles_enum import SpecialRolesEnum
 from management.base_commands import BaseCommands
 
 BOUND_ROLE_MARKER = "\u200c"
 
 
 class UserCommands(BaseCommands):
+    async def video_verify(self, ctx: lightbulb.Context) -> None:
+        self.bot.rest.add_role_to_member(ctx.guild_id, ctx.user.id, SpecialRolesEnum.VERIFYING)
+
     async def edit_role(
         self,
         ctx: lightbulb.Context,

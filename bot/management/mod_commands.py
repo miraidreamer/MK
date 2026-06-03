@@ -14,6 +14,7 @@ from management.user_commands import BOUND_ROLE_MARKER
 class ModCommands(BaseCommands):
     async def give_verified(self, ctx: lightbulb.Context, target: hikari.User):
         self._add_role(ctx, target.id, SpecialRolesEnum.VERIFIED)
+        self._remove_role(ctx, target.id, SpecialRolesEnum.VERIFYING)
 
     async def freeze_roles(self, ctx: lightbulb.Context, target: hikari.User, timer: str):
         if timer := self._parse_to_seconds(timer):
@@ -35,6 +36,14 @@ class ModCommands(BaseCommands):
     async def _add_role(self, ctx: lightbulb.Context, target_id: int, role: SpecialRolesEnum):
         try:
             await self.bot.rest.add_role_to_member(ctx.guild_id, target_id, role.value)
+        except hikari.NotFoundError:
+            await self.respond(ctx, "User or role not found.")
+        finally:
+            await self.respond(ctx, f"Successfully updated roles for <@{target_id}>.")
+
+    async def _remove_role(self, ctx: lightbulb.Context, target_id: int, role: SpecialRolesEnum):
+        try:
+            await self.bot.rest.remove_role_from_member(ctx.guild_id, target_id, role.value)
         except hikari.NotFoundError:
             await self.respond(ctx, "User or role not found.")
         finally:
