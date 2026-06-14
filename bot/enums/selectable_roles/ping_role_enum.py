@@ -6,6 +6,7 @@ class PingRoleEnum(BaseRole):
     BUMP_REMINDER = ("Bump Reminder", "ping_bump", 1482874862677786685, "🔝")
     EVENTS = ("Events", "ping_events", 1486818848715046922, "🗞️")
     NEWS = ("News", "ping_news", 1482874915840462900, "🎀")
+    GAME_PINGS = ("Game Pings (Opens a new menu)", "open_game_select", None, "🎮")
 
     @classmethod
     def get_title(cls) -> str:

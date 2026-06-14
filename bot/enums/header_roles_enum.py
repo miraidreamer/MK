@@ -6,6 +6,7 @@ from enums.level_role_enum import LevelRoleEnum
 from enums.selectable_roles.dm_status_role_enum import DmStatusRoleEnum
 from enums.selectable_roles.dom_sub_style_role_enum import DomSubStyleRoleEnum
 from enums.selectable_roles.dom_title_enum import DomTitleEnum
+from enums.selectable_roles.game_role_enum import GameRoleEnum
 from enums.selectable_roles.genital_role_enum import GenitalRoleEnum
 from enums.selectable_roles.interaction_style_role_enum import InteractionStyleRoleEnum
 from enums.selectable_roles.kink_role_enum_a_n import KinkRoleEnumAN
@@ -24,8 +25,8 @@ class HeaderRolesEnum(Enum):
     BOUNDARIES_AND_RELATIONSHIPS = 1483416803215675494
     KINKS = 1482760118994210977
     MISC = 1483418773338980435
+    INTERESTS = 1515667784040845312
 
-    # This is a class attribute, not an Enum member
     @classmethod
     def get_category_map(cls):
         return {
@@ -49,6 +50,7 @@ class HeaderRolesEnum(Enum):
             ],
             cls.KINKS: [KinkRoleEnumAN, KinkRoleEnumOW],
             cls.MISC: [PingRoleEnum, LevelRoleEnum],
+            cls.INTERESTS: [GameRoleEnum],
         }
 
     @classmethod
@@ -64,7 +66,8 @@ class HeaderRolesEnum(Enum):
             for enum_cls in child_enum_list:
                 for member in enum_cls:
                     if hasattr(member, "role_id"):
-                        child_ids.add(member.role_id)
+                        if member.role_id is not None:
+                            child_ids.add(member.role_id)
                     else:
                         child_ids.add(member.value)
 
