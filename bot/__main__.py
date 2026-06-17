@@ -5,6 +5,7 @@ import hikari
 import lightbulb
 from commands import Commands
 from dotenv import load_dotenv
+from scripts.channel_lock_script import ChannelLockScript
 from scripts.interaction_script import InteractionScript
 from scripts.management_scripts import ManagementScripts
 
@@ -48,6 +49,7 @@ class Bot:
 
         self.manager = ManagementScripts(self.bot, PANDAEMONIUM_GUILD_ID)
         self.interaction = InteractionScript(self.bot)
+        self.channel_lock = ChannelLockScript(self.bot)
 
         for command in Commands().get_commands():
             self.client.register(command)
@@ -60,6 +62,7 @@ class Bot:
         self.bot.subscribe(hikari.GuildChannelDeleteEvent, self.manager.on_channel_delete)
         self.bot.subscribe(hikari.MemberUpdateEvent, self.manager.on_member_update)
         self.bot.subscribe(hikari.InteractionCreateEvent, self.interaction.on_interaction_create)
+        self.bot.subscribe(hikari.GuildMessageCreateEvent, self.channel_lock.on_message_create)
 
         self.bot.run()
 
