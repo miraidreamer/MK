@@ -29,7 +29,7 @@ class ChannelLockScript:
             )
             return
 
-        await self.bot.rest.create_message(
+        warning = await self.bot.rest.create_message(
             LOCKED_CHANNEL_ID,
             content=(
                 f"{event.author.mention} Welcome!"
