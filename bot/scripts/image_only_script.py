@@ -22,13 +22,16 @@ class ImageOnlyScript:
         if event.is_bot or event.message.author.is_bot:
             return
 
-        message = event.message
+        message = await self.bot.rest.fetch_message(event.channel_id, event.message_id)
 
-        has_image = any(
-            attachment.media_type is not None and attachment.media_type.startswith("image/")
-            for attachment in message.attachments
+        logger.info(
+            "Message %d | attachments: %s | content: %r",
+            event.message_id,
+            [(a.filename, a.media_type) for a in message.attachments],
+            message.content,
         )
 
+        has_image = len(message.attachments) > 0
         has_link = message.content is not None and (
             "http://" in message.content or "https://" in message.content
         )
@@ -52,5 +55,5 @@ class ImageOnlyScript:
             flags=hikari.MessageFlag.EPHEMERAL,
             user_mentions=[event.author.id],
         )
-        await asyncio.sleep(5)
+        await asyncio.sleep(10)
         await self.bot.rest.delete_message(event.channel_id, warning.id)
