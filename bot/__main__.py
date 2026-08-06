@@ -5,6 +5,7 @@ import hikari
 import lightbulb
 from commands import Commands
 from dotenv import load_dotenv
+from scripts.access_reminder_script import AccessReminderScript
 from scripts.channel_lock_script import ChannelLockScript
 from scripts.image_only_script import ImageOnlyScript
 from scripts.interaction_script import InteractionScript
@@ -52,6 +53,7 @@ class Bot:
         self.interaction = InteractionScript(self.bot)
         self.channel_lock = ChannelLockScript(self.bot)
         self.image = ImageOnlyScript(self.bot)
+        self.access_reminder = AccessReminderScript(self.bot, PANDAEMONIUM_GUILD_ID)
 
         for command in Commands().get_commands():
             self.client.register(command)
@@ -71,6 +73,7 @@ class Bot:
 
     async def _on_started(self, _: hikari.StartedEvent) -> None:
         self.manager.start_daily_purge_task()
+        self.access_reminder.start()
 
 
 if __name__ == "__main__":

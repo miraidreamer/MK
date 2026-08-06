@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 import hikari
@@ -37,3 +38,5 @@ class ChannelLockScript:
             ),
             user_mentions=[event.author.id],
         )
+        await asyncio.sleep(10)
+        await self.bot.rest.delete_message(LOCKED_CHANNEL_ID, warning.id)

@@ -28,18 +28,49 @@ class ManagementScripts:
         if event.member.is_bot:
             return
 
+        role_ids_now = set(event.member.role_ids)
+
+        await self._revoke_no_access_if_granted(
+            guild_id=event.guild_id,
+            member_id=event.member.id,
+            role_ids_now=role_ids_now,
+        )
+
         if event.old_member is not None:
             old_ids = set(event.old_member.role_ids)
-            new_ids = set(event.member.role_ids)
-            changed = old_ids.symmetric_difference(new_ids)
+            changed = old_ids.symmetric_difference(role_ids_now)
             if changed and changed.issubset(self._header_mapping.keys()):
                 return
 
         await self._sync_role_headers(
             guild_id=event.guild_id,
             member_id=event.member.id,
-            role_ids_now=set(event.member.role_ids),
+            role_ids_now=role_ids_now,
         )
+
+    async def _revoke_no_access_if_granted(
+        self,
+        *,
+        guild_id: hikari.Snowflake,
+        member_id: hikari.Snowflake,
+        role_ids_now: set[hikari.Snowflake],
+    ) -> None:
+        """Removes the no-access role once a member has been granted access."""
+        if (
+            SpecialRolesEnum.ACCESS_GRANTED.value not in role_ids_now
+            or SpecialRolesEnum.NO_ACCESS.value not in role_ids_now
+        ):
+            return
+
+        try:
+            await self.bot.rest.remove_role_from_member(
+                guild_id, member_id, SpecialRolesEnum.NO_ACCESS.value
+            )
+            logger.info("Removed no-access role from member %d after access was granted.", member_id)
+        except hikari.ForbiddenError:
+            logger.warning(
+                "Failed to remove no-access role from member %d: bot lacks permissions.", member_id
+            )
 
     async def _sync_role_headers(
         self,
