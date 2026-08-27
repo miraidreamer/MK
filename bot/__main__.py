@@ -7,6 +7,7 @@ from commands import Commands
 from dotenv import load_dotenv
 from scripts.access_reminder_script import AccessReminderScript
 from scripts.channel_lock_script import ChannelLockScript
+from scripts.counting_watch_script import CountingWatchScript
 from scripts.image_only_script import ImageOnlyScript
 from scripts.interaction_script import InteractionScript
 from scripts.management_scripts import ManagementScripts
@@ -42,7 +43,9 @@ class Bot:
 
         self.bot = hikari.GatewayBot(
             token,
-            intents=hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.GUILD_MEMBERS,
+            intents=hikari.Intents.ALL_UNPRIVILEGED
+            | hikari.Intents.GUILD_MEMBERS
+            | hikari.Intents.MESSAGE_CONTENT,
         )
 
         self.client = lightbulb.client_from_app(
@@ -54,6 +57,7 @@ class Bot:
         self.channel_lock = ChannelLockScript(self.bot)
         self.image = ImageOnlyScript(self.bot)
         self.access_reminder = AccessReminderScript(self.bot, PANDAEMONIUM_GUILD_ID)
+        self.counting_watch = CountingWatchScript(self.bot)
 
         for command in Commands().get_commands():
             self.client.register(command)
@@ -68,6 +72,8 @@ class Bot:
         self.bot.subscribe(hikari.InteractionCreateEvent, self.interaction.on_interaction_create)
         self.bot.subscribe(hikari.GuildMessageCreateEvent, self.channel_lock.on_message_create)
         self.bot.subscribe(hikari.GuildMessageCreateEvent, self.image.on_message_create)
+        self.bot.subscribe(hikari.GuildMessageCreateEvent, self.counting_watch.on_message_create)
+        self.bot.subscribe(hikari.GuildMessageDeleteEvent, self.counting_watch.on_message_delete)
 
         self.bot.run()
 
