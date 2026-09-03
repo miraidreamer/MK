@@ -7,6 +7,8 @@ class GameRoleEnum(BaseRole):
     DBD = ("Dbd", "dbd_role", 1515668457612644494, "3️⃣")
     FORTNITE = ("Fortnite", "fortnite_role", 1531712825544933386, "4️⃣")
     OVERWATCH = ("Overwatch", "overwatch_role", 1531712953617874995, "5️⃣")
+    APEX = ("Apex Legends", "apex_role", 1545083781470355617, "6️⃣")
+    MLBB = ("Mobile Legends", "mlbb_role", 1545083833488121957, "7️⃣")
 
     @classmethod
     def get_title(cls) -> str:
@@ -14,7 +16,7 @@ class GameRoleEnum(BaseRole):
 
     @classmethod
     def get_description(cls) -> str:
-        return "1️⃣ Valorant\n2️⃣ Marvel Rivals\n3️⃣ Dbd\n4️⃣ Fortnite\n 5️⃣ Overwatch"
+        return "1️⃣ Valorant\n2️⃣ Marvel Rivals\n3️⃣ Dbd\n4️⃣ Fortnite\n 5️⃣ Overwatch\n Apex Legends 6️⃣\n Mobile Legends 7️⃣"
 
     @classmethod
     def get_custom_id(cls) -> str:
