@@ -144,8 +144,13 @@ class InteractionScript:
             color=0x861F42,
         )
 
+        rows = []
         row = special_endpoints.MessageActionRowBuilder()
-        for item in GameRoleEnum:
+        for index, item in enumerate(GameRoleEnum):
+            if index and index % 5 == 0:
+                rows.append(row)
+                row = special_endpoints.MessageActionRowBuilder()
+
             try:
                 emoji = hikari.Emoji.parse(item.emoji) if item.emoji else hikari.UNDEFINED
                 label = hikari.UNDEFINED
@@ -159,10 +164,11 @@ class InteractionScript:
                 label=label,
                 emoji=emoji,
             )
+        rows.append(row)
 
         await interaction.create_initial_response(
             hikari.ResponseType.MESSAGE_CREATE,
             embed=embed,
-            components=[row],
+            components=rows,
             flags=hikari.MessageFlag.EPHEMERAL,
         )
