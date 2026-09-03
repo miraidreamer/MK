@@ -5,8 +5,10 @@ import logging
 import hikari
 import hikari.impl.special_endpoints as special_endpoints
 from enums.channel_ids_enum import ChannelIDsEnum
+from enums.gender_role_enum import GenderRoleEnum
 from enums.header_roles_enum import HeaderRolesEnum
 from enums.selectable_roles.booster_color_enum import BoosterColorEnum
+from enums.selectable_roles.position_role_enum import PositionRoleEnum
 from enums.special_roles_enum import SpecialRolesEnum
 from management.user_commands import BOUND_ROLE_MARKER
 
@@ -71,6 +73,52 @@ class ManagementScripts:
             logger.warning(
                 "Failed to remove no-access role from member %d: bot lacks permissions.", member_id
             )
+
+        await self._enforce_male_submissive_only(
+            guild_id=guild_id, member_id=member_id, role_ids_now=role_ids_now
+        )
+
+    async def _enforce_male_submissive_only(
+        self,
+        *,
+        guild_id: hikari.Snowflake,
+        member_id: hikari.Snowflake,
+        role_ids_now: set[hikari.Snowflake],
+    ) -> None:
+        """Femdom server rule: males may only hold the Submissive position role."""
+        if GenderRoleEnum.MALE.value not in role_ids_now:
+            return
+
+        disallowed_ids = role_ids_now & PositionRoleEnum.get_dominant_role_ids()
+        if not disallowed_ids:
+            return
+
+        for role_id in disallowed_ids:
+            try:
+                await self.bot.rest.remove_role_from_member(guild_id, member_id, role_id)
+            except hikari.ForbiddenError:
+                logger.warning(
+                    "Failed to remove disallowed position role %d from member %d: "
+                    "bot lacks permissions.",
+                    role_id,
+                    member_id,
+                )
+
+        if PositionRoleEnum.SUBMISSIVE.role_id not in role_ids_now:
+            try:
+                await self.bot.rest.add_role_to_member(
+                    guild_id, member_id, PositionRoleEnum.SUBMISSIVE.role_id
+                )
+            except hikari.ForbiddenError:
+                logger.warning(
+                    "Failed to add submissive role to member %d: bot lacks permissions.", member_id
+                )
+
+        logger.info(
+            "Enforced femdom position rule for member %d: removed %s, ensured Submissive.",
+            member_id,
+            disallowed_ids,
+        )
 
     async def _sync_role_headers(
         self,
