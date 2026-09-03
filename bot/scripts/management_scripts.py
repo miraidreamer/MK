@@ -5,7 +5,6 @@ import logging
 import hikari
 import hikari.impl.special_endpoints as special_endpoints
 from enums.channel_ids_enum import ChannelIDsEnum
-from enums.gender_role_enum import GenderRoleEnum
 from enums.header_roles_enum import HeaderRolesEnum
 from enums.selectable_roles.booster_color_enum import BoosterColorEnum
 from enums.selectable_roles.position_role_enum import PositionRoleEnum
@@ -85,8 +84,8 @@ class ManagementScripts:
         member_id: hikari.Snowflake,
         role_ids_now: set[hikari.Snowflake],
     ) -> None:
-        """Femdom server rule: males may only hold the Submissive position role."""
-        if GenderRoleEnum.MALE.value not in role_ids_now:
+        """Femdom server rule: males (incl. Trans FTM) may only hold the Submissive position role."""
+        if not role_ids_now & PositionRoleEnum.get_submissive_only_gender_ids():
             return
 
         disallowed_ids = role_ids_now & PositionRoleEnum.get_dominant_role_ids()

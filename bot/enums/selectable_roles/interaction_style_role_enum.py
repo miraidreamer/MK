@@ -9,6 +9,8 @@ class InteractionStyleRoleEnum(BaseRole):
     DONT_BULLY = ("Don't Bully", "style_no_bully", 1482761317399003248, "❌")
     FLIRT = ("Flirt", "style_flirt", 1483435512399396936, "💚")
     DONT_FLIRT = ("Don't Flirt", "style_no_flirt", 1483435579432632340, "❤️")
+    IRL_ONLY = ("IRL only", "style_irl_only",1545075557996306552,"🎓")
+    RP_ONLY = ("RP only", "style_rp_only",1545075604729364510,"🎭")
 
     @classmethod
     def get_title(cls) -> str:

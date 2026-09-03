@@ -44,12 +44,19 @@ class PositionRoleEnum(BaseRole):
             PositionRoleEnum.SUBMISSIVE.role_id,
         }
 
+    @staticmethod
+    def get_submissive_only_gender_ids() -> set[int]:
+        return {
+            GenderRoleEnum.MALE.value,
+            GenderRoleEnum.TRANS_FTM.value,
+        }
+
     @classmethod
     def check_permission(cls, current_role_ids, custom_id):
         if (
             custom_id in PositionRoleEnum.get_dominant_role_ids()
             or PositionRoleEnum.SUBMISSIVE.role_id in current_role_ids
-        ) and GenderRoleEnum.MALE.value in current_role_ids:
+        ) and current_role_ids & PositionRoleEnum.get_submissive_only_gender_ids():
             return "This is a femdom server — males can only be Submissive"
         return None
 
