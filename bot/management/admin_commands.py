@@ -122,27 +122,32 @@ class AdminCommands(BaseCommands):
                 color=0x861F42,
             )
 
-            row = special_endpoints.MessageActionRowBuilder()
-
             if category.is_button():
-                for item in category:
-                    label = undefined.UNDEFINED
-                    emoji = undefined.UNDEFINED
-                    try:
-                        emoji = (
-                            hikari.Emoji.parse(item.emoji) if item.emoji else undefined.UNDEFINED
-                        )
-                    except ValueError:
-                        label = item.label
+                # A single action row can hold at most 5 buttons, and a message at most 5 rows.
+                rows = []
+                items = list(category)
+                for chunk_start in range(0, len(items), 5):
+                    row = special_endpoints.MessageActionRowBuilder()
+                    for item in items[chunk_start : chunk_start + 5]:
+                        label = undefined.UNDEFINED
+                        emoji = undefined.UNDEFINED
+                        try:
+                            emoji = (
+                                hikari.Emoji.parse(item.emoji) if item.emoji else undefined.UNDEFINED
+                            )
+                        except ValueError:
+                            label = item.label
 
-                    row.add_interactive_button(
-                        hikari.ButtonStyle.SECONDARY,
-                        item.internal_id,
-                        label=label,
-                        emoji=emoji,
-                    )
+                        row.add_interactive_button(
+                            hikari.ButtonStyle.SECONDARY,
+                            item.internal_id,
+                            label=label,
+                            emoji=emoji,
+                        )
+                    rows.append(row)
 
             else:
+                row = special_endpoints.MessageActionRowBuilder()
                 menu_kwargs = {"placeholder": category.get_placeholder()}
                 if category.is_multi_select():
                     menu_kwargs["min_values"] = 0
@@ -154,6 +159,8 @@ class AdminCommands(BaseCommands):
                         item.internal_id,
                         emoji=hikari.Emoji.parse(item.emoji) if item.emoji else undefined.UNDEFINED,
                     )
-            await self.bot.rest.create_message(ctx.channel_id, embed=embed, components=[row])
+                rows = [row]
+
+            await self.bot.rest.create_message(ctx.channel_id, embed=embed, components=rows)
 
         await self.respond(ctx, "✅ All role selectors have been updated.")
