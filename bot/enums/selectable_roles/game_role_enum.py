@@ -16,7 +16,7 @@ class GameRoleEnum(BaseRole):
 
     @classmethod
     def get_description(cls) -> str:
-        return "1️⃣ Valorant\n2️⃣ Marvel Rivals\n3️⃣ Dbd\n4️⃣ Fortnite\n 5️⃣ Overwatch\n Apex Legends 6️⃣\n Mobile Legends 7️⃣"
+        return "1️⃣ Valorant\n2️⃣ Marvel Rivals\n3️⃣ Dbd\n4️⃣ Fortnite\n 5️⃣ Overwatch\n6️⃣ Apex Legends\n7️⃣ Mobile Legends"
 
     @classmethod
     def get_custom_id(cls) -> str:
