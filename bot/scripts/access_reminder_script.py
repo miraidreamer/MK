@@ -36,7 +36,7 @@ class AccessReminderScript:
         now = datetime.datetime.now(datetime.timezone.utc)
         has_pending_members = False
 
-        async for member in self.bot.rest.fetch_members(self.guild_id):
+        """async for member in self.bot.rest.fetch_members(self.guild_id):
             if member.is_bot or SpecialRolesEnum.NO_ACCESS.value not in member.role_ids:
                 continue
 
@@ -44,7 +44,7 @@ class AccessReminderScript:
                 await self._kick_member(member)
                 continue
 
-            has_pending_members = True
+            has_pending_members = True"""
 
         await self._post_reminder(has_pending_members)
 
@@ -55,7 +55,9 @@ class AccessReminderScript:
                 member.id,
                 reason="Held the no-access role for more than 4 days without completing verification.",
             )
-            logger.info("Kicked member %d for not completing access steps within 4 days.", member.id)
+            logger.info(
+                "Kicked member %d for not completing access steps within 4 days.", member.id
+            )
         except (hikari.ForbiddenError, hikari.NotFoundError):
             logger.exception("Failed to kick member %d.", member.id)
 
