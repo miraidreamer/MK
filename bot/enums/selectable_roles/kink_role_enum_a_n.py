@@ -13,7 +13,7 @@ class KinkRoleEnumAN(BaseRole):
     BREEDING = ("Breeding", "kink_breeding", 1484171981879251015)
     CHASTITY = ("Chastity", "kink_chastity", 1482763092008898725)
     CNC = ("CNC", "kink_cnc", 1482762081727021238)
-    CNTROL = ("Control", "kink_control", 1557029227407351928)
+    CONTROL = ("Control", "kink_control", 1557029227407351928)
     CORRUPTION = ("Corruption", "kink_corruption", 1484170708497207357)
     CUCKOLDING = ("Cuckolding", "kink_cuckold", 1482762856272236624)
     DEGRADATION = ("Degradation", "kink_degradation", 1482762073774752020)
